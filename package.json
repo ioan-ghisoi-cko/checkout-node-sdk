@@ -19,7 +19,11 @@
   },
   "homepage": "https://github.com/ioan-ghisoi-cko/checkout-node-sdk#readme",
   "devDependencies": {
+    "node-fetch": "^2.3.0",
     "tslint": "^5.15.0",
     "typescript": "^3.4.3"
+  },
+  "dependencies": {
+    "@types/node-fetch": "^2.3.2"
   }
 }
