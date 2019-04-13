@@ -1,0 +1,25 @@
+{
+  "name": "checkout-node-sdk",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build-watch": "tsc --watch",
+    "lint-fix": "tslint --fix './src/**/*.{ts}' -t verbose"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ioan-ghisoi-cko/checkout-node-sdk.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ioan-ghisoi-cko/checkout-node-sdk/issues"
+  },
+  "homepage": "https://github.com/ioan-ghisoi-cko/checkout-node-sdk#readme",
+  "devDependencies": {
+    "tslint": "^5.15.0",
+    "typescript": "^3.4.3"
+  }
+}
