@@ -13,11 +13,5 @@ jobs:
       - run:
           name: Run Tests
           command: npm test
-      - run:
-          name: Code coverage
-          command: npm run coverage
-      - run:
-          name: Code coverage
-          command: curl -s https://codecov.io/bash
       - store_artifacts:
           path: coverage
