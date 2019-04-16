@@ -19,4 +19,17 @@ describe('Basic Suite', () => {
             done();
         })();
     });
+    it("should work", async () => {
+        let outcome = await cko.payments.request({
+            source: {
+                type: "card",
+                number: '4242424242424242',
+                expiry_month: '06',
+                expiry_year: '2028',
+            },
+            currency: "USD",
+            amount: 100
+        });
+        expect(outcome.http_code).to.equal(201);
+    });
 });
