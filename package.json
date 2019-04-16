@@ -6,8 +6,7 @@
   "scripts": {
     "build-watch": "tsc --watch",
     "lint-fix": "tslint --fix './src/**/*.{ts}' -t verbose",
-    "test": "nyc mocha -r ts-node/register src/__tests__/**/*test.ts --reporter spec",
-    "coverage": "npx codecov",
+    "test": "nyc mocha -r ts-node/register src/__tests__/**/*test.ts --reporter spec && codecov",
     "test:watch": "mocha -r ts-node/register src/__tests__/**/*test.ts --watch-extensions ts --watch --reporter spec"
   },
   "repository": {
@@ -25,6 +24,7 @@
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.6",
     "chai": "^4.2.0",
+    "codecov": "^3.3.0",
     "node-fetch": "^2.3.0",
     "nyc": "^14.0.0",
     "source-map-support": "^0.5.12",
@@ -35,6 +35,7 @@
   },
   "dependencies": {
     "@types/node-fetch": "^2.3.2",
+    "babel-register": "^6.26.0",
     "mocha": "^6.1.3"
   },
   "nyc": {
