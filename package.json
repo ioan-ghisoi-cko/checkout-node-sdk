@@ -16,6 +16,7 @@
     "typescript": "^3.1.1"
   },
   "scripts": {
+    "build": "tsc",
     "build-watch": "tsc --watch",
     "lint-fix": "tslint --fix './src/**/*.{ts}' -t verbose",
     "test": "nyc mocha -r ts-node/register test/**/*test.ts",
