@@ -3,11 +3,22 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "devDependencies": {
+    "@types/mocha": "^5.2.5",
+    "@types/node-fetch": "^2.3.2",
+    "chai": "^4.2.0",
+    "codecov": "^3.1.0",
+    "mocha": "^5.2.0",
+    "node-fetch": "^2.3.0",
+    "nyc": "^13.0.1",
+    "ts-node": "^8.1.0",
+    "typescript": "^3.1.1"
+  },
   "scripts": {
     "build-watch": "tsc --watch",
     "lint-fix": "tslint --fix './src/**/*.{ts}' -t verbose",
-    "test": "nyc mocha -r ts-node/register src/__tests__/**/*test.ts --reporter spec && codecov",
-    "test:watch": "mocha -r ts-node/register src/__tests__/**/*test.ts --watch-extensions ts --watch --reporter spec"
+    "test": "nyc mocha -r ts-node/register test/**/*test.ts",
+    "posttest": "nyc report --reporter=json"
   },
   "repository": {
     "type": "git",
@@ -19,42 +30,8 @@
   "bugs": {
     "url": "https://github.com/ioan-ghisoi-cko/checkout-node-sdk/issues"
   },
-  "homepage": "https://github.com/ioan-ghisoi-cko/checkout-node-sdk#readme",
-  "devDependencies": {
-    "@types/chai": "^4.1.7",
-    "@types/mocha": "^5.2.6",
-    "chai": "^4.2.0",
-    "codecov": "^3.3.0",
-    "node-fetch": "^2.3.0",
-    "nyc": "^14.0.0",
-    "source-map-support": "^0.5.12",
-    "ts-node": "^8.1.0",
-    "tslint": "^5.15.0",
-    "typescript": "^3.4.3",
-    "typings": "^2.1.1"
-  },
+  "homepage": "https://github.com/codecov/example-typescript#readme",
   "dependencies": {
-    "@types/node-fetch": "^2.3.2",
-    "babel-register": "^6.26.0",
-    "mocha": "^6.1.3"
-  },
-  "nyc": {
-    "include": [
-      "src/**/*.ts",
-      "src/**/*.tsx"
-    ],
-    "extension": [
-      ".ts",
-      ".tsx"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text-summary",
-      "html"
-    ],
-    "sourceMap": true,
-    "instrument": true
+    "@types/jquery": "^3.3.29"
   }
 }
