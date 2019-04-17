@@ -19,7 +19,7 @@
     "build": "tsc",
     "build-watch": "tsc --watch",
     "lint-fix": "tslint --fix './src/**/*.{ts}' -t verbose",
-    "test": "nyc mocha -r ts-node/register test/**/*test.ts",
+    "test": "nyc --reporter=text mocha -r ts-node/register test/**/*test.ts",
     "posttest": "nyc report --reporter=json"
   },
   "repository": {
