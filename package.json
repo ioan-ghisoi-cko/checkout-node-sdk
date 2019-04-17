@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "devDependencies": {
-    "@types/mocha": "^5.2.5",
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.6",
     "@types/node-fetch": "^2.3.2",
     "chai": "^4.2.0",
     "codecov": "^3.1.0",
