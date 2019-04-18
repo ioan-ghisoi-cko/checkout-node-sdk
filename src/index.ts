@@ -10,9 +10,8 @@ class checkout {
     }
 }
 
-const api = (key: string): checkout => {
+export function api(key: string): checkout {
     return new checkout(key)
 }
 
-export default api;
-module.exports = api;
+module.exports = { api };
