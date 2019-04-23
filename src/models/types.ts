@@ -40,7 +40,7 @@ export interface ThreeDSecure {
 }
 
 export interface Risk {
-    enabled: boolean;
+    flagged: boolean;
 }
 
 export interface Processing {
@@ -96,9 +96,10 @@ export interface Links {
     actions?: Link;
     void?: Link;
     capture?: Link;
+    redirect?: Link;
 }
 
-export interface PaymentSuccess {
+export interface PaymentResponse {
     id: string;
     action_id: string;
     amount: number;
@@ -116,7 +117,7 @@ export interface PaymentSuccess {
     reference: string;
     eci: string;
     scheme_id: string;
-    links: Links
+    _links: Links
 }
 
 export interface PaymentActionRequired {
@@ -124,8 +125,8 @@ export interface PaymentActionRequired {
     status: string;
     reference?: string;
     customer?: Customer;
-    threed_secure?: ThreeDSecureResponse;
-    redirect_url?: string;
+    '3ds'?: ThreeDSecureResponse;
+    _links: Links
 }
 
 export interface ThreeDSecureResponse {
@@ -135,10 +136,7 @@ export interface ThreeDSecureResponse {
 
 export interface PaymentOutcome {
     http_code: number;
-    is_successful: boolean;
-    is_approved: boolean;
-    is_pending: boolean;
-    body: PaymentSuccess | PaymentActionRequired;
+    body: PaymentResponse | PaymentActionRequired;
 }
 
 export interface PaymentError {

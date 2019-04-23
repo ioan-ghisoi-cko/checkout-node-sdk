@@ -1,12 +1,12 @@
 // const { checkout } = require('../lib/index');
-import { checkout, PaymentRequest, CardSource, NetworkTokenSource } from '../lib/index';
+import { checkout, PaymentRequest, CardSource, NetworkTokenSource, PaymentResponse, PaymentActionRequired } from '../lib/index';
 import { expect } from 'chai';
 
 let api = new checkout('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
 
-describe('Full card charges', () => {
+describe('Full card charge', () => {
     it("should produce successful authorisation response", async () => {
-        let outcome = await api.payments.request<CardSource>({
+        let transaction = await api.payments.request<CardSource>({
             source: new CardSource({
                 number: '4242424242424242',
                 expiry_month: '06',
@@ -17,14 +17,16 @@ describe('Full card charges', () => {
             amount: 100
         });
 
-        expect(outcome.is_successful).to.be.true;
-        expect(outcome.is_approved).to.be.true;
-        expect(outcome.is_pending).to.be.false;
-        expect(outcome.http_code).to.equal(201);
+        let response = transaction.body as PaymentResponse;
+
+        expect(transaction.http_code).to.equal(201);
+        expect(response.approved).to.be.true;
+        expect(response.risk.flagged).to.be.false;
+        expect(response._links.redirect).to.be.undefined;
     });
 
     it("should produce a decline response", async () => {
-        let outcome = await api.payments.request<CardSource>({
+        let transaction = await api.payments.request<CardSource>({
             source: new CardSource({
                 number: '4242424242424242',
                 expiry_month: '06',
@@ -34,14 +36,17 @@ describe('Full card charges', () => {
             currency: "USD",
             amount: 1005
         });
-        expect(outcome.is_successful).to.be.false;
-        expect(outcome.is_approved).to.be.false;
-        expect(outcome.is_pending).to.be.false;
-        expect(outcome.http_code).to.equal(201);
+
+        let response = transaction.body as PaymentResponse;
+
+        expect(transaction.http_code).to.equal(201);
+        expect(response.approved).to.be.false;
+        expect(response.risk.flagged).to.be.false;
+        expect(response._links.redirect).to.be.undefined;
     });
 
     it("should produce a flagged response", async () => {
-        let outcome = await api.payments.request<CardSource>({
+        let transaction = await api.payments.request<CardSource>({
             source: new CardSource({
                 number: '4242424242424242',
                 expiry_month: '06',
@@ -51,14 +56,17 @@ describe('Full card charges', () => {
             currency: "USD",
             amount: 100000
         });
-        expect(outcome.is_successful).to.be.false;
-        expect(outcome.is_approved).to.be.true;
-        expect(outcome.is_pending).to.be.true;
-        expect(outcome.http_code).to.equal(201);
+
+        let response = transaction.body as PaymentResponse;
+
+        expect(transaction.http_code).to.equal(201);
+        expect(response.approved).to.be.true;
+        expect(response.risk.flagged).to.be.true;
+        expect(response._links.capture!.href).to.not.be.undefined;
     });
 
     it("should produce a 3DS response", async () => {
-        let outcome = await api.payments.request<CardSource>({
+        let transaction = await api.payments.request<CardSource>({
             source: new CardSource({
                 number: '4242424242424242',
                 expiry_month: '06',
@@ -66,11 +74,17 @@ describe('Full card charges', () => {
                 cvv: '100'
             }),
             currency: "USD",
-            amount: 100000
+            amount: 1000,
+            '3ds': {
+                enabled: true
+            }
         });
-        expect(outcome.is_successful).to.be.false;
-        expect(outcome.is_approved).to.be.true;
-        expect(outcome.is_pending).to.be.true;
-        expect(outcome.http_code).to.equal(201);
+
+        let response = transaction.body as PaymentActionRequired;
+
+        expect(transaction.http_code).to.equal(202);
+        expect(response["3ds"]!.enrolled).to.equal('Y');
+        expect(response.status).to.equal('Pending');
+        expect(response._links.redirect!.href).to.not.be.undefined;
     });
 });
