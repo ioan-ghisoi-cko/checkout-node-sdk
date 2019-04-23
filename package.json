@@ -1,40 +1,41 @@
 {
-  "name": "checkout-node-sdk",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "devDependencies": {
-    "@types/chai": "^4.1.7",
-    "@types/mocha": "^5.2.6",
-    "@types/node-fetch": "^2.3.2",
-    "chai": "^4.2.0",
-    "codecov": "^3.1.0",
-    "mocha": "^5.2.0",
-    "node-fetch": "^2.3.0",
-    "nyc": "^13.0.1",
-    "ts-node": "^8.1.0",
-    "typescript": "^3.1.1"
-  },
-  "scripts": {
-    "build": "tsc",
-    "build-watch": "tsc --watch",
-    "lint-fix": "tslint --fix './src/**/*.{ts}' -t verbose",
-    "test": "nyc --reporter=text mocha -r ts-node/register test/**/*test.ts",
-    "test:watch": "nyc --reporter=text mocha --watch -r ts-node/register test/**/*test.ts",
-    "posttest": "nyc report --reporter=json"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ioan-ghisoi-cko/checkout-node-sdk.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/ioan-ghisoi-cko/checkout-node-sdk/issues"
-  },
-  "homepage": "https://github.com/codecov/example-typescript#readme",
-  "dependencies": {
-    "@types/jquery": "^3.3.29"
-  }
+    "name": "checkout-node-sdk",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "devDependencies": {
+        "@types/chai": "^4.1.7",
+        "@types/mocha": "^5.2.6",
+        "@types/node-fetch": "^2.3.2",
+        "chai": "^4.2.0",
+        "codecov": "^3.1.0",
+        "mocha": "^5.2.0",
+        "node-fetch": "^2.3.0",
+        "nyc": "^13.0.1",
+        "ts-node": "^8.1.0",
+        "typescript": "^3.1.1"
+    },
+    "scripts": {
+        "build": "tsc",
+        "build-watch": "tsc --watch",
+        "lint-fix": "tslint --fix './src/**/*.{ts}' -t verbose",
+        "test": "nyc --reporter=text mocha -r ts-node/register test/**/*test.ts",
+        "test:watch": "mocha --require ts-node/register --watch-extensions ts --watch 'test/**/*test.ts'",
+        "posttest": "nyc report --reporter=json"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ioan-ghisoi-cko/checkout-node-sdk.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/ioan-ghisoi-cko/checkout-node-sdk/issues"
+    },
+    "homepage": "https://github.com/codecov/example-typescript#readme",
+    "dependencies": {
+        "@types/jquery": "^3.3.29",
+        "lodash": "^4.17.11"
+    }
 }
