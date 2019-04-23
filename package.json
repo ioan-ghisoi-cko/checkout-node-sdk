@@ -19,7 +19,7 @@
         "build": "tsc",
         "build-watch": "tsc --watch",
         "lint-fix": "tslint --fix './src/**/*.{ts}' -t verbose",
-        "test": "nyc --reporter=text mocha -r ts-node/register test/**/*test.ts",
+        "test": "nyc --reporter=text mocha --timeout 10000 -r ts-node/register test/**/*test.ts",
         "test:watch": "mocha --require ts-node/register --watch-extensions ts --watch 'test/**/*test.ts'",
         "posttest": "nyc report --reporter=json"
     },
