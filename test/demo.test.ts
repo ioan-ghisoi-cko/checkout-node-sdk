@@ -1,5 +1,5 @@
 // const { checkout } = require('../lib/index');
-import { checkout, PaymentRequest, CardSource, NetworkTokenSource, PaymentResponse, PaymentActionRequired } from '../lib/index';
+import { checkout, CardSource, PaymentError, PaymentResponse, PaymentActionRequired } from '../lib/index';
 import { expect } from 'chai';
 
 let api = new checkout('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
@@ -86,5 +86,22 @@ describe('Full card charge', () => {
         expect(response["3ds"]!.enrolled).to.equal('Y');
         expect(response.status).to.equal('Pending');
         expect(response._links.redirect!.href).to.not.be.undefined;
+    });
+
+    it("should produce an error response", async () => {
+        try {
+            // @ts-ignore
+            let transaction = await api.payments.request<CardSource>({
+                currency: "USD",
+                amount: 1000,
+                '3ds': {
+                    enabled: true
+                }
+            });
+        } catch (error) {
+            let err = error as PaymentError;
+            expect(err.http_code).to.equal(422);
+            expect(err.body.error_type).to.equal('request_invalid');
+        }
     });
 });

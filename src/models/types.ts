@@ -139,10 +139,15 @@ export interface PaymentOutcome {
     body: PaymentResponse | PaymentActionRequired;
 }
 
-export interface PaymentError {
+export interface _PaymentError {
     request_id: string;
     error_type: string;
     error_codes: string[];
+}
+
+export interface PaymentError {
+    http_code: number;
+    body: _PaymentError;
 }
 
 export interface InfoField {
