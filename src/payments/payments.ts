@@ -1,11 +1,12 @@
 import fetch from 'node-fetch';
 import { constants } from '../common/constants';
-import { PaymentRequest, PaymentActionRequired, PaymentResponse, PaymentOutcome, PaymentError } from '../models/types';
+import { PaymentRequest, PaymentActionRequired, PaymentResponse, PaymentOutcome, PaymentError, HttpOptions } from '../models/types';
 
 export default class Payments {
     key: string;
+    http_options: HttpOptions;
 
-    public request = async <T>(arg: PaymentRequest<T>, retry: number = 0): Promise<
+    public request = async <T>(arg: PaymentRequest<T>, retry: number = this.http_options.reties): Promise<
         PaymentOutcome> => {
         try {
             const response = await fetch(`${constants.SANDBOX_BASE_URL}/payments`,
@@ -39,7 +40,12 @@ export default class Payments {
         }
     };
 
-    public constructor(key: string) {
+    public constructor(key: string, http_options: HttpOptions) {
         this.key = key;
+        this.http_options = http_options;
+    }
+
+    public setHttpOptions = (options: HttpOptions) => {
+        this.http_options = options;
     }
 }

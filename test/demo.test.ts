@@ -89,6 +89,10 @@ describe('Full card charge', () => {
     });
 
     it("should produce an error response", async () => {
+        api.setHttpOptions({
+            reties: 2,
+            timeout: 5000,
+        })
         try {
             // @ts-ignore
             let transaction = await api.payments.request<CardSource>({

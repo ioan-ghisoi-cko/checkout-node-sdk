@@ -158,3 +158,8 @@ export interface InfoField {
 export interface InfoFields {
     [key: string]: InfoField;
 }
+
+export interface HttpOptions {
+    reties: number;
+    timeout: number;
+}
