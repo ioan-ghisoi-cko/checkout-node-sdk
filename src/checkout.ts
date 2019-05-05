@@ -7,7 +7,7 @@ export default class checkout {
     public http_options: HttpOptions = {
         reties: constants.DEFAULT_RETRIES,
         timeout: constants.DEFAULT_TIMEOUT
-    }s;
+    };
     public payments: _payments;
 
     constructor(key: string) {
