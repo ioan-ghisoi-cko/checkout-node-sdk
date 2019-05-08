@@ -35,7 +35,7 @@ export default class Payments {
                 };
             }
         } catch (err) {
-            if (!isNaN(retry) || retry === 1 || retry < 1) throw err;
+            if (retry === 1 || retry < 1) throw err;
             return await this.request(arg, retry - 1);
         }
     };
