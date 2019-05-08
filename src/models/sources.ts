@@ -1,4 +1,20 @@
-import { Address, Phone, NetworkTokenType, InfoFields } from './types';
+import {
+    Address,
+    Phone,
+    NetworkTokenType,
+    InfoFields,
+    CardSourceType,
+    TokenSourceType,
+    IdSourceType,
+    CustomerSourceType,
+    NetworkTokenSourceType,
+    BoletoSourceType,
+    GiropaySourceType,
+    IdealSourceType,
+    KlarnaSourceType,
+    QiwiSourceType,
+
+} from './types';
 
 // export class TokenSource {
 //     private readonly type: string = 'token';
@@ -6,19 +22,10 @@ import { Address, Phone, NetworkTokenType, InfoFields } from './types';
 //     public billing_address?: Address;
 //     public phone?: Phone
 
-//     public constructor(
-//         {
-//             token,
-//             billing_address,
-//             phone }:
-//             {
-//                 token: string,
-//                 billing_address?: Address,
-//                 phone?: Phone
-//             }) {
-//         this.token = token;
-//         this.billing_address = billing_address;
-//         this.phone = phone;
+//     public constructor(source: TokenSourceType) {
+//         this.token = source.token;
+//         this.billing_address = source.billing_address;
+//         this.phone = source.phone;
 //     }
 // }
 
@@ -27,17 +34,9 @@ import { Address, Phone, NetworkTokenType, InfoFields } from './types';
 //     public id: string;
 //     public cvv?: string;
 
-//     public constructor(
-//         {
-//             id,
-//             cvv
-//         }:
-//             {
-//                 id: string,
-//                 cvv?: string
-//             }) {
-//         this.id = id;
-//         this.cvv = cvv;
+//     public constructor(source: IdSourceType) {
+//         this.id = source.id;
+//         this.cvv = source.cvv;
 //     }
 // }
 
@@ -52,34 +51,15 @@ export class CardSource {
     public billing_address?: Address;
     public phone?: Phone;
 
-    public constructor(
-        {
-            number,
-            expiry_month,
-            expiry_year,
-            name,
-            cvv,
-            stored,
-            billing_address,
-            phone }:
-            {
-                number: string,
-                expiry_month: string,
-                expiry_year: string,
-                name?: string,
-                cvv?: string,
-                stored?: boolean,
-                billing_address?: Address,
-                phone?: Phone
-            }) {
-        this.number = number;
-        this.expiry_month = expiry_month;
-        this.expiry_year = expiry_year;
-        this.name = name;
-        this.cvv = cvv;
-        this.stored = stored;
-        this.billing_address = billing_address;
-        this.phone = phone;
+    public constructor(source: CardSourceType) {
+        this.number = source.number;
+        this.expiry_month = source.expiry_month;
+        this.expiry_year = source.expiry_year;
+        this.name = source.name;
+        this.cvv = source.cvv;
+        this.stored = source.stored;
+        this.billing_address = source.billing_address;
+        this.phone = source.phone;
     }
 }
 
@@ -88,9 +68,9 @@ export class CardSource {
 //     public id?: string;
 //     public email?: string;
 
-//     public constructor({ id, email }: { id?: string, email?: string }) {
-//         this.id = id;
-//         this.email = email;
+//     public constructor(source: CustomerSourceType) {
+//         this.id = source.id;
+//         this.email = source.email;
 //     }
 // }
 
@@ -108,43 +88,18 @@ export class CardSource {
 //     public billing_address?: Address;
 //     public phone?: Phone;
 
-//     public constructor(
-//         {
-//             token,
-//             expiry_month,
-//             expiry_year,
-//             token_type,
-//             cryptogram,
-//             eci,
-//             stored,
-//             name,
-//             cvv,
-//             billing_address,
-//             phone
-//         }: {
-//             token: string,
-//             expiry_month: number,
-//             expiry_year: number,
-//             token_type: NetworkTokenType,
-//             cryptogram: string,
-//             eci: string,
-//             stored?: string,
-//             name?: string,
-//             cvv?: string,
-//             billing_address?: Address,
-//             phone?: Phone
-//         }) {
-//         this.token = token;
-//         this.expiry_month = expiry_month;
-//         this.expiry_year = expiry_year;
-//         this.token_type = token_type;
-//         this.cryptogram = cryptogram;
-//         this.eci = eci;
-//         this.stored = stored;
-//         this.name = name;
-//         this.cvv = cvv;
-//         this.billing_address = billing_address;
-//         this.phone = phone;
+//     public constructor(source: NetworkTokenSourceType) {
+//         this.token = source.token;
+//         this.expiry_month = source.expiry_month;
+//         this.expiry_year = source.expiry_year;
+//         this.token_type = source.token_type;
+//         this.cryptogram = source.cryptogram;
+//         this.eci = source.eci;
+//         this.stored = source.stored;
+//         this.name = source.name;
+//         this.cvv = source.cvv;
+//         this.billing_address = source.billing_address;
+//         this.phone = source.phone;
 //     }
 // }
 
@@ -160,19 +115,10 @@ export class CardSource {
 //     public cpf: string;
 //     public customerName: string;
 
-//     public constructor(
-//         {
-//             birthDate,
-//             cpf,
-//             customerName
-//         }: {
-//             birthDate: string,
-//             cpf: string,
-//             customerName: string,
-//         }) {
-//         this.birthDate = birthDate;
-//         this.cpf = cpf;
-//         this.customerName = customerName;
+//     public constructor(source: BoletoSourceType) {
+//         this.birthDate = source.birthDate;
+//         this.cpf = source.cpf;
+//         this.customerName = source.customerName;
 //     }
 // }
 
@@ -183,22 +129,11 @@ export class CardSource {
 //     public iban?: string;
 //     public info_fields?: InfoFields;
 
-//     public constructor(
-//         {
-//             purpose,
-//             bic,
-//             iban,
-//             info_fields
-//         }: {
-//             purpose: string,
-//             bic: string,
-//             iban?: string,
-//             info_fields?: InfoFields
-//         }) {
-//         this.purpose = purpose;
-//         this.bic = bic;
-//         this.iban = iban;
-//         this.info_fields = info_fields;
+//     public constructor(source: GiropaySourceType) {
+//         this.purpose = source.purpose;
+//         this.bic = source.bic;
+//         this.iban = source.iban;
+//         this.info_fields = source.info_fields;
 //     }
 // }
 
@@ -208,19 +143,10 @@ export class CardSource {
 //     public bic: string;
 //     public language?: string;
 
-//     public constructor(
-//         {
-//             description,
-//             bic,
-//             language,
-//         }: {
-//             description: string,
-//             bic: string,
-//             language?: string
-//         }) {
-//         this.description = description;
-//         this.bic = bic;
-//         this.language = language;
+//     public constructor(source: IdealSourceType) {
+//         this.description = source.description;
+//         this.bic = source.bic;
+//         this.language = source.language;
 //     }
 // }
 
@@ -239,46 +165,19 @@ export class CardSource {
 //     public merchant_reference2?: string;
 //     public merchant_data?: any;
 
-//     public constructor(
-//         {
-//             authorization_token,
-//             locale,
-//             purchase_country,
-//             auto_capture,
-//             billing_address,
-//             shipping_address,
-//             tax_amount,
-//             products,
-//             customer,
-//             merchant_reference1,
-//             merchant_reference2,
-//             merchant_data,
-//         }: {
-//             authorization_token: string,
-//             locale: string,
-//             purchase_country: string,
-//             auto_capture?: boolean,
-//             billing_address: any,
-//             shipping_address?: any,
-//             tax_amount: number,
-//             products: any,
-//             customer?: any,
-//             merchant_reference1?: string,
-//             merchant_reference2?: string,
-//             merchant_data?: any
-//         }) {
-//         this.authorization_token = authorization_token;
-//         this.locale = locale;
-//         this.purchase_country = purchase_country;
-//         this.auto_capture = auto_capture;
-//         this.billing_address = billing_address;
-//         this.shipping_address = shipping_address;
-//         this.tax_amount = tax_amount;
-//         this.products = products;
-//         this.customer = customer;
-//         this.merchant_reference1 = merchant_reference1;
-//         this.merchant_reference2 = merchant_reference2;
-//         this.merchant_data = merchant_data;
+//     public constructor(source: KlarnaSourceType) {
+//         this.authorization_token = source.authorization_token;
+//         this.locale = source.locale;
+//         this.purchase_country = source.purchase_country;
+//         this.auto_capture = source.auto_capture;
+//         this.billing_address = source.billing_address;
+//         this.shipping_address = source.shipping_address;
+//         this.tax_amount = source.tax_amount;
+//         this.products = source.products;
+//         this.customer = source.customer;
+//         this.merchant_reference1 = source.merchant_reference1;
+//         this.merchant_reference2 = source.merchant_reference2;
+//         this.merchant_data = source.merchant_data;
 //     }
 // }
 
@@ -292,8 +191,8 @@ export class CardSource {
 //     private readonly type: string = 'qiwi';
 //     public walletId: string;
 
-//     public constructor({ walletId }: { walletId: string }) {
-//         this.walletId = walletId;
+//     public constructor(source: QiwiSourceType) {
+//         this.walletId = source.walletId;
 //     }
 // }
 
