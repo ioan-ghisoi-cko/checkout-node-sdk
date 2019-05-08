@@ -6,7 +6,16 @@ import { Address, Phone, NetworkTokenType, InfoFields } from './types';
 //     public billing_address?: Address;
 //     public phone?: Phone
 
-//     public constructor({ token, billing_address, phone }: { token: string, billing_address?: Address, phone?: Phone }) {
+//     public constructor(
+//         {
+//             token,
+//             billing_address,
+//             phone }:
+//             {
+//                 token: string,
+//                 billing_address?: Address,
+//                 phone?: Phone
+//             }) {
 //         this.token = token;
 //         this.billing_address = billing_address;
 //         this.phone = phone;
@@ -18,7 +27,15 @@ import { Address, Phone, NetworkTokenType, InfoFields } from './types';
 //     public id: string;
 //     public cvv?: string;
 
-//     public constructor({ id, cvv }: { id: string, cvv?: string }) {
+//     public constructor(
+//         {
+//             id,
+//             cvv
+//         }:
+//             {
+//                 id: string,
+//                 cvv?: string
+//             }) {
 //         this.id = id;
 //         this.cvv = cvv;
 //     }
@@ -35,11 +52,34 @@ export class CardSource {
     public billing_address?: Address;
     public phone?: Phone;
 
-    public constructor({ number, expiry_month, expiry_year, name, cvv, stored, billing_address, phone }: { number: string, expiry_month: string, expiry_year: string, name?: string, cvv?: string, stored?: boolean, billing_address?: Address, phone?: Phone }) {
+    public constructor(
+        {
+            number,
+            expiry_month,
+            expiry_year,
+            name,
+            cvv,
+            stored,
+            billing_address,
+            phone }:
+            {
+                number: string,
+                expiry_month: string,
+                expiry_year: string,
+                name?: string,
+                cvv?: string,
+                stored?: boolean,
+                billing_address?: Address,
+                phone?: Phone
+            }) {
         this.number = number;
         this.expiry_month = expiry_month;
         this.expiry_year = expiry_year;
         this.name = name;
+        this.cvv = cvv;
+        this.stored = stored;
+        this.billing_address = billing_address;
+        this.phone = phone;
     }
 }
 
