@@ -12,6 +12,7 @@ export default class Payments {
             const response = await fetch(`${constants.SANDBOX_BASE_URL}/payments`,
                 {
                     method: 'post',
+                    timeout: this.http_options.timeout,
                     body: JSON.stringify(arg),
                     headers: { 'Content-Type': 'application/json', 'Authorization': this.key },
                 });

@@ -1,4 +1,5 @@
 // const { checkout } = require('../lib/index');
+const nock = require('nock')
 import { checkout, CardSource, PaymentError, PaymentResponse, PaymentActionRequired } from '../lib/index';
 import { expect } from 'chai';
 
@@ -107,5 +108,34 @@ describe('Full card charge', () => {
             expect(err.http_code).to.equal(422);
             expect(err.body.error_type).to.equal('request_invalid');
         }
+    });
+
+    it("should timeout", async () => {
+        nock('https://api.sandbox.checkout.com')
+            .post('/payments')
+            .delay(3000)
+            .reply(500, {
+                transaction: {
+                    body: {
+                        http_code: 500
+                    }
+                },
+            });
+
+        try {
+            let transaction = await api.payments.request<CardSource>({
+                source: new CardSource({
+                    number: '4242424242424242',
+                    expiry_month: '06',
+                    expiry_year: '2029',
+                    cvv: '100'
+                }),
+                currency: "USD",
+                amount: 100
+            });
+        } catch (err) {
+            expect(err.type).to.equal('system');
+        }
+
     });
 });
