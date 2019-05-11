@@ -3,5 +3,5 @@ export class Constants {
     public static readonly SANDBOX_BASE_URL =
         "https://api.sandbox.checkout.com";
     public static readonly DEFAULT_RETRIES = 0;
-    public static readonly DEFAULT_TIMEOUT = 2000;
+    public static readonly DEFAULT_TIMEOUT = 6000;
 }
