@@ -1,21 +1,35 @@
-import fetch from 'node-fetch';
-import { constants } from '../common/constants';
-import { PaymentRequest, PaymentActionRequired, PaymentResponse, PaymentOutcome, PaymentError, HttpOptions } from '../models/types';
+import fetch from "node-fetch";
+import { Constants as constants } from "../common/constants";
+import {
+    PaymentRequest,
+    PaymentActionRequired,
+    PaymentResponse,
+    PaymentOutcome,
+    PaymentError,
+    HttpOptions
+} from "../models/types";
 
 export default class Payments {
     key: string;
     http_options: HttpOptions;
 
-    public request = async <T>(arg: PaymentRequest<T>, retry: number = this.http_options.reties): Promise<
-        PaymentOutcome> => {
+    public request = async <T>(
+        arg: PaymentRequest<T>,
+        retry: number = this.http_options.reties
+    ): Promise<PaymentOutcome> => {
         try {
-            const response = await fetch(`${constants.SANDBOX_BASE_URL}/payments`,
+            const response = await fetch(
+                `${constants.SANDBOX_BASE_URL}/payments`,
                 {
-                    method: 'post',
+                    method: "post",
                     timeout: this.http_options.timeout,
                     body: JSON.stringify(arg),
-                    headers: { 'Content-Type': 'application/json', 'Authorization': this.key },
-                });
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: this.key
+                    }
+                }
+            );
 
             const json = await response.json();
 
@@ -48,5 +62,5 @@ export default class Payments {
 
     public setHttpOptions = (options: HttpOptions) => {
         this.http_options = options;
-    }
+    };
 }

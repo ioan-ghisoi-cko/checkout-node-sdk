@@ -70,7 +70,7 @@ export interface PaymentRequest<T> {
     customer?: Customer;
     billing_descriptor?: BillingDescriptor;
     shipping?: Shipping;
-    '3ds'?: ThreeDSecure;
+    "3ds"?: ThreeDSecure;
     previous_payment_id?: string;
     risk?: string;
     success_url?: string;
@@ -109,7 +109,7 @@ export interface PaymentResponse {
     auth_code: string;
     response_code: string;
     response_summary: string;
-    '3ds': ThreeDSecureResponse;
+    "3ds": ThreeDSecureResponse;
     risk: Risk;
     source: SourceResponse;
     customer: Customer;
@@ -117,7 +117,7 @@ export interface PaymentResponse {
     reference: string;
     eci: string;
     scheme_id: string;
-    _links: Links
+    _links: Links;
 }
 
 export interface PaymentActionRequired {
@@ -125,8 +125,8 @@ export interface PaymentActionRequired {
     status: string;
     reference?: string;
     customer?: Customer;
-    '3ds'?: ThreeDSecureResponse;
-    _links: Links
+    "3ds"?: ThreeDSecureResponse;
+    _links: Links;
 }
 
 export interface ThreeDSecureResponse {
@@ -170,79 +170,79 @@ export interface HttpOptions {
 }
 
 export type TokenSourceType = {
-    token: string,
-    billing_address?: Address,
-    phone?: Phone
-}
+    token: string;
+    billing_address?: Address;
+    phone?: Phone;
+};
 
 export type IdSourceType = {
-    id: string,
-    cvv?: string
-}
+    id: string;
+    cvv?: string;
+};
 
 export type CardSourceType = {
-    number: string,
-    expiry_month: string,
-    expiry_year: string,
-    name?: string,
-    cvv?: string,
-    stored?: boolean,
-    billing_address?: Address,
-    phone?: Phone
-}
+    number: string;
+    expiry_month: string;
+    expiry_year: string;
+    name?: string;
+    cvv?: string;
+    stored?: boolean;
+    billing_address?: Address;
+    phone?: Phone;
+};
 
 export type CustomerSourceType = {
-    id?: string,
-    email?: string
-}
+    id?: string;
+    email?: string;
+};
 
 export type NetworkTokenSourceType = {
-    token: string,
-    expiry_month: number,
-    expiry_year: number,
-    token_type: NetworkTokenType,
-    cryptogram: string,
-    eci: string,
-    stored?: string,
-    name?: string,
-    cvv?: string,
-    billing_address?: Address,
-    phone?: Phone
-}
+    token: string;
+    expiry_month: number;
+    expiry_year: number;
+    token_type: NetworkTokenType;
+    cryptogram: string;
+    eci: string;
+    stored?: string;
+    name?: string;
+    cvv?: string;
+    billing_address?: Address;
+    phone?: Phone;
+};
 
 export type BoletoSourceType = {
-    birthDate: string,
-    cpf: string,
-    customerName: string,
-}
+    birthDate: string;
+    cpf: string;
+    customerName: string;
+};
 
 export type GiropaySourceType = {
-    purpose: string,
-    bic: string,
-    iban?: string,
-    info_fields?: InfoFields
-}
+    purpose: string;
+    bic: string;
+    iban?: string;
+    info_fields?: InfoFields;
+};
 
 export type IdealSourceType = {
-    description: string,
-    bic: string,
-    language?: string
-}
+    description: string;
+    bic: string;
+    language?: string;
+};
 export type KlarnaSourceType = {
-    authorization_token: string,
-    locale: string,
-    purchase_country: string,
-    auto_capture?: boolean,
-    billing_address: any,
-    shipping_address?: any,
-    tax_amount: number,
-    products: any,
-    customer?: any,
-    merchant_reference1?: string,
-    merchant_reference2?: string,
-    merchant_data?: any
-}
+    authorization_token: string;
+    locale: string;
+    purchase_country: string;
+    auto_capture?: boolean;
+    billing_address: any;
+    shipping_address?: any;
+    tax_amount: number;
+    products: any;
+    customer?: any;
+    merchant_reference1?: string;
+    merchant_reference2?: string;
+    merchant_data?: any;
+};
 
 export type QiwiSourceType = {
-    walletId: string
-}
+    walletId: string;
+};

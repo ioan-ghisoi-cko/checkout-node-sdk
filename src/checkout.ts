@@ -1,22 +1,22 @@
-import _payments from './payments/payments';
-import { HttpOptions } from './models/types';
-import { constants } from './common/constants';
+import _payments from "./payments/payments";
+import { HttpOptions } from "./models/types";
+import { Constants as constants } from "./common/constants";
 
-export default class checkout {
-    private key: string = '';
-    public http_options: HttpOptions = {
+export default class Checkout {
+    private key: string;
+    public payments: _payments;
+    public httpOptions: HttpOptions = {
         reties: constants.DEFAULT_RETRIES,
         timeout: constants.DEFAULT_TIMEOUT
     };
-    public payments: _payments;
 
     constructor(key: string) {
         this.key = key;
-        this.payments = new _payments(key, this.http_options);
+        this.payments = new _payments(key, this.httpOptions);
     }
 
     public setHttpOptions = (options: HttpOptions) => {
-        this.http_options = options;
+        this.httpOptions = options;
         this.payments.setHttpOptions(options);
-    }
+    };
 }

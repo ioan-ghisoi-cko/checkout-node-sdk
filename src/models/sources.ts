@@ -1,20 +1,19 @@
 import {
     Address,
     Phone,
-    NetworkTokenType,
-    InfoFields,
-    CardSourceType,
-    TokenSourceType,
-    IdSourceType,
-    CustomerSourceType,
-    NetworkTokenSourceType,
-    BoletoSourceType,
-    GiropaySourceType,
-    IdealSourceType,
-    KlarnaSourceType,
-    QiwiSourceType,
-
-} from './types';
+    // NetworkTokenType,
+    // InfoFields,
+    CardSourceType
+    // TokenSourceType,
+    // IdSourceType,
+    // CustomerSourceType,
+    // NetworkTokenSourceType,
+    // BoletoSourceType,
+    // GiropaySourceType,
+    // IdealSourceType,
+    // KlarnaSourceType,
+    // QiwiSourceType
+} from "./types";
 
 // export class TokenSource {
 //     private readonly type: string = 'token';
@@ -41,7 +40,7 @@ import {
 // }
 
 export class CardSource {
-    private readonly type: string = 'card';
+    private readonly type: string = "card";
     public number: string;
     public expiry_month: string;
     public expiry_year: string;
