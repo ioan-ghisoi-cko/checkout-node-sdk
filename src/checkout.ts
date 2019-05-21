@@ -1,22 +1,22 @@
 import _payments from "./payments/payments";
-import { HttpOptions } from "./models/types";
 import { Constants as constants } from "./common/constants";
+import { Configuration } from "./configuration";
 
 export default class Checkout {
     private key: string;
     public payments: _payments;
-    public httpOptions: HttpOptions = {
-        reties: constants.DEFAULT_RETRIES,
+    public httpConfiguration: Configuration = {
+        retries: constants.DEFAULT_RETRIES,
         timeout: constants.DEFAULT_TIMEOUT
     };
 
     constructor(key: string) {
         this.key = key;
-        this.payments = new _payments(key, this.httpOptions);
+        this.payments = new _payments(key, this.httpConfiguration);
     }
 
-    public setHttpOptions = (options: HttpOptions) => {
-        this.httpOptions = options;
-        this.payments.setHttpOptions(options);
+    public setHttpConfiguration = (config: Configuration) => {
+        this.httpConfiguration = config;
+        this.payments.setHttpConfiguration(config);
     };
 }

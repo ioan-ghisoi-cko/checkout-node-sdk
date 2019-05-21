@@ -2,65 +2,55 @@ import fetch from "node-fetch";
 import { Constants as constants } from "../common/constants";
 import {
     PaymentRequest,
-    PaymentActionRequired,
-    PaymentResponse,
     PaymentOutcome,
-    PaymentError,
-    HttpOptions
+    _PaymentError,
 } from "../models/types";
+import { Configuration, Http } from '../index'
+import { AuthenticationError, ValidationError } from '../models/errors';
+import { PaymentProcessed, PaymentActionRequired } from '../models/responses';
+
 
 export default class Payments {
     key: string;
-    http_options: HttpOptions;
+    configuration: Configuration;
 
     public request = async <T>(
         arg: PaymentRequest<T>,
-        retry: number = this.http_options.reties
     ): Promise<PaymentOutcome> => {
+        const http = new Http(this.configuration);
         try {
-            const response = await fetch(
-                `${constants.SANDBOX_BASE_URL}/payments`,
-                {
-                    method: "post",
-                    timeout: this.http_options.timeout,
-                    body: JSON.stringify(arg),
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: this.key
-                    }
-                }
-            );
-
-            const json = await response.json();
+            var response = await http.post({
+                url: Configuration.SANDBOX_BASE_URL + '/payments',
+                http_configuration: this.configuration,
+                key: this.key,
+                body: arg
+            });
 
             if (response.status === 201) {
                 return {
                     http_code: response.status,
-                    body: json as PaymentResponse
+                    body: new PaymentProcessed(await response.json)
                 };
             } else if (response.status === 202) {
                 return {
                     http_code: response.status,
-                    body: json as PaymentActionRequired
+                    body: new PaymentActionRequired(await response.json)
                 };
             } else {
-                throw {
-                    http_code: response.status,
-                    body: json as PaymentError
-                };
+                let error = await response.json as _PaymentError;
+                throw new ValidationError(error, 'ValidationError')
             }
         } catch (err) {
-            if (retry === 1 || retry < 1) throw err;
-            return await this.request(arg, retry - 1);
+            throw err;
         }
     };
 
-    public constructor(key: string, http_options: HttpOptions) {
+    public constructor(key: string, http_options: Configuration) {
         this.key = key;
-        this.http_options = http_options;
+        this.configuration = http_options;
     }
 
-    public setHttpOptions = (options: HttpOptions) => {
-        this.http_options = options;
+    public setHttpConfiguration = (options: Configuration) => {
+        this.configuration = options;
     };
 }

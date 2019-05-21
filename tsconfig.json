@@ -6,10 +6,17 @@
     "outDir": "./lib",
     "skipLibCheck": true,
     "strict": true,
-    "sourceMap": true
+    "sourceMap": true,
+    // "noEmit": true,
+    // "noImplicitAny": false,
+    // "noUnusedParameters": true,
+    // "noImplicitReturns": true,
+    // "noFallthroughCasesInSwitch": true,
+    // "forceConsistentCasingInFileNames": true
   },
   "include": [
-    "src"
+    "src",
+    // "test/*.ts"
   ],
   "exclude": [
     "node_modules",

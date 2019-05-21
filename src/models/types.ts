@@ -1,3 +1,4 @@
+import { Configuration } from '../configuration';
 export type PaymentType = "Regular" | "Recurring" | "MOTO";
 export type NetworkTokenType = "vts" | "mdes" | "applepay" | "googlepay";
 
@@ -99,7 +100,7 @@ export interface Links {
     redirect?: Link;
 }
 
-export interface PaymentResponse {
+export interface _PaymentProcessed {
     id: string;
     action_id: string;
     amount: number;
@@ -120,7 +121,7 @@ export interface PaymentResponse {
     _links: Links;
 }
 
-export interface PaymentActionRequired {
+export interface _PaymentActionRequired {
     id: number;
     status: string;
     reference?: string;
@@ -136,7 +137,7 @@ export interface ThreeDSecureResponse {
 
 export interface PaymentOutcome {
     http_code: number;
-    body: PaymentResponse | PaymentActionRequired;
+    body: _PaymentProcessed | _PaymentActionRequired;
 }
 
 export interface _PaymentError {
@@ -157,16 +158,6 @@ export interface InfoField {
 
 export interface InfoFields {
     [key: string]: InfoField;
-}
-
-export interface HttpOptions {
-    reties: number;
-    timeout: number;
-}
-
-export interface HttpOptions {
-    reties: number;
-    timeout: number;
 }
 
 export type TokenSourceType = {
@@ -245,4 +236,23 @@ export type KlarnaSourceType = {
 
 export type QiwiSourceType = {
     walletId: string;
+};
+
+
+export type HttpPost = {
+    url: string;
+    key: string;
+    http_configuration?: Configuration;
+    body: any;
+};
+
+export type HttpGet = {
+    url: string;
+    key: string;
+    http_configuration?: Configuration;
+};
+
+export type CheckoutConfiguration = {
+    retries: number;
+    timeout: number;
 };
