@@ -8,8 +8,8 @@ export class Configuration {
         "https://api.sandbox.checkout.com";
     public static readonly DEFAULT_RETRIES = 0;
     public static readonly DEFAULT_TIMEOUT = 5000;
-    public retries?= 0;
-    public timeout?= 2000;
+    public retries: number;
+    public timeout: number;
 
     public constructor(config: CheckoutConfiguration) {
         this.retries = config.retries;

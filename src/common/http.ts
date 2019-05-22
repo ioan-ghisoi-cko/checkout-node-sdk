@@ -62,11 +62,10 @@ export class Http {
             );
             return await { status: response.status, json: response.json() };
         } catch (err) {
-            if (this.configuration === undefined || this.configuration.retries === undefined) {
+            if (this.configuration === undefined) {
                 throw new ValueError('Invalid configuration');
-            } else if (this.configuration === 1 || this.configuration.retries < 1) throw new HttpError(err, 500)
+            } else if (this.configuration.retries === 1 || this.configuration.retries < 1) throw new HttpError(err, 500)
             this.configuration.retries -= 1;
-            console.log('da boss');
             return await this.post(request);
         }
     };
@@ -90,11 +89,10 @@ export class Http {
             );
             return await { status: response.status, json: response.json() };
         } catch (err) {
-            if (this.configuration === undefined || this.configuration.retries === undefined) {
+            if (this.configuration === undefined) {
                 throw new ValueError('Invalid configuration');
-            } else if (this.configuration === 1 || this.configuration.retries < 1) throw new HttpError(err, 500)
+            } else if (this.configuration.retries === 1 || this.configuration.retries < 1) throw new HttpError(err, 500)
             this.configuration.retries -= 1;
-            console.log('da boss iar');
             return await this.get(request);
         }
     };
