@@ -6,7 +6,7 @@ import {
     _PaymentError,
 } from "../models/types";
 import { Configuration, Http } from '../index'
-import { AuthenticationError, ValidationError } from '../models/errors';
+import { ValidationError } from '../models/errors';
 import { PaymentProcessed, PaymentActionRequired } from '../models/responses';
 
 
@@ -40,6 +40,7 @@ export default class Payments {
                 throw new ValidationError(error, 'ValidationError')
             }
         } catch (err) {
+            console.log("intra13");
             throw err;
         }
     };

@@ -6,10 +6,10 @@ import {
     // PaymentError,
     // PaymentResponse,
     // PaymentActionRequired,
-    TokenSource
+    // TokenSource
 } from "../src/index";
 import { expect } from "chai";
-import { AuthenticationError, ValidationError } from "../src/models/errors";
+import { ValidationError } from "../src/models/errors";
 import { PaymentProcessed, PaymentActionRequired } from "../src/models/responses";
 
 let api = new checkout("sk_test_43ed9a7f-4799-461d-b201-a70507878b51");
