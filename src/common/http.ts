@@ -47,7 +47,7 @@ export class Http {
                 request.url,
                 {
                     method: "post",
-                    timeout: request.http_configuration !== undefined ? request.http_configuration.timeout : this.configuration.timeout,
+                    timeout: this.configuration.timeout !== undefined ? this.configuration.timeout : Configuration.DEFAULT_TIMEOUT,
                     body: JSON.stringify(request.body),
                     headers: {
                         "Content-Type": "application/json",
@@ -57,10 +57,11 @@ export class Http {
             );
             return await { status: response.status, json: response.json() };
         } catch (err) {
-            if (request.http_configuration === undefined || request.http_configuration.retries === undefined) {
+            if (this.configuration.retries === undefined || this.configuration.retries === undefined) {
                 throw err;
-            } else if (request.http_configuration.retries === 1 || request.http_configuration.retries < 1) throw err;
-            return await this.post({ ...request, http_configuration: { ...request.http_configuration, retries: request.http_configuration.retries - 1 } });
+            } else if (this.configuration.retries === 1 || this.configuration.retries < 1) throw err;
+            this.configuration.retries -= 1;
+            return await this.post(request);
         }
     };
 
@@ -74,7 +75,7 @@ export class Http {
                 request.url,
                 {
                     method: "get",
-                    timeout: request.http_configuration !== undefined ? request.http_configuration.timeout : this.configuration.timeout,
+                    timeout: this.configuration.timeout !== undefined ? this.configuration.timeout : Configuration.DEFAULT_TIMEOUT,
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: request.key
@@ -83,10 +84,11 @@ export class Http {
             );
             return await { status: response.status, json: response.json() };
         } catch (err) {
-            if (request.http_configuration === undefined || request.http_configuration.retries === undefined) {
+            if (this.configuration.retries === undefined || this.configuration.retries === undefined) {
                 throw err;
-            } else if (request.http_configuration.retries === 1 || request.http_configuration.retries < 1) throw err;
-            return await this.get({ ...request, http_configuration: { ...request.http_configuration, retries: request.http_configuration.retries - 1 } });
+            } else if (this.configuration.retries === 1 || this.configuration.retries < 1) throw err;
+            this.configuration.retries -= 1;
+            return await this.get(request);
         }
     };
 

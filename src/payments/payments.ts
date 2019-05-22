@@ -21,7 +21,6 @@ export default class Payments {
         try {
             var response = await http.post({
                 url: Configuration.SANDBOX_BASE_URL + '/payments',
-                http_configuration: this.configuration,
                 key: this.key,
                 body: arg
             });

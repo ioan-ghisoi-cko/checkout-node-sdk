@@ -7,7 +7,7 @@ export class Configuration {
     public static readonly SANDBOX_BASE_URL =
         "https://api.sandbox.checkout.com";
     public static readonly DEFAULT_RETRIES = 0;
-    public static readonly DEFAULT_TIMEOUT = 0;
+    public static readonly DEFAULT_TIMEOUT = 5000;
     public retries?= 0;
     public timeout?= 2000;
 

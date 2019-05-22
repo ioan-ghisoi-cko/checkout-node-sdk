@@ -242,14 +242,12 @@ export type QiwiSourceType = {
 export type HttpPost = {
     url: string;
     key: string;
-    http_configuration?: Configuration;
     body: any;
 };
 
 export type HttpGet = {
     url: string;
     key: string;
-    http_configuration?: Configuration;
 };
 
 export type CheckoutConfiguration = {
