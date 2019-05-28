@@ -1,18 +1,17 @@
 import {
-    CheckoutConfiguration
-} from "./models/types";
+    HttpConfig,
+    EnvironmentType,
+    Environment
+} from "./index";
 
-export class Configuration {
-    public static readonly LIVE_BASE_URL = "https://api.checkout.com";
-    public static readonly SANDBOX_BASE_URL =
-        "https://api.sandbox.checkout.com";
-    public static readonly DEFAULT_RETRIES = 0;
-    public static readonly DEFAULT_TIMEOUT = 5000;
-    public retries: number;
+const DEFAULT_TIMEOUT = 5000;
+
+export class HttpConfiguration {
     public timeout: number;
+    public environment: EnvironmentType;
 
-    public constructor(config: CheckoutConfiguration) {
-        this.retries = config.retries;
-        this.timeout = config.timeout;
+    public constructor(config?: HttpConfig) {
+        this.timeout = config !== undefined ? config.timeout : DEFAULT_TIMEOUT;
+        this.environment = config !== undefined && config.environment !== undefined ? config.environment : Environment.Sandbox;
     }
 }

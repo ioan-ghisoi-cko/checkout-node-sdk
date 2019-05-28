@@ -1,27 +1,27 @@
 import fetch from "node-fetch";
-import { Constants as constants } from "../common/constants";
 import {
     PaymentRequest,
     PaymentOutcome,
     _PaymentError,
 } from "../models/types";
-import { Configuration, Http } from '../index'
+import { HttpConfiguration, Http } from '../index'
 import { ValidationError } from '../models/errors';
 import { PaymentProcessed, PaymentActionRequired } from '../models/responses';
 
 
 export default class Payments {
     key: string;
-    configuration: Configuration;
+    configuration: HttpConfiguration;
 
     public request = async <T>(
         arg: PaymentRequest<T>,
     ): Promise<PaymentOutcome> => {
         const http = new Http(this.configuration);
         try {
-            var response = await http.post({
-                url: Configuration.SANDBOX_BASE_URL + '/payments',
-                key: this.key,
+            var response = await http.send({
+                method: 'post',
+                path: '/payments',
+                authorization: this.key,
                 body: arg
             });
 
@@ -40,17 +40,16 @@ export default class Payments {
                 throw new ValidationError(error, 'ValidationError')
             }
         } catch (err) {
-            console.log("intra13");
             throw err;
         }
     };
 
-    public constructor(key: string, http_options: Configuration) {
+    public constructor(key: string, http_options: HttpConfiguration) {
         this.key = key;
         this.configuration = http_options;
     }
 
-    public setHttpConfiguration = (options: Configuration) => {
+    public setHttpConfiguration = (options: HttpConfiguration) => {
         this.configuration = options;
     };
 }

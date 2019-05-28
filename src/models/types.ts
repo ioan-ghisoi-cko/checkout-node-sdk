@@ -1,6 +1,9 @@
 import { Configuration } from '../configuration';
+import { Environment } from '../index';
 export type PaymentType = "Regular" | "Recurring" | "MOTO";
 export type NetworkTokenType = "vts" | "mdes" | "applepay" | "googlepay";
+export type RequestType = "get" | "post" | "put" | "patch";
+export type EnvironmentType = Environment.Live | Environment.Sandbox;
 
 export interface Address {
     address_line1: string;
@@ -239,18 +242,15 @@ export type QiwiSourceType = {
 };
 
 
-export type HttpPost = {
-    url: string;
-    key: string;
-    body: any;
+export type HttpRequestParams = {
+    path: string;
+    authorization: string;
+    method: RequestType;
+    body?: any;
 };
 
-export type HttpGet = {
-    url: string;
-    key: string;
-};
 
-export type CheckoutConfiguration = {
-    retries: number;
+export type HttpConfig = {
+    environment?: EnvironmentType;
     timeout: number;
 };

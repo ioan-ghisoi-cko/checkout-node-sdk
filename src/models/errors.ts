@@ -144,15 +144,15 @@ export class ValidationError extends Error {
  * @class HttpError
  * @extends {Error}
  */
-export class HttpError extends Error {
-    public http_code: number;
-    public body: any;
+// export class HttpError extends Error {
+//     public http_code: number;
+//     public body: any;
 
-    constructor(error: _PaymentError, http_code: number) {
-        super("HTTP error")
-        Object.setPrototypeOf(this, new.target.prototype);
-        this.name = HttpError.name;
-        this.http_code = http_code;
-        this.body = error;
-    }
-}
+//     constructor(error: _PaymentError, http_code: number) {
+//         super("HTTP error")
+//         Object.setPrototypeOf(this, new.target.prototype);
+//         this.name = HttpError.name;
+//         this.http_code = http_code;
+//         this.body = error;
+//     }
+// }

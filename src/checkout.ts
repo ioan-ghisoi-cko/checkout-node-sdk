@@ -1,22 +1,23 @@
 import _payments from "./payments/payments";
-import { Constants as constants } from "./common/constants";
-import { Configuration } from "./configuration";
+import { HttpConfiguration } from "./configuration";
+import { Environment, HttpConfig } from "./index";
 
 export default class Checkout {
     private key: string;
     public payments: _payments;
-    public httpConfiguration: Configuration = {
-        retries: constants.DEFAULT_RETRIES,
-        timeout: constants.DEFAULT_TIMEOUT
-    };
+    public httpConfiguration: HttpConfiguration = new HttpConfiguration({
+        environment: Environment.Sandbox,
+        timeout: 5000
+    });
 
     constructor(key: string) {
         this.key = key;
         this.payments = new _payments(key, this.httpConfiguration);
     }
 
-    public setHttpConfiguration = (config: Configuration) => {
-        this.httpConfiguration = config;
-        this.payments.setHttpConfiguration(config);
+    public setHttpConfiguration = (config: HttpConfig) => {
+        const cnf = new HttpConfiguration(config);
+        this.httpConfiguration = cnf;
+        this.payments.setHttpConfiguration(cnf);
     };
 }
