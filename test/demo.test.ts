@@ -10,12 +10,23 @@ import {
 	// TokenSource
 } from "../src/index";
 import { expect } from "chai";
-import { ValidationError } from "../src/models/errors";
+import { ValidationError, AuthenticationError } from "../src/models/errors";
+import Payments from "../src/payments/payments";
 import { PaymentProcessed, PaymentActionRequired } from "../src/models/responses";
 
-let api = new checkout("sk_test_43ed9a7f-4799-461d-b201-a70507878b51");
+const SK = "sk_test_43ed9a7f-4799-461d-b201-a70507878b51"
+
+let api = new checkout(SK);
 
 describe("Full card charge", () => {
+	it("should set secret key", async () => {
+		api.setSecretKey("test");
+		console.log
+		expect(api.key).to.equal("test");
+		expect(api.payments.key).to.equal("test");
+		api.setSecretKey(SK);
+	});
+
 	it("should produce successful authorisation response", async () => {
 		let transaction = await api.payments.request<CardSource>({
 			source: new CardSource({
@@ -119,33 +130,81 @@ describe("Full card charge", () => {
 		}
 	});
 
-	// it.only("should timeout", async () => {
-	//     nock("https://api.sandbox.checkout.com")
-	//         .post("/payments")
-	//         .delay(3000)
-	//         .reply(500, {
-	//             transaction: {
-	//                 body: {
-	//                     http_code: 500
-	//                 }
-	//             }
-	//         });
+	it("should throw with error body", async () => {
+		nock("https://api.sandbox.checkout.com")
+			.post("/payments")
+			.delay(3000)
+			.reply(500, {
+				transaction: {
+					body: {
+						http_code: 500
+					}
+				}
+			});
 
-	//     try {
-	//         let transaction = await api.payments.request<CardSource>({
-	//             source: new CardSource({
-	//                 number: "4242424242424242",
-	//                 expiry_month: "06",
-	//                 expiry_year: "2029",
-	//                 cvv: "100"
-	//             }),
-	//             currency: "USD",
-	//             amount: 100
-	//         });
-	//     } catch (err) {
-	//         console.log('intraa in masa')
-	//         console.log(err)
-	//         expect(err.type).to.equal("system");
-	//     }
-	// });
+		try {
+			let transaction = await api.payments.request<CardSource>({
+				source: new CardSource({
+					number: "4242424242424242",
+					expiry_month: "06",
+					expiry_year: "2029",
+					cvv: "100"
+				}),
+				currency: "USD",
+				amount: 100
+			});
+		} catch (err) {
+			expect(err.transaction.body.http_code).to.equal(500);
+		}
+	});
+
+	it("should timeout", async () => {
+		nock("https://api.sandbox.checkout.com")
+			.post("/payments")
+			.delay(6000)
+			.reply(500, {
+				transaction: {
+					body: {
+						http_code: 500
+					}
+				}
+			});
+
+		try {
+			let transaction = await api.payments.request<CardSource>({
+				source: new CardSource({
+					number: "4242424242424242",
+					expiry_month: "06",
+					expiry_year: "2029",
+					cvv: "100"
+				}),
+				currency: "USD",
+				amount: 100
+			});
+		} catch (err) {
+			expect(err.type).to.equal('request-timeout');
+		}
+	});
+
+	it("should produce 401 error", async () => {
+		nock("https://api.sandbox.checkout.com")
+			.post("/payments")
+			.reply(401);
+
+		const tmpApi = new checkout();
+		try {
+			let transaction = await tmpApi.payments.request<CardSource>({
+				source: new CardSource({
+					number: "4242424242424242",
+					expiry_month: "06",
+					expiry_year: "2029",
+					cvv: "100"
+				}),
+				currency: "USD",
+				amount: 100
+			});
+		} catch (err) {
+			expect(err).to.be.an.instanceof(AuthenticationError);
+		}
+	});
 });

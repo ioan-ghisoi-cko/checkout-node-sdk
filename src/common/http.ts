@@ -21,11 +21,24 @@ export class Http {
                     body: JSON.stringify(request.body),
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: request.authorization
+                        "Authorization": request.authorization
                     }
                 }
             );
-            return await { status: response.status, json: response.json() };
+            let http_status = response.status;
+            // Check response and if it's body is not present replace body with empty object
+            return response.json()
+                .then(data => {
+                    return {
+                        status: http_status, json: data
+                    }
+                })
+                .catch(err => {
+                    return {
+                        status: http_status, json: {}
+                    }
+                })
+
         } catch (err) {
             if (this.configuration === undefined) {
                 throw new ValueError('Invalid configuration');

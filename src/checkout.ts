@@ -3,17 +3,20 @@ import { HttpConfiguration } from "./configuration";
 import { Environment, HttpConfig } from "./index";
 
 export default class Checkout {
-    private key: string;
     public payments: _payments;
     public httpConfiguration: HttpConfiguration = new HttpConfiguration({
         environment: Environment.Sandbox,
         timeout: 5000
     });
 
-    constructor(key: string) {
-        this.key = key;
-        this.payments = new _payments(key, this.httpConfiguration);
+    constructor(public key?: string) {
+        this.payments = new _payments(key || '', this.httpConfiguration);
     }
+
+    public setSecretKey = (key: string) => {
+        this.key = key;
+        this.payments.setSecretKey(key);
+    };
 
     public setHttpConfiguration = (config: HttpConfig) => {
         const cnf = new HttpConfiguration(config);

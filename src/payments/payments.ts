@@ -5,7 +5,7 @@ import {
     _PaymentError,
 } from "../models/types";
 import { HttpConfiguration, Http } from '../index'
-import { ValidationError } from '../models/errors';
+import * as errors from '../models/errors';
 import { PaymentProcessed, PaymentActionRequired } from '../models/responses';
 
 
@@ -25,19 +25,43 @@ export default class Payments {
                 body: arg
             });
 
-            if (response.status === 201) {
-                return {
-                    http_code: response.status,
-                    body: new PaymentProcessed(await response.json)
-                };
-            } else if (response.status === 202) {
-                return {
-                    http_code: response.status,
-                    body: new PaymentActionRequired(await response.json)
-                };
-            } else {
-                let error = await response.json as _PaymentError;
-                throw new ValidationError(error, 'ValidationError')
+            switch (response.status) {
+                case 201:
+                    return {
+                        http_code: response.status,
+                        body: new PaymentProcessed(await response.json)
+                    }
+                    break;
+                case 202:
+                    return {
+                        http_code: response.status,
+                        body: new PaymentActionRequired(await response.json)
+                    };
+                    break;
+                case 401:
+                    throw new errors.AuthenticationError('AuthenticationError')
+                    break;
+                case 422:
+                    throw new errors.ValidationError(await response.json)
+                    break;
+                // case 429:
+                //     throw new errors.TooManyRequestsError(await response.json)
+                //     break;
+                // case 404:
+                //     throw new errors.ResourceNotFoundError(await response.json)
+                //     break;
+                // case 409:
+                //     throw new errors.UrlAlreadyRegistered()
+                //     break;
+                // case 409:
+                //     throw new errors.UrlAlreadyRegistered()
+                //     break;
+                // case 502:
+                //     throw new errors.BadGateway()
+                //     break;
+                default:
+                    throw await response.json
+                    break;
             }
         } catch (err) {
             throw err;
@@ -51,5 +75,10 @@ export default class Payments {
 
     public setHttpConfiguration = (options: HttpConfiguration) => {
         this.configuration = options;
+    };
+
+
+    public setSecretKey = (key: string) => {
+        this.key = key;
     };
 }

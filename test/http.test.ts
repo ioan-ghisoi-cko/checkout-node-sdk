@@ -22,7 +22,7 @@ describe("Http Client", async () => {
 
     it("should be able to get/set http client configuration", async () => {
         const cnf = new HttpConfiguration({
-            timeout: 5000
+            timeout: 4000
         });
         const http = new Http(cnf);
         expect(http.configuration).to.equal(cnf);
@@ -179,6 +179,7 @@ describe("Http Client", async () => {
             timeout: 5000
         });
         const http = new Http(cnf);
+
         try {
             const outcome = await http.send(
                 {

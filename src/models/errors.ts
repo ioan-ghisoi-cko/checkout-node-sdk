@@ -22,15 +22,15 @@ export class ValueError extends Error {
  * @class AuthenticationError
  * @extends {Error}
  */
-// export class AuthenticationError extends Error {
-//     public http_code: number = 401;
+export class AuthenticationError extends Error {
+    public http_code: number = 401;
 
-//     constructor(message?: string) {
-//         super(message)
-//         Object.setPrototypeOf(this, new.target.prototype);
-//         this.name = AuthenticationError.name;
-//     }
-// }
+    constructor(message?: string) {
+        super(message)
+        Object.setPrototypeOf(this, new.target.prototype);
+        this.name = AuthenticationError.name;
+    }
+}
 
 /**
  * NotAllowedError

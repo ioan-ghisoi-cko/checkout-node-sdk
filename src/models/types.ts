@@ -1,4 +1,3 @@
-import { Configuration } from '../configuration';
 import { Environment } from '../index';
 export type PaymentType = "Regular" | "Recurring" | "MOTO";
 export type NetworkTokenType = "vts" | "mdes" | "applepay" | "googlepay";
