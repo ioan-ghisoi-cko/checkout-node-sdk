@@ -1,84 +1,72 @@
-import fetch from "node-fetch";
 import {
+    HttpConfigurationType,
     PaymentRequest,
-    PaymentOutcome,
-    _PaymentError,
-} from "../models/types";
-import { HttpConfiguration, Http } from '../index'
-import * as errors from '../models/errors';
-import { PaymentProcessed, PaymentActionRequired } from '../models/responses';
+    Http,
+    PaymentResponse,
+    Environment,
+    DEFAULT_TIMEOUT
+} from '../index';
+
+import { ApiTimeout } from '../services/HttpErrors';
 
 
+/**
+ * Payment request class
+ *
+ * @export
+ * @class Payments
+ */
 export default class Payments {
+
+    /**
+     * The auth key needed in the HTTP calls to the
+     * Checkout.com Unified Payments API
+     *
+     * This key is used in the 'Authorisation Header'
+     *
+     * @type {string}
+     * @memberof Payments
+     */
     key: string;
-    configuration: HttpConfiguration;
 
-    public request = async <T>(
-        arg: PaymentRequest<T>,
-    ): Promise<PaymentOutcome> => {
-        const http = new Http(this.configuration);
-        try {
-            var response = await http.send({
-                method: 'post',
-                path: '/payments',
-                authorization: this.key,
-                body: arg
-            });
+    /**
+     * Http configuration needed in the HTTP requests
+     * made the the Checkout.com Unified Payments API
+     *
+     * @type {string}
+     * @memberof Payments
+     */
+    configuration: HttpConfigurationType;
 
-            switch (response.status) {
-                case 201:
-                    return {
-                        http_code: response.status,
-                        body: new PaymentProcessed(await response.json)
-                    }
-                    break;
-                case 202:
-                    return {
-                        http_code: response.status,
-                        body: new PaymentActionRequired(await response.json)
-                    };
-                    break;
-                case 401:
-                    throw new errors.AuthenticationError('AuthenticationError')
-                    break;
-                case 422:
-                    throw new errors.ValidationError(await response.json)
-                    break;
-                // case 429:
-                //     throw new errors.TooManyRequestsError(await response.json)
-                //     break;
-                // case 404:
-                //     throw new errors.ResourceNotFoundError(await response.json)
-                //     break;
-                // case 409:
-                //     throw new errors.UrlAlreadyRegistered()
-                //     break;
-                // case 409:
-                //     throw new errors.UrlAlreadyRegistered()
-                //     break;
-                // case 502:
-                //     throw new errors.BadGateway()
-                //     break;
-                default:
-                    throw await response.json
-                    break;
-            }
-        } catch (err) {
-            throw err;
-        }
-    };
 
-    public constructor(key: string, http_options: HttpConfiguration) {
+    /**
+     * Creates an instance of Payments.
+     *
+     * @param {string} key
+     * @param {HttpConfigurationType} http_options
+     * @memberof Payments
+     */
+    constructor(key: string, http_options: HttpConfigurationType = { timeout: DEFAULT_TIMEOUT, environment: Environment.Sandbox }) {
         this.key = key;
         this.configuration = http_options;
     }
 
-    public setHttpConfiguration = (options: HttpConfiguration) => {
-        this.configuration = options;
-    };
+    public request = async <T>(
+        arg: PaymentRequest<T>,
+    ): Promise<PaymentResponse> => {
+        const http = new Http(this.configuration);
+        try {
+            var response = await http.send({
+                method: 'post',
+                url: `${this.configuration.environment}/payments`,
+                authorization: this.key,
+                body: { ...arg, metadata: { ...arg.metadata, sdk: 'node' } }
+            });
 
+            return new PaymentResponse(await response.json);
 
-    public setSecretKey = (key: string) => {
-        this.key = key;
+        } catch (err) {
+            throw err;
+        }
     };
 }

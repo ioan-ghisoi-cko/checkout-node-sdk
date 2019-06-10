@@ -7,16 +7,11 @@
     "skipLibCheck": true,
     "strict": true,
     "sourceMap": true,
-    // "noEmit": true,
-    // "noImplicitAny": false,
-    // "noUnusedParameters": true,
-    // "noImplicitReturns": true,
-    // "noFallthroughCasesInSwitch": true,
-    // "forceConsistentCasingInFileNames": true
+    "noEmit": true,
+    "noImplicitAny": false,
   },
   "include": [
     "src",
-    // "test/*.ts"
   ],
   "exclude": [
     "node_modules",
