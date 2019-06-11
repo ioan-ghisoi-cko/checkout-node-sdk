@@ -57,7 +57,9 @@ describe("Http", async () => {
             {
                 method: 'post',
                 url: 'https://test.com/payments',
-                authorization: 'sk_test_43ed9a7f-4799-461d-b201-a70507878b51',
+                headers: {
+                    Authorization: 'sk_test_43ed9a7f-4799-461d-b201-a70507878b51'
+                },
                 body: {
                     test: true
                 }
@@ -92,7 +94,9 @@ describe("Http", async () => {
             {
                 method: 'get',
                 url: 'https://test.com/payments',
-                authorization: 'sk_test_43ed9a7f-4799-461d-b201-a70507878b51'
+                headers: {
+                    Authorization: 'sk_test_43ed9a7f-4799-461d-b201-a70507878b51'
+                },
             }
         )
         const json = await outcome.json;
@@ -115,7 +119,9 @@ describe("Http", async () => {
                 {
                     method: 'post',
                     url: 'https://test.com/payments',
-                    authorization: 'sk_test_43ed9a7f-4799-461d-b201-a70507878b51',
+                    headers: {
+                        Authorization: 'sk_test_43ed9a7f-4799-461d-b201-a70507878b51'
+                    },
                     body: {
                         payload: 'test'
                     }
@@ -137,7 +143,9 @@ describe("Http", async () => {
             {
                 method: 'get',
                 url: 'https://test.com/payments',
-                authorization: 'sk_test_43ed9a7f-4799-461d-b201-a70507878b51'
+                headers: {
+                    Authorization: 'sk_test_43ed9a7f-4799-461d-b201-a70507878b51'
+                },
             }
         )
         const json = await outcome.json;
@@ -155,7 +163,9 @@ describe("Http", async () => {
                 {
                     method: 'post',
                     url: 'https://test.com/payments',
-                    authorization: 'sk_test_43ed9a7f-4799-461d-b201-a70507878b51'
+                    headers: {
+                        Authorization: 'sk_test_43ed9a7f-4799-461d-b201-a70507878b51'
+                    },
                 }
             )
         } catch (err) {
@@ -180,7 +190,9 @@ describe("Http", async () => {
                 {
                     method: 'post',
                     url: 'https://test.com/payments',
-                    authorization: 'sk_test_43ed9a7f-4799-461d-b201-a70507878b51'
+                    headers: {
+                        Authorization: 'sk_test_43ed9a7f-4799-461d-b201-a70507878b51'
+                    },
                 }
             )
         } catch (err) {
@@ -205,7 +217,9 @@ describe("Http", async () => {
                 {
                     method: 'post',
                     url: 'https://test.com/payments',
-                    authorization: 'sk_test_43ed9a7f-4799-461d-b201-a70507878b51'
+                    headers: {
+                        Authorization: 'sk_test_43ed9a7f-4799-461d-b201-a70507878b51'
+                    },
                 }
             )
         } catch (err) {
@@ -224,11 +238,40 @@ describe("Http", async () => {
                 {
                     method: 'post',
                     url: 'https://test.com/payments',
-                    authorization: 'sk_test_43ed9a7f-4799-461d-b201-a70507878b51'
+                    headers: {
+                        Authorization: 'sk_test_43ed9a7f-4799-461d-b201-a70507878b51'
+                    },
                 }
             )
         } catch (err) {
             expect(err).to.be.instanceOf(BadGateway)
         }
+    });
+
+    it("should send idempotency key in the header", async () => {
+
+        nock("https://test.com")
+            .post("/payments")
+            // @ts-ignore
+            .reply(function () {
+                return {
+                    // @ts-ignore
+                    headers: this.req.headers,
+                }
+            })
+        const http = new Http();
+        const outcome = await http.send(
+            {
+                method: 'post',
+                url: 'https://test.com/payments',
+                headers: {
+                    Authorization: 'sk_test_43ed9a7f-4799-461d-b201-a70507878b51',
+                    'Cko-Idempotency-Key': '123'
+                },
+                body: {}
+            }
+        )
+        const json = await outcome.json;
+        expect(json.headers['cko-idempotency-key']).to.eql(['123']);
     });
 });

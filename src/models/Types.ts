@@ -27,6 +27,10 @@ interface Metadata {
     [prop: string]: any;
 }
 
+interface Headers {
+    [prop: string]: any;
+}
+
 interface Link {
     href: string;
 }
@@ -46,7 +50,7 @@ export interface HttpConfigurationType {
 
 export interface HttpRequestParamsType {
     url: string;
-    authorization: string;
+    headers: Headers;
     method: _RequestType;
     body?: any;
 }

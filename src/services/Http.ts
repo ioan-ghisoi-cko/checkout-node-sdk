@@ -56,8 +56,8 @@ export class Http {
                     timeout: this.timeout,
                     body: JSON.stringify(request.body),
                     headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": request.authorization
+                        ...request.headers,
+                        "Content-Type": "application/json"
                     }
                 }
             );

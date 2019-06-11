@@ -57,14 +57,17 @@ export default class Payments {
     }
 
     public request = async <T>(
-        arg: PaymentRequest<T>,
+        arg: PaymentRequest<T>, idempotency_key = ""
     ): Promise<PaymentResponse> => {
         const http = new Http(this.configuration);
         try {
             const response = await http.send({
                 method: "post",
                 url: `${this.configuration.environment}/payments`,
-                authorization: this.key,
+                headers: {
+                    "Authorization": this.key,
+                    "Cko-Idempotency-Key": idempotency_key
+                },
                 body: { ...arg, metadata: { ...arg.metadata, sdk: "node" } }
             });
 
