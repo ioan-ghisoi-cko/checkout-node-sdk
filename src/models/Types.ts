@@ -1,9 +1,9 @@
-import { Environment } from '../index';
+import { Environment } from "../index";
 type _RequestType = "get" | "post" | "put" | "patch";
 type _PaymentType = "Regular" | "Recurring" | "MOTO";
 type _EnvironmentType = Environment.Live | Environment.Sandbox;
 
-interface _ThreeDSecure {
+interface ThreeDSecure {
     enabled?: boolean;
     attempt_n3d?: boolean;
     eci?: string;
@@ -12,44 +12,44 @@ interface _ThreeDSecure {
 }
 
 
-interface _Recipient {
+interface Recipient {
     dob: string;
     account_number: string;
     zip: string;
     last_name: string;
 }
 
-interface _Processing {
+interface Processing {
     mid: string;
 }
 
-interface _Metadata {
+interface Metadata {
     [prop: string]: any;
 }
 
-interface _Link {
+interface Link {
     href: string;
 }
 
 export interface Links {
-    self: _Link;
-    actions?: _Link;
-    void?: _Link;
-    capture?: _Link;
-    redirect?: _Link;
+    self: Link;
+    actions?: Link;
+    void?: Link;
+    capture?: Link;
+    redirect?: Link;
 }
 
-export type HttpConfigurationType = {
+export interface HttpConfigurationType {
     timeout: number;
     environment: _EnvironmentType;
-};
+}
 
-export type HttpRequestParamsType = {
+export interface HttpRequestParamsType {
     url: string;
     authorization: string;
     method: _RequestType;
     body?: any;
-};
+}
 
 export interface Address {
     address_line1: string;
@@ -93,18 +93,18 @@ export interface PaymentRequest<T> {
     customer?: Customer;
     billing_descriptor?: BillingDescriptor;
     shipping?: Shipping;
-    "3ds"?: _ThreeDSecure;
+    "3ds"?: ThreeDSecure;
     previous_payment_id?: string;
     risk?: string;
     success_url?: string;
     failure_url?: string;
     payment_ip?: string;
-    recipient?: _Recipient;
-    processing?: _Processing;
-    metadata?: _Metadata;
+    recipient?: Recipient;
+    processing?: Processing;
+    metadata?: Metadata;
 }
 
-export type CardSourceType = {
+export interface CardSourceType {
     number: string;
     expiry_month: string;
     expiry_year: string;
@@ -113,7 +113,7 @@ export type CardSourceType = {
     stored?: boolean;
     billing_address?: Address;
     phone?: Phone;
-};
+}
 
 export interface PaymentResponseType {
     id: string;

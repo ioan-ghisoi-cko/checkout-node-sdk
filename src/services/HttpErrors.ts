@@ -1,4 +1,4 @@
-import { PaymentError } from '../index';
+import { PaymentError } from "../index";
 /**
  * Error raised for pre-api value validation
  *
@@ -7,11 +7,11 @@ import { PaymentError } from '../index';
  * @extends {Error}
  */
 export class ApiTimeout extends Error {
-	constructor() {
-		super('ApiTimeout');
-		Object.setPrototypeOf(this, new.target.prototype);
-		this.name = ApiTimeout.name;
-	}
+    constructor() {
+        super("ApiTimeout");
+        Object.setPrototypeOf(this, new.target.prototype);
+        this.name = ApiTimeout.name;
+    }
 }
 
 /**
@@ -37,13 +37,13 @@ export class ApiTimeout extends Error {
  * @extends {Error}
  */
 export class AuthenticationError extends Error {
-	public http_code: number = 401;
+    public http_code = 401;
 
-	constructor(message?: string) {
-		super(message)
-		Object.setPrototypeOf(this, new.target.prototype);
-		this.name = AuthenticationError.name;
-	}
+    constructor(message?: string) {
+        super(message);
+        Object.setPrototypeOf(this, new.target.prototype);
+        this.name = AuthenticationError.name;
+    }
 }
 
 /**
@@ -54,15 +54,15 @@ export class AuthenticationError extends Error {
  * @extends {Error}
  */
 export class ValidationError extends Error {
-	public http_code: number = 422;
-	public body: PaymentError;
+    public http_code = 422;
+    public body: PaymentError;
 
-	constructor(error: PaymentError, message?: string) {
-		super(message)
-		Object.setPrototypeOf(this, new.target.prototype);
-		this.name = ValidationError.name;
-		this.body = error;
-	}
+    constructor(error: PaymentError, message?: string) {
+        super(message);
+        Object.setPrototypeOf(this, new.target.prototype);
+        this.name = ValidationError.name;
+        this.body = error;
+    }
 }
 
 
@@ -74,15 +74,15 @@ export class ValidationError extends Error {
  * @extends {Error}
  */
 export class TooManyRequestsError extends Error {
-	public http_code: number = 429;
-	public body: PaymentError;
+    public http_code = 429;
+    public body: PaymentError;
 
-	constructor(error: PaymentError, message?: string) {
-		super(message)
-		Object.setPrototypeOf(this, new.target.prototype);
-		this.name = ValidationError.name;
-		this.body = error;
-	}
+    constructor(error: PaymentError, message?: string) {
+        super(message);
+        Object.setPrototypeOf(this, new.target.prototype);
+        this.name = ValidationError.name;
+        this.body = error;
+    }
 }
 
 /**
@@ -93,12 +93,12 @@ export class TooManyRequestsError extends Error {
  * @extends {Error}
  */
 export class BadGateway extends Error {
-	public http_code: number = 502;
+    public http_code = 502;
 
-	constructor() {
-		super('Bad gateway')
-		Object.setPrototypeOf(this, new.target.prototype);
-	}
+    constructor() {
+        super("Bad gateway");
+        Object.setPrototypeOf(this, new.target.prototype);
+    }
 }
 
 /**
@@ -109,9 +109,9 @@ export class BadGateway extends Error {
  * @extends {Error}
  */
 export class ApiError extends Error {
-	constructor(public error: any) {
-		super("API Error")
-		Object.setPrototypeOf(this, new.target.prototype);
-		this.name = 'API Error';
-	}
+    constructor(public error: any) {
+        super("API Error");
+        Object.setPrototypeOf(this, new.target.prototype);
+        this.name = "API Error";
+    }
 }

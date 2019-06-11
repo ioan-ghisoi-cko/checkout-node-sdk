@@ -22,8 +22,8 @@
     "scripts": {
         "build": "tsc",
         "build-watch": "tsc --watch",
-        "lint": "tslint './src/**/*.{ts}' -t verbose",
-        "lint-fix": "tslint --fix './src/**/*.{ts}' -t verbose",
+        "lint": "tslint --project tsconfig.json --config tslint.json 'src/**/*.ts' -t verbose",
+        "lint-fix": "tslint --fix --project tsconfig.json --config tslint.json 'src/**/*.ts' -t verbose",
         "test": "nyc --reporter=html mocha --timeout 10000 -r ts-node/register test/**/*test.ts",
         "test:watch": "mocha --timeout 20000 --require ts-node/register --watch-extensions ts --watch 'test/**/*test.ts'",
         "posttest": "nyc report --reporter=json"
@@ -44,7 +44,8 @@
         "@types/nock": "^10.0.2",
         "lodash": "^4.17.11",
         "nock": "^10.0.6",
-        "nyc": "^14.1.1"
+        "nyc": "^14.1.1",
+        "tslint": "^5.17.0"
     },
     "nyc": {
         "include": [

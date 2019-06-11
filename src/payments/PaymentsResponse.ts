@@ -5,7 +5,7 @@ import {
     SourceResponse,
     Customer,
     Links
-} from '../index'
+} from "../index";
 
 export class PaymentResponse {
     public id: string;
@@ -49,6 +49,6 @@ export class PaymentResponse {
     }
 
     public isPending = () => {
-        return this.status === 'Pending';
+        return this.status === "Pending";
     }
 }

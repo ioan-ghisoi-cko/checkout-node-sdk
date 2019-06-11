@@ -5,9 +5,9 @@ import {
     PaymentResponse,
     Environment,
     DEFAULT_TIMEOUT
-} from '../index';
+} from "../index";
 
-import { ApiTimeout } from '../services/HttpErrors';
+import { ApiTimeout } from "../services/HttpErrors";
 
 
 /**
@@ -46,7 +46,12 @@ export default class Payments {
      * @param {HttpConfigurationType} http_options
      * @memberof Payments
      */
-    constructor(key: string, http_options: HttpConfigurationType = { timeout: DEFAULT_TIMEOUT, environment: Environment.Sandbox }) {
+    constructor(
+        key: string,
+        http_options: HttpConfigurationType = {
+            timeout: DEFAULT_TIMEOUT, environment: Environment.Sandbox
+        }
+    ) {
         this.key = key;
         this.configuration = http_options;
     }
@@ -56,11 +61,11 @@ export default class Payments {
     ): Promise<PaymentResponse> => {
         const http = new Http(this.configuration);
         try {
-            var response = await http.send({
-                method: 'post',
+            const response = await http.send({
+                method: "post",
                 url: `${this.configuration.environment}/payments`,
                 authorization: this.key,
-                body: { ...arg, metadata: { ...arg.metadata, sdk: 'node' } }
+                body: { ...arg, metadata: { ...arg.metadata, sdk: "node" } }
             });
 
             return new PaymentResponse(await response.json);
@@ -69,4 +74,23 @@ export default class Payments {
             throw err;
         }
     };
+
+    // public get = async (
+    //     arg: string,
+    // ): Promise<PaymentResponse> => {
+    //     const http = new Http(this.configuration);
+    //     try {
+    //         var response = await http.send({
+    //             method: 'get',
+    //             url: `${this.configuration.environment}/payments`,
+    //             authorization: this.key,
+    //             body: { ...arg, metadata: { ...arg.metadata, sdk: 'node' } }
+    //         });
+
+    //         return new PaymentResponse(await response.json);
+
+    //     } catch (err) {
+    //         throw err;
+    //     }
+    // };
 }

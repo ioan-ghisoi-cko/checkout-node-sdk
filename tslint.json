@@ -40,7 +40,6 @@
                 ]
             ]
         },
-        "boolean-trivia": true,
         "class-name": true,
         "comment-format": [
             true,
@@ -50,7 +49,6 @@
             true,
             "ignore-same-line"
         ],
-        "debug-assert": true,
         "indent": [
             true,
             "spaces"
@@ -65,16 +63,7 @@
             true,
             "CRLF"
         ],
-        "next-line": [
-            true,
-            "check-catch",
-            "check-else"
-        ],
-        "no-bom": true,
-        "no-double-space": true,
         "no-eval": true,
-        "no-in-operator": true,
-        "no-increment-decrement": true,
         "no-inferrable-types": true,
         "no-internal-module": true,
         "no-null-keyword": true,
@@ -83,11 +72,9 @@
             true,
             "ignore-template-strings"
         ],
-        "no-type-assertion-whitespace": true,
         "no-unnecessary-qualifier": true,
         "no-var-keyword": true,
         "object-literal-shorthand": true,
-        "object-literal-surrounding-space": true,
         "one-line": [
             true,
             "check-open-brace",
@@ -106,7 +93,6 @@
         ],
         "space-within-parens": true,
         "triple-equals": true,
-        "type-operator-spacing": true,
         "typedef-whitespace": [
             true,
             {
@@ -146,7 +132,8 @@
             true,
             "ban-keywords",
             "check-format",
-            "allow-leading-underscore"
+            "allow-leading-underscore",
+            "allow-snake-case"
         ],
         // TODO
         "arrow-parens": false, // [true, "ban-single-arg-parens"]
@@ -158,6 +145,7 @@
         "no-console": false,
         "no-debugger": false,
         "no-empty-interface": false,
+        "no-empty": false,
         "no-object-literal-type-assertion": false,
         "no-shadowed-variable": false,
         "no-submodule-imports": false,
