@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { HttpConfigurationType, DEFAULT_TIMEOUT, HttpRequestParamsType, Environment } from '../index';
+import { HttpConfigurationType, DEFAULT_TIMEOUT, HttpRequestParamsType, Environment } from "../index";
 import {
     ApiError,
     ApiTimeout,
@@ -7,7 +7,7 @@ import {
     ValidationError,
     TooManyRequestsError,
     BadGateway
-} from './HttpErrors';
+} from "./HttpErrors";
 
 /**
  * Http Client Class
@@ -27,7 +27,7 @@ export class Http {
 
 
     /**
-     *Creates an instance of Http.
+     * Creates an instance of Http.
      * @param {HttpConfigurationType} [configuration={ timeout: DEFAULT_TIMEOUT }]
      * @memberof Http
      */
@@ -63,20 +63,20 @@ export class Http {
             );
 
             if (!response.ok) {
-                throw { status: response.status, json: response.json() }
+                throw { status: response.status, json: response.json() };
             }
             // For 'no body' response, replace with empty object
             return response.json()
                 .then(data => {
-                    return { status: response.status, json: data }
+                    return { status: response.status, json: data };
                 })
                 .catch(err => {
-                    return { status: response.status, json: {} }
-                })
+                    return { status: response.status, json: {} };
+                });
 
         } catch (err) {
             // Fot time outs
-            if (err.type === 'request-timeout') {
+            if (err.type === "request-timeout") {
                 throw new ApiTimeout();
             }
 
@@ -84,15 +84,15 @@ export class Http {
             const errorJSON = err.json !== undefined ? await
                 err.json.then(data => {
                     return data;
-                }).catch(err => { return {} }) : {}
+                }).catch(err => { }) : {};
 
             switch (err.status) {
                 case 401:
-                    throw new AuthenticationError()
+                    throw new AuthenticationError();
                 case 422:
-                    throw new ValidationError(await err.json)
+                    throw new ValidationError(await err.json);
                 case 429:
-                    throw new TooManyRequestsError(await err.json)
+                    throw new TooManyRequestsError(await err.json);
                 case 502:
                     throw new BadGateway();
                 default:
