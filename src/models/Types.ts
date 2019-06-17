@@ -1,6 +1,6 @@
 import { Environment } from "../index";
+import * as Source from "../models/Sources";
 type _RequestType = "get" | "post" | "put" | "patch";
-type _PaymentType = "Regular" | "Recurring" | "MOTO";
 type _EnvironmentType = Environment.Live | Environment.Sandbox;
 
 interface ThreeDSecure {
@@ -9,14 +9,6 @@ interface ThreeDSecure {
     eci?: string;
     cryptogram?: string;
     xid?: string;
-}
-
-
-interface Recipient {
-    dob: string;
-    account_number: string;
-    zip: string;
-    last_name: string;
 }
 
 interface Processing {
@@ -33,6 +25,23 @@ interface Headers {
 
 interface Link {
     href: string;
+}
+
+export interface PaymentEvent {
+    id: string;
+    type: PaymentEventType;
+    response_code: string;
+    response_summary: string;
+}
+
+export type PaymentType = "Regular" | "Recurring" | "MOTO";
+export type PaymentEventType = "Authorization" | "Card Verification" | "Void" | "Capture" | "Refund";
+
+export interface Recipient {
+    dob: string;
+    account_number: string;
+    zip: string;
+    last_name: string;
 }
 
 export interface Links {
@@ -89,7 +98,7 @@ export interface PaymentRequest<T> {
     source: T;
     currency: string;
     amount?: number | string;
-    payment_type?: _PaymentType;
+    payment_type?: PaymentType;
     reference?: string;
     description?: string;
     capture?: boolean;
@@ -160,4 +169,27 @@ export interface PaymentError {
     request_id: string;
     error_type: string;
     error_codes: string[];
+}
+
+export interface GetPaymentResponseType {
+    id: string;
+    requested_on: string;
+    source: SourceResponse;
+    amount: string;
+    currency: string;
+    payment_type: PaymentType;
+    reference: string;
+    approved: boolean;
+    status: string;
+    "3ds": ThreeDSecureResponse;
+    risk: Risk;
+    customer: Customer;
+    billing_descriptor: BillingDescriptor;
+    shipping: Shipping;
+    recipient: Recipient;
+    metadata: any;
+    eci: string;
+    scheme_id: string;
+    actions: [PaymentEvent];
+    _links: Links;
 }

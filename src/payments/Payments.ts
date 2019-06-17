@@ -3,6 +3,7 @@ import {
     PaymentRequest,
     Http,
     PaymentResponse,
+    GetPaymentResponse,
     Environment,
     DEFAULT_TIMEOUT
 } from "../index";
@@ -78,22 +79,23 @@ export default class Payments {
         }
     };
 
-    // public get = async (
-    //     arg: string,
-    // ): Promise<PaymentResponse> => {
-    //     const http = new Http(this.configuration);
-    //     try {
-    //         var response = await http.send({
-    //             method: 'get',
-    //             url: `${this.configuration.environment}/payments`,
-    //             authorization: this.key,
-    //             body: { ...arg, metadata: { ...arg.metadata, sdk: 'node' } }
-    //         });
+    public get = async (
+        id: string,
+    ): Promise<GetPaymentResponse> => {
+        const http = new Http(this.configuration);
+        try {
+            const response = await http.send({
+                method: "get",
+                url: `${this.configuration.environment}/payments/${id}`,
+                headers: {
+                    "Authorization": this.key
+                },
+            });
 
-    //         return new PaymentResponse(await response.json);
+            return new GetPaymentResponse(await response.json);
 
-    //     } catch (err) {
-    //         throw err;
-    //     }
-    // };
+        } catch (err) {
+            throw err;
+        }
+    };
 }

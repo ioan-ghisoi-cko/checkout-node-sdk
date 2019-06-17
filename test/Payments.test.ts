@@ -1,9 +1,10 @@
 import { expect } from 'chai'
 import payments from '../src/payments/Payments';
-import { Http, CardSource, Environment } from '../src/index'
+import { Http, CardSource, Environment } from '../src/index';
+import { AuthenticationError } from '../src/services/HttpErrors';
 const nock = require("nock");
 
-describe("Payments", async () => {
+describe("Request Payment", async () => {
 	it("should create instance of payments class with a HTTP configuration", async () => {
 		const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
 		expect(pay).to.be.instanceOf(payments);
@@ -281,6 +282,93 @@ describe("Payments", async () => {
 			});
 		} catch (err) {
 			expect(err.name).to.equal('API Error');
+		}
+	});
+});
+
+describe("Get payment details", async () => {
+	it("should get payment details with payment id", async () => {
+		nock("https://api.sandbox.checkout.com")
+			.get("/payments/pay_hw5ly47dkyvuhea6lh4wln6wmy")
+			.reply(200, {
+				"id": "pay_hw5ly47dkyvuhea6lh4wln6wmy",
+				"requested_on": "2019-06-17T01:22:33Z",
+				"source": {
+					"id": "src_k4mcvtv7krlutm523iccedknuu",
+					"type": "card",
+					"expiry_month": 8,
+					"expiry_year": 2025,
+					"name": "Sarah Mitchell",
+					"scheme": "Mastercard",
+					"last4": "1465",
+					"fingerprint": "EF6107604AE20CB5EE03BE1FB3066234343D40DA23F0FCF1178C74383E55AB09",
+					"bin": "519999",
+					"card_type": "Credit",
+					"card_category": "Consumer",
+					"issuer": "BANCO COOPERATIVO DE PUERTO RICO",
+					"issuer_country": "PR",
+					"product_id": "MCS",
+					"product_type": "Standard MasterCard® Card",
+					"avs_check": "S",
+					"cvv_check": "Y"
+				},
+				"amount": 2000,
+				"currency": "USD",
+				"payment_type": "Regular",
+				"reference": "ORD-5023-4E89",
+				"status": "Captured",
+				"approved": true,
+				"risk": {
+					"flagged": false
+				},
+				"customer": {
+					"id": "cus_ln3y5gsi7haunau2cryg3kbnka",
+					"name": "Sarah Mitchell"
+				},
+				"billing_descriptor": {
+					"name": "",
+					"city": "Port Louis"
+				},
+				"eci": "05",
+				"scheme_id": "638284745624527",
+				"_links": {
+					"self": {
+						"href": "https://api.sandbox.checkout.com/payments/pay_hw5ly47dkyvuhea6lh4wln6wmy"
+					},
+					"actions": {
+						"href": "https://api.sandbox.checkout.com/payments/pay_hw5ly47dkyvuhea6lh4wln6wmy/actions"
+					},
+					"refund": {
+						"href": "https://api.sandbox.checkout.com/payments/pay_hw5ly47dkyvuhea6lh4wln6wmy/refunds"
+					}
+				}
+			});
+
+		const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+		pay.configuration = {
+			timeout: 2000,
+			environment: Environment.Sandbox
+		}
+		let transaction = await pay.get("pay_hw5ly47dkyvuhea6lh4wln6wmy");
+
+		expect(transaction.id).to.equal('pay_hw5ly47dkyvuhea6lh4wln6wmy');
+	});
+
+	it("should throw authentication error", async () => {
+		nock("https://api.sandbox.checkout.com")
+			.get("/payments/pay_hw5ly47dkyvuhea6lh4wln6wmy")
+			.reply(401);
+
+		try {
+			const pay = new payments('sk_test_error');
+			pay.configuration = {
+				timeout: 2000,
+				environment: Environment.Sandbox
+			}
+			let transaction = await pay.get("pay_hw5ly47dkyvuhea6lh4wln6wmy");
+		} catch (err) {
+			const error = err as AuthenticationError;
+			expect(err).to.be.instanceOf(AuthenticationError)
 		}
 	});
 });

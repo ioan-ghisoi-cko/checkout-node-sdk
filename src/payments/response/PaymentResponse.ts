@@ -5,7 +5,8 @@ import {
     SourceResponse,
     Customer,
     Links
-} from "../index";
+} from "../../index";
+
 
 export class PaymentResponse {
     public id: string;
