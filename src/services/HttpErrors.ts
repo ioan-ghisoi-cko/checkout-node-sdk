@@ -47,6 +47,23 @@ export class AuthenticationError extends Error {
 }
 
 /**
+ * NotFoundError
+ *
+ * @export
+ * @class AuthenticationError
+ * @extends {Error}
+ */
+export class NotFoundError extends Error {
+    public http_code = 404;
+
+    constructor(message?: string) {
+        super(message);
+        Object.setPrototypeOf(this, new.target.prototype);
+        this.name = NotFoundError.name;
+    }
+}
+
+/**
  * ValidationError
  *
  * @export

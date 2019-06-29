@@ -1,13 +1,5 @@
 import fetch from "node-fetch";
 import { HttpConfigurationType, DEFAULT_TIMEOUT, HttpRequestParamsType, Environment } from "../index";
-import {
-    ApiError,
-    ApiTimeout,
-    AuthenticationError,
-    ValidationError,
-    TooManyRequestsError,
-    BadGateway
-} from "./HttpErrors";
 
 /**
  * Http Client Class
@@ -75,29 +67,7 @@ export class Http {
                 });
 
         } catch (err) {
-            // Fot time outs
-            if (err.type === "request-timeout") {
-                throw new ApiTimeout();
-            }
-
-            // For 'no body' response, replace with empty object
-            const errorJSON = err.json !== undefined ? await
-                err.json.then(data => {
-                    return data;
-                }).catch(err => { }) : {};
-
-            switch (err.status) {
-                case 401:
-                    throw new AuthenticationError();
-                case 422:
-                    throw new ValidationError(await err.json);
-                case 429:
-                    throw new TooManyRequestsError(await err.json);
-                case 502:
-                    throw new BadGateway();
-                default:
-                    throw new ApiError(await err.json);
-            }
+            throw err;
         }
     }
 }

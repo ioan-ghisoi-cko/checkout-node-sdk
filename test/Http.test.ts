@@ -1,6 +1,5 @@
 import { expect } from 'chai'
 import { Http, Environment } from '../src';
-import { AuthenticationError, ValidationError, TooManyRequestsError, BadGateway } from '../src/services/HttpErrors';
 const nock = require("nock");
 
 describe("Http", async () => {
@@ -129,7 +128,7 @@ describe("Http", async () => {
             )
             const json = await outcome.json;
         } catch (err) {
-            expect(err.name).to.equal('API Error');
+            expect(err.message.split(': ').pop()).to.equal('something awful happened');
         }
     });
 
@@ -150,102 +149,6 @@ describe("Http", async () => {
         )
         const json = await outcome.json;
         expect(json).to.eql({});
-    });
-
-    it("should throw AuthenticationError", async () => {
-        nock('https://test.com')
-            .post("/payments")
-            .reply(401);
-        const http = new Http();
-
-        try {
-            const outcome = await http.send(
-                {
-                    method: 'post',
-                    url: 'https://test.com/payments',
-                    headers: {
-                        Authorization: 'sk_test_43ed9a7f-4799-461d-b201-a70507878b51'
-                    },
-                }
-            )
-        } catch (err) {
-            expect(err).to.be.instanceOf(AuthenticationError)
-        }
-    });
-
-    it("should throw ValidationError", async () => {
-        nock('https://test.com')
-            .post("/payments")
-            .reply(422, {
-                "request_id": "0HL80RJLS76I7",
-                "error_type": "request_invalid",
-                "error_codes": [
-                    "payment_source_required"
-                ]
-            });
-        const http = new Http();
-
-        try {
-            const outcome = await http.send(
-                {
-                    method: 'post',
-                    url: 'https://test.com/payments',
-                    headers: {
-                        Authorization: 'sk_test_43ed9a7f-4799-461d-b201-a70507878b51'
-                    },
-                }
-            )
-        } catch (err) {
-            expect(err).to.be.instanceOf(ValidationError)
-        }
-    });
-
-    it("should throw TooManyRequestsError", async () => {
-        nock('https://test.com')
-            .post("/payments")
-            .reply(429, {
-                "request_id": "0HL80RJLS76I7",
-                "error_type": "request_invalid",
-                "error_codes": [
-                    "payment_source_required"
-                ]
-            });
-        const http = new Http();
-
-        try {
-            const outcome = await http.send(
-                {
-                    method: 'post',
-                    url: 'https://test.com/payments',
-                    headers: {
-                        Authorization: 'sk_test_43ed9a7f-4799-461d-b201-a70507878b51'
-                    },
-                }
-            )
-        } catch (err) {
-            expect(err).to.be.instanceOf(TooManyRequestsError)
-        }
-    });
-
-    it("should throw BadGateway", async () => {
-        nock('https://test.com')
-            .post("/payments")
-            .reply(502);
-        const http = new Http();
-
-        try {
-            const outcome = await http.send(
-                {
-                    method: 'post',
-                    url: 'https://test.com/payments',
-                    headers: {
-                        Authorization: 'sk_test_43ed9a7f-4799-461d-b201-a70507878b51'
-                    },
-                }
-            )
-        } catch (err) {
-            expect(err).to.be.instanceOf(BadGateway)
-        }
     });
 
     it("should send idempotency key in the header", async () => {

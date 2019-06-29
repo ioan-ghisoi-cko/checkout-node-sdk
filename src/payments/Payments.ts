@@ -8,8 +8,7 @@ import {
     DEFAULT_TIMEOUT
 } from "../index";
 
-import { ApiTimeout } from "../services/HttpErrors";
-
+import { determineError } from "../utils/ErrorHandler";
 
 /**
  * Payment request class
@@ -75,7 +74,7 @@ export default class Payments {
             return new PaymentResponse(await response.json);
 
         } catch (err) {
-            throw err;
+            throw await determineError(err);
         }
     };
 
@@ -95,7 +94,7 @@ export default class Payments {
             return new GetPaymentResponse(await response.json);
 
         } catch (err) {
-            throw err;
+            throw await determineError(err);
         }
     };
 }
