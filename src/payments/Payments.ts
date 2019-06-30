@@ -11,6 +11,7 @@ import {
     PaymentActionResponse,
     CaptureActionBody,
     RefundActionBody,
+    VoidActionBody
 } from "../index";
 
 import { determineError } from "../utils/ErrorHandler";
@@ -154,6 +155,28 @@ export default class Payments {
             const response = await http.send({
                 method: "post",
                 url: `${this.configuration.environment}/payments/${paymentId}/refunds`,
+                headers: {
+                    "Authorization": this.key
+                },
+                body: body !== undefined ? body : {}
+            });
+
+            return new PaymentActionResponse(await response.json);
+
+        } catch (err) {
+            throw await determineError(err);
+        }
+    };
+
+    public void = async (
+        paymentId: string,
+        body?: VoidActionBody
+    ): Promise<PaymentActionResponse> => {
+        const http = new Http(this.configuration);
+        try {
+            const response = await http.send({
+                method: "post",
+                url: `${this.configuration.environment}/payments/${paymentId}/voids`,
                 headers: {
                     "Authorization": this.key
                 },
