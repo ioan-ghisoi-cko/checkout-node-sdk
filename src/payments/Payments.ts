@@ -4,6 +4,7 @@ import {
     Http,
     PaymentResponse,
     GetPaymentResponse,
+    GetPaymentActionsResponseType,
     Environment,
     DEFAULT_TIMEOUT
 } from "../index";
@@ -92,6 +93,26 @@ export default class Payments {
             });
 
             return new GetPaymentResponse(await response.json);
+
+        } catch (err) {
+            throw await determineError(err);
+        }
+    };
+
+    public getActions = async (
+        id: string,
+    ): Promise<GetPaymentActionsResponseType> => {
+        const http = new Http(this.configuration);
+        try {
+            const response = await http.send({
+                method: "get",
+                url: `${this.configuration.environment}/payments/${id}/actions`,
+                headers: {
+                    "Authorization": this.key
+                },
+            });
+
+            return await response.json;
 
         } catch (err) {
             throw await determineError(err);

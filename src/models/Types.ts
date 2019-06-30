@@ -193,3 +193,28 @@ export interface GetPaymentResponseType {
     actions: [PaymentEvent];
     _links: Links;
 }
+
+export interface ActionProcessing {
+    retrieval_reference_number: string;
+    acquirer_reference_number: string;
+    acquirer_transaction_id: string;
+}
+
+export interface PaymentAction {
+    id: string;
+    type: string;
+    processed_on: string;
+    amount: string;
+    approved?: boolean;
+    auth_code?: string;
+    response_code?: string;
+    response_summary?: string;
+    reference?: string;
+    processing?: ActionProcessing;
+    metadata: Metadata
+}
+
+
+export interface GetPaymentActionsResponseType {
+    [prop: string]: PaymentAction;
+}

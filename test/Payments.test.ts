@@ -506,3 +506,84 @@ describe("Get payment details", async () => {
         }
     });
 });
+
+describe("Get payment actions", async () => {
+    it("should get payment actions", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .get("/payments/pay_6ndp5facelxurne7gloxkxm57u/actions")
+            .reply(200, [{
+                id: 'act_k55kvyhahyzevadsrnqob7i3am',
+                type: 'Capture',
+                processed_on: '2019-06-09T22:43:55Z',
+                amount: 100,
+                approved: true,
+                response_code: '10000',
+                response_summary: 'Approved',
+                processing:
+                {
+                    acquirer_transaction_id: '8137597746',
+                    acquirer_reference_number: '000007571039'
+                },
+                metadata: { sdk: 'node' }
+            },
+            {
+                id: 'act_6ndp5facelxurne7gloxkxm57u',
+                type: 'Authorization',
+                processed_on: '2019-06-09T22:43:54Z',
+                amount: 100,
+                approved: true,
+                auth_code: '277368',
+                response_code: '10000',
+                response_summary: 'Approved',
+                processing:
+                {
+                    acquirer_transaction_id: '8137597745',
+                    retrieval_reference_number: '000277368160'
+                },
+                metadata: { sdk: 'node' }
+            }]);
+
+        const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+        pay.configuration = {
+            timeout: 2000,
+            environment: Environment.Sandbox
+        }
+        let actions = await pay.getActions("pay_6ndp5facelxurne7gloxkxm57u");
+        expect(actions.length).to.equal(2);
+    });
+
+    it("should throw AuthenticationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .get("/payments/pay_6ndp5facelxurne7gloxkxm57u/actions")
+            .reply(401);
+
+        const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+        pay.configuration = {
+            timeout: 2000,
+            environment: Environment.Sandbox
+        }
+        try {
+            let actions = await pay.getActions("pay_6ndp5facelxurne7gloxkxm57u");
+        } catch (err) {
+            expect(err.name).to.equal('AuthenticationError');
+        }
+    });
+
+    it("should throw payment not found error", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .get("/payments/pay_6ndp5facelxurne7gloxkxm57u/actions")
+            .reply(404);
+
+        const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+        pay.configuration = {
+            timeout: 2000,
+            environment: Environment.Sandbox
+        }
+        try {
+            let actions = await pay.getActions("pay_6ndp5facelxurne7gloxkxm57u");
+        } catch (err) {
+            const error = err as NotFoundError;
+            expect(err).to.be.instanceOf(NotFoundError)
+        }
+    });
+});
