@@ -229,3 +229,16 @@ export interface PaymentActionedType {
     reference: string;
     _links: CapturedLinks;
 }
+
+export interface VoidActionBody {
+    reference: string;
+    metadata: Metadata;
+}
+
+export interface CaptureActionBody extends VoidActionBody {
+    amount: number;
+}
+
+export interface RefundActionBody extends VoidActionBody {
+    amount: number;
+}

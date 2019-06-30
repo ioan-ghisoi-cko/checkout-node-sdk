@@ -8,7 +8,9 @@ import {
     PaymentActionedType,
     Environment,
     DEFAULT_TIMEOUT,
-    CaptureResponse
+    PaymentActionResponse,
+    CaptureActionBody,
+    RefundActionBody,
 } from "../index";
 
 import { determineError } from "../utils/ErrorHandler";
@@ -122,19 +124,43 @@ export default class Payments {
     };
 
     public capture = async (
-        id: string,
-    ): Promise<CaptureResponse> => {
+        paymentId: string,
+        body?: CaptureActionBody
+    ): Promise<PaymentActionResponse> => {
         const http = new Http(this.configuration);
         try {
             const response = await http.send({
                 method: "post",
-                url: `${this.configuration.environment}/payments/${id}/captures`,
+                url: `${this.configuration.environment}/payments/${paymentId}/captures`,
                 headers: {
                     "Authorization": this.key
                 },
+                body: body !== undefined ? body : {}
             });
 
-            return new CaptureResponse(await response.json);
+            return new PaymentActionResponse(await response.json);
+
+        } catch (err) {
+            throw await determineError(err);
+        }
+    };
+
+    public refund = async (
+        paymentId: string,
+        body?: RefundActionBody
+    ): Promise<PaymentActionResponse> => {
+        const http = new Http(this.configuration);
+        try {
+            const response = await http.send({
+                method: "post",
+                url: `${this.configuration.environment}/payments/${paymentId}/refunds`,
+                headers: {
+                    "Authorization": this.key
+                },
+                body: body !== undefined ? body : {}
+            });
+
+            return new PaymentActionResponse(await response.json);
 
         } catch (err) {
             throw await determineError(err);

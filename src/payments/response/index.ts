@@ -1,4 +1,4 @@
 export * from "./GetPaymentResponse";
-export * from "./CaptureResponse";
+export * from "./PaymentActionResponse";
 export * from "./PaymentResponse";
 
