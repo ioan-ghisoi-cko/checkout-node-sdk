@@ -5,8 +5,10 @@ import {
     PaymentResponse,
     GetPaymentResponse,
     GetPaymentActionsResponseType,
+    PaymentActionedType,
     Environment,
-    DEFAULT_TIMEOUT
+    DEFAULT_TIMEOUT,
+    CaptureResponse
 } from "../index";
 
 import { determineError } from "../utils/ErrorHandler";
@@ -113,6 +115,26 @@ export default class Payments {
             });
 
             return await response.json;
+
+        } catch (err) {
+            throw await determineError(err);
+        }
+    };
+
+    public capture = async (
+        id: string,
+    ): Promise<CaptureResponse> => {
+        const http = new Http(this.configuration);
+        try {
+            const response = await http.send({
+                method: "post",
+                url: `${this.configuration.environment}/payments/${id}/captures`,
+                headers: {
+                    "Authorization": this.key
+                },
+            });
+
+            return new CaptureResponse(await response.json);
 
         } catch (err) {
             throw await determineError(err);

@@ -15,7 +15,7 @@ interface Processing {
     mid: string;
 }
 
-interface Metadata {
+export interface Metadata {
     [prop: string]: any;
 }
 
@@ -217,4 +217,15 @@ export interface PaymentAction {
 
 export interface GetPaymentActionsResponseType {
     [prop: string]: PaymentAction;
+}
+
+export interface CapturedLinks {
+    payment: Link;
+    redirect: Link;
+}
+
+export interface PaymentActionedType {
+    action_id: string;
+    reference: string;
+    _links: CapturedLinks;
 }

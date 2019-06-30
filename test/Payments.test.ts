@@ -8,7 +8,8 @@ import {
     ValidationError,
     TooManyRequestsError,
     BadGateway,
-    NotFoundError
+    NotFoundError,
+    ActionNotAllowed
 } from '../src/services/HttpErrors';
 const nock = require("nock");
 
@@ -584,6 +585,120 @@ describe("Get payment actions", async () => {
         } catch (err) {
             const error = err as NotFoundError;
             expect(err).to.be.instanceOf(NotFoundError)
+        }
+    });
+});
+
+describe("Capture payment", async () => {
+    it("should capture payment", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments/pay_7enxra4adw6evgalvfabl6nbqy/captures")
+            .reply(202, {
+                "action_id": "act_sdsnnv4ehjeujmvgby6rldgmw4",
+                "reference": "ORD-5023-4E89",
+                "_links": {
+                    "payment": {
+                        "href": "https://api.sandbox.checkout.com/payments/pay_gwqbb7qbjiee3edqmyk3dme64i"
+                    }
+                }
+            });
+
+        const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+        pay.configuration = {
+            timeout: 2000,
+            environment: Environment.Sandbox
+        }
+        let captured = await pay.capture("pay_7enxra4adw6evgalvfabl6nbqy");
+        expect(captured.action_id).to.equal("act_sdsnnv4ehjeujmvgby6rldgmw4");
+        expect(captured.reference).to.equal("ORD-5023-4E89");
+    });
+
+    it("should throw AuthenticationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments/pay_7enxra4adw6evgalvfabl6nbqy/captures")
+            .reply(401);
+
+        const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+        pay.configuration = {
+            timeout: 2000,
+            environment: Environment.Sandbox
+        }
+        try {
+            let captured = await pay.capture("pay_7enxra4adw6evgalvfabl6nbqy");
+        } catch (err) {
+            expect(err.name).to.equal('AuthenticationError');
+        }
+    });
+
+    it("should throw Capture not allowed error", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments/pay_7enxra4adw6evgalvfabl6nbqy/captures")
+            .reply(403);
+
+        const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+        pay.configuration = {
+            timeout: 2000,
+            environment: Environment.Sandbox
+        }
+        try {
+            let captured = await pay.capture("pay_7enxra4adw6evgalvfabl6nbqy");
+        } catch (err) {
+            const error = err as ActionNotAllowed;
+            expect(err).to.be.instanceOf(ActionNotAllowed)
+        }
+    });
+
+    it("should throw payment not found error", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments/pay_7enxra4adw6evgalvfabl6nbqy/captures")
+            .reply(404);
+
+        const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+        pay.configuration = {
+            timeout: 2000,
+            environment: Environment.Sandbox
+        }
+        try {
+            let captured = await pay.capture("pay_7enxra4adw6evgalvfabl6nbqy");
+        } catch (err) {
+            const error = err as NotFoundError;
+            expect(err).to.be.instanceOf(NotFoundError)
+        }
+    });
+
+    it("should throw BadGateway error", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments/pay_7enxra4adw6evgalvfabl6nbqy/captures")
+            .reply(502);
+
+        const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+        pay.configuration = {
+            timeout: 2000,
+            environment: Environment.Sandbox
+        }
+        try {
+            let captured = await pay.capture("pay_7enxra4adw6evgalvfabl6nbqy");
+        } catch (err) {
+            const error = err as BadGateway;
+            expect(err).to.be.instanceOf(BadGateway)
+        }
+    });
+
+    it("should throw Validation error", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments/pay_7enxra4adw6evgalvfabl6nbqy/captures")
+            .reply(422);
+
+        const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+        pay.configuration = {
+            timeout: 2000,
+            environment: Environment.Sandbox
+        }
+        try {
+            let captured = await pay.capture("pay_7enxra4adw6evgalvfabl6nbqy");
+        } catch (err) {
+            const error = err as ValidationError;
+            expect(err).to.be.instanceOf(ValidationError)
         }
     });
 });

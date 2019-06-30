@@ -47,6 +47,23 @@ export class AuthenticationError extends Error {
 }
 
 /**
+ * ActionNotAllowed
+ *
+ * @export
+ * @class AuthenticationError
+ * @extends {Error}
+ */
+export class ActionNotAllowed extends Error {
+    public http_code = 403;
+
+    constructor(message?: string) {
+        super(message);
+        Object.setPrototypeOf(this, new.target.prototype);
+        this.name = ActionNotAllowed.name;
+    }
+}
+
+/**
  * NotFoundError
  *
  * @export

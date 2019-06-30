@@ -5,7 +5,8 @@ import {
     ValidationError,
     TooManyRequestsError,
     BadGateway,
-    NotFoundError
+    NotFoundError,
+    ActionNotAllowed
 } from "../services/HttpErrors";
 
 export const determineError = async (err: any): Promise<any> => {
@@ -25,6 +26,8 @@ export const determineError = async (err: any): Promise<any> => {
             return new AuthenticationError();
         case 404:
             return new NotFoundError();
+        case 403:
+            return new ActionNotAllowed();
         case 422:
             return new ValidationError(await errorJSON);
         case 429:
