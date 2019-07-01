@@ -13,7 +13,7 @@ import {
     Shipping,
     Recipient,
     PaymentEvent
-} from "../../models/Types";
+} from "../types/Types";
 
 export class GetPaymentResponse {
     id: string;

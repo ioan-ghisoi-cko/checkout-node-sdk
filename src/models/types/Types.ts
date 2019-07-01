@@ -1,5 +1,5 @@
-import { Environment } from "../index";
-import * as Source from "../models/Sources";
+import { Environment } from "../../config/Environment";
+import * as Source from "../request/Sources";
 type _RequestType = "get" | "post" | "put" | "patch";
 type _EnvironmentType = Environment.Live | Environment.Sandbox;
 

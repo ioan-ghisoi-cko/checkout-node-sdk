@@ -1,7 +1,7 @@
 import {
     PaymentActionedType,
     CapturedLinks
-} from "../../models/Types";
+} from "../types/Types";
 
 export class PaymentActionResponse {
     action_id: string;

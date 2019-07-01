@@ -1,4 +1,4 @@
-import { PaymentError } from "../index";
+import { PaymentError } from "../types/Types";
 /**
  * Error raised for pre-api value validation
  *

@@ -2,7 +2,7 @@ import {
     Address,
     Phone,
     CardSourceType,
-} from "./Types";
+} from "../types/Types";
 
 export class CardSource {
     private readonly type: string = "card";

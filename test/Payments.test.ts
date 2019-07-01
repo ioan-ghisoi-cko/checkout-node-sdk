@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import payments from '../src/payments/Payments';
+import payments from '../src/api/Payments';
 import { Http, CardSource, Environment } from '../src/index';
 import {
     ApiError,
@@ -10,7 +10,7 @@ import {
     BadGateway,
     NotFoundError,
     ActionNotAllowed
-} from '../src/services/HttpErrors';
+} from '../src/models/response/HttpErrors';
 const nock = require("nock");
 
 describe("Request Payment", async () => {

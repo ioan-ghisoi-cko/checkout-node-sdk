@@ -7,7 +7,7 @@ import {
     BadGateway,
     NotFoundError,
     ActionNotAllowed
-} from "../services/HttpErrors";
+} from "../models/response/HttpErrors";
 
 export const determineError = async (err: any): Promise<any> => {
     // Fot time outs
