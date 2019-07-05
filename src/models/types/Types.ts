@@ -1,6 +1,7 @@
 import { Environment } from "../../config/Environment";
 import * as Source from "../request/Sources";
 type _RequestType = "get" | "post" | "put" | "patch";
+type SepaMandate = "single" | "recurring";
 type _EnvironmentType = Environment.Live | Environment.Sandbox;
 
 interface ThreeDSecure {
@@ -52,6 +53,15 @@ export interface Links {
     redirect?: Link;
 }
 
+export interface AddSourceLinks {
+    self: Link;
+    cancel?: Link;
+}
+
+export interface SepaMandateReference {
+    mandate_reference: string;
+}
+
 export interface HttpConfigurationType {
     timeout: number;
     environment: _EnvironmentType;
@@ -94,6 +104,23 @@ export interface Shipping {
     phone?: Phone;
 }
 
+export interface SepaSourceData {
+    first_name: string;
+    last_name: string;
+    account_iban: string;
+    bic: string;
+    billing_descriptor: string;
+    mandate_type: SepaMandate;
+}
+
+export interface SourceRequest {
+    reference?: string;
+    billing_address: Address;
+    phone?: Phone;
+    customer?: Customer;
+    source_data: SepaSourceData;
+}
+
 export interface PaymentRequest<T> {
     source: T;
     currency: string;
@@ -126,6 +153,15 @@ export interface CardSourceType {
     stored?: boolean;
     billing_address?: Address;
     phone?: Phone;
+}
+
+export interface AddSourceResponseType {
+    id: string,
+    type: string,
+    response_code: string,
+    customer?: Customer;
+    response_data: SepaMandateReference;
+    _links: AddSourceLinks;
 }
 
 export interface PaymentResponseType {

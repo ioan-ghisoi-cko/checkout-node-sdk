@@ -5,7 +5,6 @@ import {
     PaymentResponse,
     GetPaymentResponse,
     GetPaymentActionsResponseType,
-    PaymentActionedType,
     Environment,
     DEFAULT_TIMEOUT,
     PaymentActionResponse,
@@ -13,7 +12,6 @@ import {
     RefundActionBody,
     VoidActionBody
 } from "../index";
-
 import { determineError } from "../utils/ErrorHandler";
 
 /**
@@ -42,7 +40,7 @@ export default class Payments {
      * @type {string}
      * @memberof Payments
      */
-    configuration: HttpConfigurationType;
+    httpConfiguration: HttpConfigurationType;
 
 
     /**
@@ -59,19 +57,19 @@ export default class Payments {
         }
     ) {
         this.key = key;
-        this.configuration = http_options;
+        this.httpConfiguration = http_options;
     }
 
     public request = async <T>(
         arg: PaymentRequest<T>, idempotency_key = ""
     ): Promise<PaymentResponse> => {
-        const http = new Http(this.configuration);
+        const http = new Http(this.httpConfiguration);
         try {
             const response = await http.send({
                 method: "post",
-                url: `${this.configuration.environment}/payments`,
+                url: `${this.httpConfiguration.environment}/payments`,
                 headers: {
-                    "Authorization": this.key,
+                    Authorization: this.key,
                     "Cko-Idempotency-Key": idempotency_key
                 },
                 body: { ...arg, metadata: { ...arg.metadata, sdk: "node" } }
@@ -87,13 +85,13 @@ export default class Payments {
     public get = async (
         id: string,
     ): Promise<GetPaymentResponse> => {
-        const http = new Http(this.configuration);
+        const http = new Http(this.httpConfiguration);
         try {
             const response = await http.send({
                 method: "get",
-                url: `${this.configuration.environment}/payments/${id}`,
+                url: `${this.httpConfiguration.environment}/payments/${id}`,
                 headers: {
-                    "Authorization": this.key
+                    Authorization: this.key
                 },
             });
 
@@ -107,13 +105,13 @@ export default class Payments {
     public getActions = async (
         id: string,
     ): Promise<GetPaymentActionsResponseType> => {
-        const http = new Http(this.configuration);
+        const http = new Http(this.httpConfiguration);
         try {
             const response = await http.send({
                 method: "get",
-                url: `${this.configuration.environment}/payments/${id}/actions`,
+                url: `${this.httpConfiguration.environment}/payments/${id}/actions`,
                 headers: {
-                    "Authorization": this.key
+                    Authorization: this.key
                 },
             });
 
@@ -128,13 +126,13 @@ export default class Payments {
         paymentId: string,
         body?: CaptureActionBody
     ): Promise<PaymentActionResponse> => {
-        const http = new Http(this.configuration);
+        const http = new Http(this.httpConfiguration);
         try {
             const response = await http.send({
                 method: "post",
-                url: `${this.configuration.environment}/payments/${paymentId}/captures`,
+                url: `${this.httpConfiguration.environment}/payments/${paymentId}/captures`,
                 headers: {
-                    "Authorization": this.key
+                    Authorization: this.key
                 },
                 body: body !== undefined ? body : {}
             });
@@ -150,13 +148,13 @@ export default class Payments {
         paymentId: string,
         body?: RefundActionBody
     ): Promise<PaymentActionResponse> => {
-        const http = new Http(this.configuration);
+        const http = new Http(this.httpConfiguration);
         try {
             const response = await http.send({
                 method: "post",
-                url: `${this.configuration.environment}/payments/${paymentId}/refunds`,
+                url: `${this.httpConfiguration.environment}/payments/${paymentId}/refunds`,
                 headers: {
-                    "Authorization": this.key
+                    Authorization: this.key
                 },
                 body: body !== undefined ? body : {}
             });
@@ -172,13 +170,13 @@ export default class Payments {
         paymentId: string,
         body?: VoidActionBody
     ): Promise<PaymentActionResponse> => {
-        const http = new Http(this.configuration);
+        const http = new Http(this.httpConfiguration);
         try {
             const response = await http.send({
                 method: "post",
-                url: `${this.configuration.environment}/payments/${paymentId}/voids`,
+                url: `${this.httpConfiguration.environment}/payments/${paymentId}/voids`,
                 headers: {
-                    "Authorization": this.key
+                    Authorization: this.key
                 },
                 body: body !== undefined ? body : {}
             });

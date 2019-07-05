@@ -18,23 +18,22 @@ describe("Request Payment", async () => {
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
         expect(pay).to.be.instanceOf(payments);
         expect(pay.key).to.equal('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-        expect(pay.configuration.timeout).to.equal(5000);
+        expect(pay.httpConfiguration.timeout).to.equal(5000);
     });
 
     it("should set http configuration and key in constructor", async () => {
-        const cnf = new Http
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51', {
             timeout: 4000,
             environment: Environment.Sandbox
         });
         expect(pay.key).to.equal('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-        expect(pay.configuration.timeout).to.equal(4000);
+        expect(pay.httpConfiguration.timeout).to.equal(4000);
     });
 
     it("should set http configuration and key with parameter", async () => {
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
 
-        pay.configuration = {
+        pay.httpConfiguration = {
             timeout: 4000,
             environment: Environment.Sandbox
         };
@@ -42,7 +41,7 @@ describe("Request Payment", async () => {
         pay.key = 'sk_test_43ed9a7f-4799-461d-b201-a70507878b51';
 
         expect(pay.key).to.equal('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-        expect(pay.configuration.timeout).to.equal(4000);
+        expect(pay.httpConfiguration.timeout).to.equal(4000);
     });
 
     it("should perform normal payment request with a Card Source", async () => {
@@ -250,7 +249,7 @@ describe("Request Payment", async () => {
 
         try {
             const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-            pay.configuration = {
+            pay.httpConfiguration = {
                 timeout: 10,
                 environment: Environment.Sandbox
             }
@@ -462,7 +461,7 @@ describe("Get payment details", async () => {
             });
 
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-        pay.configuration = {
+        pay.httpConfiguration = {
             timeout: 2000,
             environment: Environment.Sandbox
         }
@@ -478,7 +477,7 @@ describe("Get payment details", async () => {
 
         try {
             const pay = new payments('sk_test_error');
-            pay.configuration = {
+            pay.httpConfiguration = {
                 timeout: 2000,
                 environment: Environment.Sandbox
             }
@@ -496,7 +495,7 @@ describe("Get payment details", async () => {
 
         try {
             const pay = new payments('sk_test_error');
-            pay.configuration = {
+            pay.httpConfiguration = {
                 timeout: 2000,
                 environment: Environment.Sandbox
             }
@@ -545,7 +544,7 @@ describe("Get payment actions", async () => {
             }]);
 
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-        pay.configuration = {
+        pay.httpConfiguration = {
             timeout: 2000,
             environment: Environment.Sandbox
         }
@@ -559,7 +558,7 @@ describe("Get payment actions", async () => {
             .reply(401);
 
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-        pay.configuration = {
+        pay.httpConfiguration = {
             timeout: 2000,
             environment: Environment.Sandbox
         }
@@ -576,7 +575,7 @@ describe("Get payment actions", async () => {
             .reply(404);
 
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-        pay.configuration = {
+        pay.httpConfiguration = {
             timeout: 2000,
             environment: Environment.Sandbox
         }
@@ -604,7 +603,7 @@ describe("Capture payment", async () => {
             });
 
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-        pay.configuration = {
+        pay.httpConfiguration = {
             timeout: 2000,
             environment: Environment.Sandbox
         }
@@ -629,7 +628,7 @@ describe("Capture payment", async () => {
             })
 
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-        pay.configuration = {
+        pay.httpConfiguration = {
             timeout: 2000,
             environment: Environment.Sandbox
         }
@@ -652,7 +651,7 @@ describe("Capture payment", async () => {
             .reply(401);
 
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-        pay.configuration = {
+        pay.httpConfiguration = {
             timeout: 2000,
             environment: Environment.Sandbox
         }
@@ -669,7 +668,7 @@ describe("Capture payment", async () => {
             .reply(403);
 
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-        pay.configuration = {
+        pay.httpConfiguration = {
             timeout: 2000,
             environment: Environment.Sandbox
         }
@@ -687,7 +686,7 @@ describe("Capture payment", async () => {
             .reply(404);
 
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-        pay.configuration = {
+        pay.httpConfiguration = {
             timeout: 2000,
             environment: Environment.Sandbox
         }
@@ -705,7 +704,7 @@ describe("Capture payment", async () => {
             .reply(502);
 
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-        pay.configuration = {
+        pay.httpConfiguration = {
             timeout: 2000,
             environment: Environment.Sandbox
         }
@@ -723,7 +722,7 @@ describe("Capture payment", async () => {
             .reply(422);
 
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-        pay.configuration = {
+        pay.httpConfiguration = {
             timeout: 2000,
             environment: Environment.Sandbox
         }
@@ -754,7 +753,7 @@ describe("Refund payment", async () => {
             });
 
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-        pay.configuration = {
+        pay.httpConfiguration = {
             timeout: 2000,
             environment: Environment.Sandbox
         }
@@ -779,7 +778,7 @@ describe("Refund payment", async () => {
             })
 
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-        pay.configuration = {
+        pay.httpConfiguration = {
             timeout: 2000,
             environment: Environment.Sandbox
         }
@@ -802,7 +801,7 @@ describe("Refund payment", async () => {
             .reply(401);
 
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-        pay.configuration = {
+        pay.httpConfiguration = {
             timeout: 2000,
             environment: Environment.Sandbox
         }
@@ -819,7 +818,7 @@ describe("Refund payment", async () => {
             .reply(403);
 
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-        pay.configuration = {
+        pay.httpConfiguration = {
             timeout: 2000,
             environment: Environment.Sandbox
         }
@@ -837,7 +836,7 @@ describe("Refund payment", async () => {
             .reply(404);
 
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-        pay.configuration = {
+        pay.httpConfiguration = {
             timeout: 2000,
             environment: Environment.Sandbox
         }
@@ -855,7 +854,7 @@ describe("Refund payment", async () => {
             .reply(502);
 
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-        pay.configuration = {
+        pay.httpConfiguration = {
             timeout: 2000,
             environment: Environment.Sandbox
         }
@@ -873,7 +872,7 @@ describe("Refund payment", async () => {
             .reply(422);
 
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-        pay.configuration = {
+        pay.httpConfiguration = {
             timeout: 2000,
             environment: Environment.Sandbox
         }
@@ -904,7 +903,7 @@ describe("Void payment", async () => {
             });
 
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-        pay.configuration = {
+        pay.httpConfiguration = {
             timeout: 2000,
             environment: Environment.Sandbox
         }
@@ -929,7 +928,7 @@ describe("Void payment", async () => {
             })
 
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-        pay.configuration = {
+        pay.httpConfiguration = {
             timeout: 2000,
             environment: Environment.Sandbox
         }
@@ -951,7 +950,7 @@ describe("Void payment", async () => {
             .reply(401);
 
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-        pay.configuration = {
+        pay.httpConfiguration = {
             timeout: 2000,
             environment: Environment.Sandbox
         }
@@ -968,7 +967,7 @@ describe("Void payment", async () => {
             .reply(403);
 
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-        pay.configuration = {
+        pay.httpConfiguration = {
             timeout: 2000,
             environment: Environment.Sandbox
         }
@@ -986,7 +985,7 @@ describe("Void payment", async () => {
             .reply(404);
 
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-        pay.configuration = {
+        pay.httpConfiguration = {
             timeout: 2000,
             environment: Environment.Sandbox
         }
@@ -1004,7 +1003,7 @@ describe("Void payment", async () => {
             .reply(502);
 
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-        pay.configuration = {
+        pay.httpConfiguration = {
             timeout: 2000,
             environment: Environment.Sandbox
         }
@@ -1022,7 +1021,7 @@ describe("Void payment", async () => {
             .reply(422);
 
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
-        pay.configuration = {
+        pay.httpConfiguration = {
             timeout: 2000,
             environment: Environment.Sandbox
         }
