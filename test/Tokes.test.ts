@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import sources from '../src/api/Sources';
-import { Environment, Sources } from '../src';
+import { Environment } from '../src';
 import {
 	ValidationError,
 	BadGateway,
@@ -66,7 +66,9 @@ describe("Sources", async () => {
 			timeout: 4000,
 			environment: Environment.Sandbox
 		});
-		let source = await paymentSources.add(new Sources({
+
+		let source = await paymentSources.add({
+			type: 'sepa',
 			billing_address: {
 				address_line1: "test me",
 				address_line2: "test me 2",
@@ -83,7 +85,7 @@ describe("Sources", async () => {
 				billing_descriptor: "TST",
 				mandate_type: "single"
 			}
-		}))
+		})
 		expect(source.response_code).to.equal('10000');
 		expect(source.type).to.equal('Sepa');
 	});
@@ -96,7 +98,8 @@ describe("Sources", async () => {
 		try {
 			const paymentSources = new sources('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
 
-			let source = await paymentSources.add(new Sources({
+			let source = await paymentSources.add({
+				type: 'sepa',
 				billing_address: {
 					address_line1: "test me",
 					address_line2: "test me 2",
@@ -113,7 +116,7 @@ describe("Sources", async () => {
 					billing_descriptor: "TST",
 					mandate_type: "single"
 				}
-			}))
+			})
 		} catch (err) {
 			expect(err.name).to.equal('AuthenticationError');
 		}
@@ -133,7 +136,8 @@ describe("Sources", async () => {
 		try {
 			const paymentSources = new sources('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
 
-			let source = await paymentSources.add(new Sources({
+			let source = await paymentSources.add({
+				type: 'sepa',
 				billing_address: {
 					address_line1: "test me",
 					address_line2: "test me 2",
@@ -150,7 +154,7 @@ describe("Sources", async () => {
 					billing_descriptor: "TST",
 					mandate_type: "single"
 				}
-			}))
+			})
 		} catch (err) {
 			expect(err).to.be.instanceOf(ValidationError)
 		}
@@ -164,7 +168,8 @@ describe("Sources", async () => {
 		try {
 			const paymentSources = new sources('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
 
-			let source = await paymentSources.add(new Sources({
+			let source = await paymentSources.add({
+				type: 'sepa',
 				billing_address: {
 					address_line1: "test me",
 					address_line2: "test me 2",
@@ -181,7 +186,7 @@ describe("Sources", async () => {
 					billing_descriptor: "TST",
 					mandate_type: "single"
 				}
-			}))
+			})
 		} catch (err) {
 			expect(err).to.be.instanceOf(BadGateway)
 		}

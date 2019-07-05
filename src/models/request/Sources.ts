@@ -29,20 +29,3 @@ export class CardSource {
         this.phone = source.phone;
     }
 }
-
-export class Sources {
-    private readonly type: string = "sepa";
-    public reference?: string;
-    public billing_address: Address;
-    public phone?: Phone;
-    public customer?: Customer;
-    public source_data: SepaSourceData;
-
-    public constructor(source: SourceRequest) {
-        this.reference = source.reference;
-        this.billing_address = source.billing_address;
-        this.phone = source.phone;
-        this.customer = source.customer;
-        this.source_data = source.source_data;
-    }
-}

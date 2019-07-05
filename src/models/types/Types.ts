@@ -1,6 +1,7 @@
 import { Environment } from "../../config/Environment";
 import * as Source from "../request/Sources";
 type _RequestType = "get" | "post" | "put" | "patch";
+type _SourceRequestType = "sepa";
 type SepaMandate = "single" | "recurring";
 type _EnvironmentType = Environment.Live | Environment.Sandbox;
 
@@ -114,6 +115,7 @@ export interface SepaSourceData {
 }
 
 export interface SourceRequest {
+    type: _SourceRequestType;
     reference?: string;
     billing_address: Address;
     phone?: Phone;
