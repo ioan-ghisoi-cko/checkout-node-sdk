@@ -2,9 +2,9 @@ import {
     Address,
     Phone,
     CardSourceType,
-    SourceRequest,
-    Customer,
-    SepaSourceData
+    AppleTokenData,
+    TokenData,
+    GoogleTokenData
 } from "../types/Types";
 
 export class CardSource {
@@ -29,3 +29,22 @@ export class CardSource {
         this.phone = source.phone;
     }
 }
+
+export class ApplePaySource {
+    private readonly type: string = "applepay";
+    public token_data: TokenData<AppleTokenData>;
+
+    public constructor(source: TokenData<AppleTokenData>) {
+        this.token_data = source;
+    }
+}
+
+export class GooglePaySource {
+    private readonly type: string = "googlepay";
+    public token_data: TokenData<GoogleTokenData>;
+
+    public constructor(source: TokenData<GoogleTokenData>) {
+        this.token_data = source;
+    }
+}
+

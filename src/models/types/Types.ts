@@ -280,3 +280,40 @@ export interface CaptureActionBody extends VoidActionBody {
 export interface RefundActionBody extends VoidActionBody {
     amount: number;
 }
+
+export interface AppleTokenData {
+    version: string;
+    data: string;
+    signature: string;
+    header: string;
+}
+
+export interface GoogleTokenData {
+    signature: string;
+    protocolVersion: string;
+    signedMessage: string;
+}
+
+export interface TokenData<T> {
+    token_data: T;
+}
+
+export interface CreateTokenResponseType {
+    type: string;
+    token: string;
+    expires_on: string;
+    expiry_month: number;
+    expiry_year: number;
+    scheme: string;
+    last4: string;
+    bin: string;
+    card_type: string;
+    card_category: string;
+    issuer: string;
+    issuer_country: string;
+    product_id: string;
+    product_type: string;
+    billing_address?: Address;
+    phone?: Phone;
+    name?: string;
+}
