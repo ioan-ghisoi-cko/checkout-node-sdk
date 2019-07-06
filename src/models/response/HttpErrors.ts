@@ -56,7 +56,7 @@ export class AuthenticationError extends Error {
 export class ActionNotAllowed extends Error {
     public http_code = 403;
 
-    constructor(message?: string) {
+    constructor(message = "ActionNotAllowed") {
         super(message);
         Object.setPrototypeOf(this, new.target.prototype);
         this.name = ActionNotAllowed.name;
@@ -73,7 +73,7 @@ export class ActionNotAllowed extends Error {
 export class NotFoundError extends Error {
     public http_code = 404;
 
-    constructor(message?: string) {
+    constructor(message = "NotFoundError") {
         super(message);
         Object.setPrototypeOf(this, new.target.prototype);
         this.name = NotFoundError.name;
