@@ -88,7 +88,7 @@ export default class Payments {
     ): Promise<GetPaymentResponse> => {
         const http = new Http(this.httpConfiguration);
         try {
-            const response = await http.send({
+            const getPayment = await http.send({
                 method: "get",
                 url: `${this.httpConfiguration.environment}/payments/${id}`,
                 headers: {
@@ -96,7 +96,7 @@ export default class Payments {
                 },
             });
 
-            return new GetPaymentResponse(await response.json);
+            return new GetPaymentResponse(await getPayment.json);
 
         } catch (err) {
             throw await determineError(err);
@@ -108,7 +108,7 @@ export default class Payments {
     ): Promise<GetPaymentActionsResponseType> => {
         const http = new Http(this.httpConfiguration);
         try {
-            const response = await http.send({
+            const getPaymentActions = await http.send({
                 method: "get",
                 url: `${this.httpConfiguration.environment}/payments/${id}/actions`,
                 headers: {
@@ -116,7 +116,7 @@ export default class Payments {
                 },
             });
 
-            return await response.json;
+            return await getPaymentActions.json;
 
         } catch (err) {
             throw await determineError(err);
