@@ -10,7 +10,8 @@ import {
     PaymentActionResponse,
     CaptureActionBody,
     RefundActionBody,
-    VoidActionBody
+    VoidActionBody,
+    RequestType
 } from "../index";
 import { determineError } from "../utils/ErrorHandler";
 
@@ -125,56 +126,28 @@ export default class Payments {
     public capture = async (
         paymentId: string,
         body?: CaptureActionBody
-    ): Promise<PaymentActionResponse> => {
-        const http = new Http(this.httpConfiguration);
-        try {
-            const response = await http.send({
-                method: "post",
-                url: `${this.httpConfiguration.environment}/payments/${paymentId}/captures`,
-                headers: {
-                    Authorization: this.key
-                },
-                body: body !== undefined ? body : {}
-            });
-
-            return new PaymentActionResponse(await response.json);
-
-        } catch (err) {
-            throw await determineError(err);
-        }
-    };
+    ): Promise<PaymentActionResponse> => this._actionHandler("captures", paymentId, body);
 
     public refund = async (
         paymentId: string,
         body?: RefundActionBody
-    ): Promise<PaymentActionResponse> => {
-        const http = new Http(this.httpConfiguration);
-        try {
-            const response = await http.send({
-                method: "post",
-                url: `${this.httpConfiguration.environment}/payments/${paymentId}/refunds`,
-                headers: {
-                    Authorization: this.key
-                },
-                body: body !== undefined ? body : {}
-            });
-
-            return new PaymentActionResponse(await response.json);
-
-        } catch (err) {
-            throw await determineError(err);
-        }
-    };
+    ): Promise<PaymentActionResponse> => this._actionHandler("refunds", paymentId, body);
 
     public void = async (
         paymentId: string,
         body?: VoidActionBody
+    ): Promise<PaymentActionResponse> => this._actionHandler("voids", paymentId, body);
+
+    private _actionHandler = async (
+        action: string,
+        paymentId: string,
+        body?: VoidActionBody,
     ): Promise<PaymentActionResponse> => {
         const http = new Http(this.httpConfiguration);
         try {
             const response = await http.send({
                 method: "post",
-                url: `${this.httpConfiguration.environment}/payments/${paymentId}/voids`,
+                url: `${this.httpConfiguration.environment}/payments/${paymentId}/${action}`,
                 headers: {
                     Authorization: this.key
                 },
@@ -186,5 +159,5 @@ export default class Payments {
         } catch (err) {
             throw await determineError(err);
         }
-    };
+    }
 }

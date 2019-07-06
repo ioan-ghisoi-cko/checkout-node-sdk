@@ -1,6 +1,6 @@
 import { Environment } from "../../config/Environment";
 import * as Source from "../request/Sources";
-type _RequestType = "get" | "post" | "put" | "patch";
+export type RequestType = "get" | "post" | "put" | "patch";
 type _SourceRequestType = "sepa";
 type SepaMandate = "single" | "recurring";
 type _EnvironmentType = Environment.Live | Environment.Sandbox;
@@ -71,7 +71,7 @@ export interface HttpConfigurationType {
 export interface HttpRequestParamsType {
     url: string;
     headers: Headers;
-    method: _RequestType;
+    method: RequestType;
     body?: any;
 }
 
