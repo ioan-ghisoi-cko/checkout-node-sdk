@@ -91,7 +91,7 @@ export class ValidationError extends Error {
     public http_code = 422;
     public body: PaymentError;
 
-    constructor(error: PaymentError, message?: string) {
+    constructor(error: PaymentError, message = "ValidationError") {
         super(message);
         Object.setPrototypeOf(this, new.target.prototype);
         this.name = ValidationError.name;
@@ -111,7 +111,7 @@ export class TooManyRequestsError extends Error {
     public http_code = 429;
     public body: PaymentError;
 
-    constructor(error: PaymentError, message?: string) {
+    constructor(error: PaymentError, message = "TooManyRequestsError") {
         super(message);
         Object.setPrototypeOf(this, new.target.prototype);
         this.name = TooManyRequestsError.name;
