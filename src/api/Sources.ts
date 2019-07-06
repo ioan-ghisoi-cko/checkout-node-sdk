@@ -20,7 +20,7 @@ export default class Sources extends BaseEndpoint {
         super(key, http_options);
     }
 
-    public add = async <T>(
+    public add = async (
         source: SourceRequest
     ): Promise<AddSourceResponse> => {
         const http = new Http(this.httpConfiguration);

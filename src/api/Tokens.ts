@@ -21,7 +21,7 @@ export default class Tokens extends BaseEndpoint {
         super(key, http_options);
     }
 
-    public request = async <T>(
+    public request = async (
         source: CardSource | ApplePaySource | GooglePaySource
     ): Promise<CreateTokenResponse> => {
         const http = new Http(this.httpConfiguration);
