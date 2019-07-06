@@ -53,9 +53,7 @@ export default class Payments extends BaseEndpoint {
                 },
                 body: { ...arg, metadata: { ...arg.metadata, sdk: "node" } }
             });
-
             return new PaymentResponse(await response.json);
-
         } catch (err) {
             throw await determineError(err);
         }
@@ -64,18 +62,9 @@ export default class Payments extends BaseEndpoint {
     public get = async (
         id: string,
     ): Promise<GetPaymentResponse> => {
-        const http = new Http(this.httpConfiguration);
         try {
-            const getPayment = await http.send({
-                method: "get",
-                url: `${this.httpConfiguration.environment}/payments/${id}`,
-                headers: {
-                    Authorization: this.key
-                },
-            });
-
+            const getPayment = await this._getHandler(`${this.httpConfiguration.environment}/payments/${id}`);
             return new GetPaymentResponse(await getPayment.json);
-
         } catch (err) {
             throw await determineError(err);
         }
@@ -84,18 +73,9 @@ export default class Payments extends BaseEndpoint {
     public getActions = async (
         id: string,
     ): Promise<GetPaymentActionsResponseType> => {
-        const http = new Http(this.httpConfiguration);
         try {
-            const getPaymentActions = await http.send({
-                method: "get",
-                url: `${this.httpConfiguration.environment}/payments/${id}/actions`,
-                headers: {
-                    Authorization: this.key
-                },
-            });
-
+            const getPaymentActions = await this._getHandler(`${this.httpConfiguration.environment}/payments/${id}/actions`);
             return await getPaymentActions.json;
-
         } catch (err) {
             throw await determineError(err);
         }
@@ -137,5 +117,18 @@ export default class Payments extends BaseEndpoint {
         } catch (err) {
             throw await determineError(err);
         }
+    }
+
+    private _getHandler = async (
+        url: string,
+    ): Promise<any> => {
+        const http = new Http(this.httpConfiguration);
+        return http.send({
+            method: "get",
+            url,
+            headers: {
+                Authorization: this.key
+            },
+        });
     }
 }
