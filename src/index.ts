@@ -5,5 +5,5 @@ export * from "./config/Environment";
 export * from "./models/request/Sources";
 export * from "./models/response";
 export * from "./api/";
-export { default as checkout } from "./checkout";
-export { default } from "./checkout";
+export { default as checkout } from "./Checkout";
+export { default } from "./Checkout";
