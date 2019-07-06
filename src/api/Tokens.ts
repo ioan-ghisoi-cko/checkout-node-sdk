@@ -8,13 +8,9 @@ import {
 } from "../index";
 import { determineError } from "../utils/ErrorHandler";
 import { CardSource, ApplePaySource, GooglePaySource } from "../models/request";
+import BaseEndpoint from "./BaseEndpoint";
 
-export default class Tokens {
-
-    key: string;
-
-    httpConfiguration: HttpConfigurationType;
-
+export default class Tokens extends BaseEndpoint {
 
     constructor(
         key: string,
@@ -22,8 +18,7 @@ export default class Tokens {
             timeout: DEFAULT_TIMEOUT, environment: Environment.Sandbox
         }
     ) {
-        this.key = key;
-        this.httpConfiguration = http_options;
+        super(key, http_options);
     }
 
     public request = async <T>(

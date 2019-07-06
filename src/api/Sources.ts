@@ -7,20 +7,9 @@ import {
     SourceRequest
 } from "../index";
 import { determineError } from "../utils/ErrorHandler";
+import BaseEndpoint from "./BaseEndpoint";
 
-export default class Sources {
-
-    key: string;
-
-    /**
-     * Http configuration needed in the HTTP requests
-     * made the the Checkout.com Unified Payments API
-     *
-     * @type {string}
-     * @memberof Payments
-     */
-    httpConfiguration: HttpConfigurationType;
-
+export default class Sources extends BaseEndpoint {
 
     constructor(
         key: string,
@@ -28,8 +17,7 @@ export default class Sources {
             timeout: DEFAULT_TIMEOUT, environment: Environment.Sandbox
         }
     ) {
-        this.key = key;
-        this.httpConfiguration = http_options;
+        super(key, http_options);
     }
 
     public add = async <T>(

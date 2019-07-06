@@ -14,6 +14,7 @@ import {
     RequestType
 } from "../index";
 import { determineError } from "../utils/ErrorHandler";
+import BaseEndpoint from "./BaseEndpoint";
 
 /**
  * Payment request class
@@ -21,29 +22,7 @@ import { determineError } from "../utils/ErrorHandler";
  * @export
  * @class Payments
  */
-export default class Payments {
-
-    /**
-     * The auth key needed in the HTTP calls to the
-     * Checkout.com Unified Payments API
-     *
-     * This key is used in the 'Authorisation Header'
-     *
-     * @type {string}
-     * @memberof Payments
-     */
-    key: string;
-
-    /**
-     * Http configuration needed in the HTTP requests
-     * made the the Checkout.com Unified Payments API
-     *
-     * @type {string}
-     * @memberof Payments
-     */
-    httpConfiguration: HttpConfigurationType;
-
-
+export default class Payments extends BaseEndpoint {
     /**
      * Creates an instance of Payments.
      *
@@ -57,8 +36,7 @@ export default class Payments {
             timeout: DEFAULT_TIMEOUT, environment: Environment.Sandbox
         }
     ) {
-        this.key = key;
-        this.httpConfiguration = http_options;
+        super(key, http_options);
     }
 
     public request = async <T>(
