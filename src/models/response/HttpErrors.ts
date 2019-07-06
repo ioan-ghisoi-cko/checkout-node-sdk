@@ -114,7 +114,7 @@ export class TooManyRequestsError extends Error {
     constructor(error: PaymentError, message?: string) {
         super(message);
         Object.setPrototypeOf(this, new.target.prototype);
-        this.name = ValidationError.name;
+        this.name = TooManyRequestsError.name;
         this.body = error;
     }
 }
