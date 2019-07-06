@@ -87,15 +87,29 @@ export class NotFoundError extends Error {
  * @class ValidationError
  * @extends {Error}
  */
-export class ValidationError extends Error {
-    public http_code = 422;
+export class ErrorWithBody extends Error {
+    public http_code: number;
     public body: PaymentError;
 
-    constructor(error: PaymentError, message = "ValidationError") {
+    constructor(http_code: number, error: PaymentError, message?: string) {
         super(message);
         Object.setPrototypeOf(this, new.target.prototype);
-        this.name = ValidationError.name;
+        this.http_code = http_code;
         this.body = error;
+    }
+}
+
+
+/**
+ * ValidationError
+ *
+ * @export
+ * @class ValidationError
+ * @extends {Error}
+ */
+export class ValidationError extends ErrorWithBody {
+    constructor(error: PaymentError, message = "ValidationError") {
+        super(422, error, message);
     }
 }
 
@@ -107,15 +121,9 @@ export class ValidationError extends Error {
  * @class TooManyRequestsError
  * @extends {Error}
  */
-export class TooManyRequestsError extends Error {
-    public http_code = 429;
-    public body: PaymentError;
-
+export class TooManyRequestsError extends ErrorWithBody {
     constructor(error: PaymentError, message = "TooManyRequestsError") {
-        super(message);
-        Object.setPrototypeOf(this, new.target.prototype);
-        this.name = TooManyRequestsError.name;
-        this.body = error;
+        super(429, error, message);
     }
 }
 
