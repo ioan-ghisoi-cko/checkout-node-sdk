@@ -6,7 +6,8 @@ import {
     TooManyRequestsError,
     BadGateway,
     NotFoundError,
-    ActionNotAllowed
+    ActionNotAllowed,
+    NotConfiguredError
 } from "../models/response/HttpErrors";
 
 export const determineError = async (err: any): Promise<any> => {
@@ -24,6 +25,8 @@ export const determineError = async (err: any): Promise<any> => {
     switch (err.status) {
         case 401:
             return new AuthenticationError();
+        case 204:
+            return new NotConfiguredError();
         case 404:
             return new NotFoundError();
         case 403:

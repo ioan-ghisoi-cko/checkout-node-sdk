@@ -2,6 +2,7 @@ import { Environment } from "../../config/Environment";
 import * as Source from "../request/Sources";
 export type RequestType = "get" | "post" | "put" | "patch";
 type _SourceRequestType = "sepa";
+export type ContentType = "json" | 'xml';
 type SepaMandate = "single" | "recurring";
 type _EnvironmentType = Environment.Live | Environment.Sandbox;
 
@@ -317,3 +318,14 @@ export interface CreateTokenResponseType {
     phone?: Phone;
     name?: string;
 }
+
+export interface WebhookInstance {
+    id: string;
+    url: string;
+    active?: string;
+    headers?: string;
+    content_type?: ContentType;
+    event_types: [string];
+}
+
+export type RetriveWebhookResponseType = [WebhookInstance]
