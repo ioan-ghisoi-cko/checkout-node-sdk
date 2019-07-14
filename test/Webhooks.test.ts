@@ -384,7 +384,7 @@ describe("Retrieve webhook", async () => {
 });
 
 describe("Update webhook", async () => {
-	it("should retrieve webhook", async () => {
+	it("should update webhook", async () => {
 		nock("https://api.sandbox.checkout.com")
 			.put("/webhooks/wh_c7v25q36lxeuvl3bjksr5ybbhu")
 			.reply(200, {
@@ -427,11 +427,6 @@ describe("Update webhook", async () => {
 			environment: Environment.Sandbox
 		});
 
-		try {
-
-		} catch (er) {
-			console.log(er)
-		}
 		let outcome = await hook.update("wh_c7v25q36lxeuvl3bjksr5ybbhu", {
 			"url": "http://requestbin.fullcontact.com/ysvfvyys",
 			"active": true,
@@ -677,7 +672,353 @@ describe("Update webhook", async () => {
 			expect(err).to.be.instanceOf(ValidationError)
 		}
 	});
+});
 
+describe("Partially update webhook", async () => {
+	it("should partially update webhook", async () => {
+		nock("https://api.sandbox.checkout.com")
+			.patch("/webhooks/wh_c7v25q36lxeuvl3bjksr5ybbhu")
+			.reply(200, {
+				"url": "http://requestbin.fullcontact.com/ysvfvyys",
+				"active": true,
+				"headers": {
+					"Authorization": "12345"
+				},
+				"content_type": "json",
+				"event_types": [
+					"card_verification_declined",
+					"card_verified",
+					"dispute_canceled",
+					"dispute_evidence_required",
+					"dispute_expired",
+					"dispute_lost",
+					"dispute_resolved",
+					"dispute_won",
+					"payment_approved",
+					"payment_canceled",
+					"payment_capture_declined",
+					"payment_capture_pending",
+					"payment_captured",
+					"payment_chargeback",
+					"payment_declined",
+					"payment_expired",
+					"payment_pending",
+					"payment_refund_declined",
+					"payment_refund_pending",
+					"payment_refunded",
+					"payment_retrieval",
+					"payment_void_declined",
+					"payment_voided",
+					"source_updated"
+				]
+			});
+
+		const hook = new webhook('sk_test_0b9b5db6-f223-49d0-b68f-f6643dd4f808', {
+			timeout: 4000,
+			environment: Environment.Sandbox
+		});
+
+		try {
+
+		} catch (er) {
+			console.log(er)
+		}
+		let outcome = await hook.partialUpdate("wh_c7v25q36lxeuvl3bjksr5ybbhu", {
+			"url": "http://requestbin.fullcontact.com/ysvfvyys",
+			"active": true,
+			"headers": {
+				"Authorization": "12345"
+			},
+			"content_type": "json",
+			"event_types": [
+				"card_verification_declined",
+				"card_verified",
+				"dispute_canceled",
+				"dispute_evidence_required",
+				"dispute_expired",
+				"dispute_lost",
+				"dispute_resolved",
+				"dispute_won",
+				"payment_approved",
+				"payment_canceled",
+				"payment_capture_declined",
+				"payment_capture_pending",
+				"payment_captured",
+				"payment_chargeback",
+				"payment_declined",
+				"payment_expired",
+				"payment_pending",
+				"payment_refund_declined",
+				"payment_refund_pending",
+				"payment_refunded",
+				"payment_retrieval",
+				"payment_void_declined",
+				"payment_voided",
+				"source_updated"
+			]
+		});
+		expect(outcome.headers.Authorization).to.equal('12345');
+	});
+
+	it("should throw authentication error", async () => {
+		nock("https://api.sandbox.checkout.com")
+			.patch("/webhooks/wh_c7v25q36lxeuvl3bjksr5ybbhu")
+			.reply(401);
+
+		const hook = new webhook('sk_test_43ed9a7f-4799-461d-b201-a70507878b51', {
+			timeout: 4000,
+			environment: Environment.Sandbox
+		});
+
+		try {
+			let outcome = await hook.partialUpdate("wh_c7v25q36lxeuvl3bjksr5ybbhu", {
+				"url": "http://requestbin.fullcontact.com/ysvfvyys",
+				"active": true,
+				"headers": {
+					"Authorization": "12345"
+				},
+				"content_type": "json",
+				"event_types": [
+					"card_verification_declined",
+					"card_verified",
+					"dispute_canceled",
+					"dispute_evidence_required",
+					"dispute_expired",
+					"dispute_lost",
+					"dispute_resolved",
+					"dispute_won",
+					"payment_approved",
+					"payment_canceled",
+					"payment_capture_declined",
+					"payment_capture_pending",
+					"payment_captured",
+					"payment_chargeback",
+					"payment_declined",
+					"payment_expired",
+					"payment_pending",
+					"payment_refund_declined",
+					"payment_refund_pending",
+					"payment_refunded",
+					"payment_retrieval",
+					"payment_void_declined",
+					"payment_voided",
+					"source_updated"
+				]
+			});
+		} catch (err) {
+			const error = err as AuthenticationError;
+			expect(err).to.be.instanceOf(AuthenticationError)
+		}
+	});
+
+	it("should throw not found error", async () => {
+		nock("https://api.sandbox.checkout.com")
+			.patch("/webhooks/wh_c7v25q36lxeuvl3bjksr5ybbhu")
+			.reply(404);
+
+		const hook = new webhook('sk_test_43ed9a7f-4799-461d-b201-a70507878b51', {
+			timeout: 4000,
+			environment: Environment.Sandbox
+		});
+
+		try {
+			let outcome = await hook.partialUpdate("wh_c7v25q36lxeuvl3bjksr5ybbhu", {
+				"url": "http://requestbin.fullcontact.com/ysvfvyys",
+				"active": true,
+				"headers": {
+					"Authorization": "12345"
+				},
+				"content_type": "json",
+				"event_types": [
+					"card_verification_declined",
+					"card_verified",
+					"dispute_canceled",
+					"dispute_evidence_required",
+					"dispute_expired",
+					"dispute_lost",
+					"dispute_resolved",
+					"dispute_won",
+					"payment_approved",
+					"payment_canceled",
+					"payment_capture_declined",
+					"payment_capture_pending",
+					"payment_captured",
+					"payment_chargeback",
+					"payment_declined",
+					"payment_expired",
+					"payment_pending",
+					"payment_refund_declined",
+					"payment_refund_pending",
+					"payment_refunded",
+					"payment_retrieval",
+					"payment_void_declined",
+					"payment_voided",
+					"source_updated"
+				]
+			});
+		} catch (err) {
+			const error = err as NotFoundError;
+			expect(err).to.be.instanceOf(NotFoundError)
+		}
+	});
+
+	it("should throw already registered error", async () => {
+		nock("https://api.sandbox.checkout.com")
+			.patch("/webhooks/wh_c7v25q36lxeuvl3bjksr5ybbhu")
+			.reply(409);
+
+		const hook = new webhook('sk_test_43ed9a7f-4799-461d-b201-a70507878b51', {
+			timeout: 4000,
+			environment: Environment.Sandbox
+		});
+
+		try {
+			let outcome = await hook.partialUpdate("wh_c7v25q36lxeuvl3bjksr5ybbhu", {
+				"url": "http://requestbin.fullcontact.com/ysvfvyys",
+				"active": true,
+				"headers": {
+					"Authorization": "12345"
+				},
+				"content_type": "json",
+				"event_types": [
+					"card_verification_declined",
+					"card_verified",
+					"dispute_canceled",
+					"dispute_evidence_required",
+					"dispute_expired",
+					"dispute_lost",
+					"dispute_resolved",
+					"dispute_won",
+					"payment_approved",
+					"payment_canceled",
+					"payment_capture_declined",
+					"payment_capture_pending",
+					"payment_captured",
+					"payment_chargeback",
+					"payment_declined",
+					"payment_expired",
+					"payment_pending",
+					"payment_refund_declined",
+					"payment_refund_pending",
+					"payment_refunded",
+					"payment_retrieval",
+					"payment_void_declined",
+					"payment_voided",
+					"source_updated"
+				]
+			});
+		} catch (err) {
+			const error = err as UrlAlreadyRegistered;
+			expect(err).to.be.instanceOf(UrlAlreadyRegistered)
+		}
+	});
+
+	it("should throw already registered error", async () => {
+		nock("https://api.sandbox.checkout.com")
+			.patch("/webhooks/wh_c7v25q36lxeuvl3bjksr5ybbhu")
+			.reply(422, {
+				"request_id": "0HL80RJLS76I7",
+				"error_type": "request_invalid",
+				"error_codes": [
+					"payment_source_required"
+				]
+			});
+
+		const hook = new webhook('sk_test_43ed9a7f-4799-461d-b201-a70507878b51', {
+			timeout: 4000,
+			environment: Environment.Sandbox
+		});
+
+		try {
+			let outcome = await hook.partialUpdate("wh_c7v25q36lxeuvl3bjksr5ybbhu", {
+				"url": "http://requestbin.fullcontact.com/ysvfvyys",
+				"active": true,
+				"headers": {
+					"Authorization": "12345"
+				},
+				"content_type": "json",
+				"event_types": [
+					"card_verification_declined",
+					"card_verified",
+					"dispute_canceled",
+					"dispute_evidence_required",
+					"dispute_expired",
+					"dispute_lost",
+					"dispute_resolved",
+					"dispute_won",
+					"payment_approved",
+					"payment_canceled",
+					"payment_capture_declined",
+					"payment_capture_pending",
+					"payment_captured",
+					"payment_chargeback",
+					"payment_declined",
+					"payment_expired",
+					"payment_pending",
+					"payment_refund_declined",
+					"payment_refund_pending",
+					"payment_refunded",
+					"payment_retrieval",
+					"payment_void_declined",
+					"payment_voided",
+					"source_updated"
+				]
+			});
+		} catch (err) {
+			expect(err).to.be.instanceOf(ValidationError)
+		}
+	});
+});
+
+
+
+
+describe("Remove webhook", async () => {
+	it("should remove webhook", async () => {
+		nock("https://api.sandbox.checkout.com")
+			.delete("/webhooks/wh_c7v25q36lxeuvl3bjksr5ybbhu")
+			.reply(204);
+
+		const hook = new webhook('sk_test_0b9b5db6-f223-49d0-b68f-f6643dd4f808', {
+			timeout: 4000,
+			environment: Environment.Sandbox
+		});
+		let outcome = await hook.remove("wh_c7v25q36lxeuvl3bjksr5ybbhu");
+	});
+
+	it("should throw authentication error", async () => {
+		nock("https://api.sandbox.checkout.com")
+			.delete("/webhooks/wh_c7v25q36lxeuvl3bjksr5ybbhu")
+			.reply(401);
+
+		const hook = new webhook('sk_test_0b9b5db6-f223-49d0-b68f-f6643dd4f808', {
+			timeout: 4000,
+			environment: Environment.Sandbox
+		});
+		try {
+			let outcome = await hook.remove("wh_c7v25q36lxeuvl3bjksr5ybbhu");
+		} catch (err) {
+			const error = err as AuthenticationError;
+			expect(err).to.be.instanceOf(AuthenticationError)
+		}
+	});
+
+	it("should throw not found error", async () => {
+		nock("https://api.sandbox.checkout.com")
+			.delete("/webhooks/wh_c7v25q36lxeuvl3bjksr5ybbhu")
+			.reply(404);
+
+		const hook = new webhook('sk_test_0b9b5db6-f223-49d0-b68f-f6643dd4f808', {
+			timeout: 4000,
+			environment: Environment.Sandbox
+		});
+		try {
+			let outcome = await hook.remove("wh_c7v25q36lxeuvl3bjksr5ybbhu");
+		} catch (err) {
+			const error = err as NotFoundError;
+			expect(err).to.be.instanceOf(NotFoundError)
+		}
+	});
 
 
 });

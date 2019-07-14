@@ -1,6 +1,6 @@
 import { Environment } from "../../config/Environment";
 import * as Source from "../request/Sources";
-export type RequestType = "get" | "post" | "put" | "patch";
+export type RequestType = "get" | "post" | "put" | "patch" | "delete";
 type _SourceRequestType = "sepa";
 export type ContentType = "json" | 'xml';
 type SepaMandate = "single" | "recurring";

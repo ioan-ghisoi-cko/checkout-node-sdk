@@ -60,6 +60,39 @@ export default class Webhooks extends BaseEndpoint {
         }
     };
 
+    public partialUpdate = async (id: string, body: NewWebhookInstance): Promise<WebhookResponse> => {
+        try {
+            const http = new Http(this.httpConfiguration);
+            const response = await http.send({
+                method: "patch",
+                url: `${this.httpConfiguration.environment}/webhooks/${id}`,
+                headers: {
+                    Authorization: this.key
+                },
+                body
+            });
+            return new WebhookResponse(await response.json);
+        } catch (err) {
+            throw await determineError(err);
+        }
+    };
+
+    public remove = async (id: string) => {
+        try {
+            const http = new Http(this.httpConfiguration);
+            const response = await http.send({
+                method: "delete",
+                url: `${this.httpConfiguration.environment}/webhooks/${id}`,
+                headers: {
+                    Authorization: this.key
+                }
+            });
+            return new WebhookResponse(await response.json);
+        } catch (err) {
+            throw await determineError(err);
+        }
+    };
+
     public register = async (arg: NewWebhookInstance): Promise<WebhookResponse> => {
         try {
             const http = new Http(this.httpConfiguration);
