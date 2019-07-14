@@ -7,6 +7,8 @@ import {
 } from "../index";
 import { determineError } from "../utils/ErrorHandler";
 import BaseEndpoint from "./BaseEndpoint";
+import { NewWebhookInstance } from "../models/types/Types";
+import { WebhookResponse } from "../models/response";
 
 export default class Webhooks extends BaseEndpoint {
 
@@ -19,7 +21,7 @@ export default class Webhooks extends BaseEndpoint {
         super(key, http_options);
     }
 
-    public retrieve = async (): Promise<RetriveWebhookResponse> => {
+    public retrieveWebhooks = async (arg?: string): Promise<RetriveWebhookResponse> => {
         try {
             const getPayment = await this._getHandler(`${this.httpConfiguration.environment}/webhooks`);
             if (getPayment.status === 204) {
@@ -27,6 +29,32 @@ export default class Webhooks extends BaseEndpoint {
             } else {
                 return new RetriveWebhookResponse(await getPayment.json);
             }
+        } catch (err) {
+            throw await determineError(err);
+        }
+    };
+
+    public retrieveWebhook = async (id: string): Promise<WebhookResponse> => {
+        try {
+            const getPayment = await this._getHandler(`${this.httpConfiguration.environment}/webhooks/${id}`);
+            return new WebhookResponse(await getPayment.json);
+        } catch (err) {
+            throw await determineError(err);
+        }
+    };
+
+    public register = async (arg: NewWebhookInstance): Promise<WebhookResponse> => {
+        try {
+            const http = new Http(this.httpConfiguration);
+            const response = await http.send({
+                method: "post",
+                url: `${this.httpConfiguration.environment}/webhooks`,
+                headers: {
+                    Authorization: this.key
+                },
+                body: { arg }
+            });
+            return new WebhookResponse(await response.json);
         } catch (err) {
             throw await determineError(err);
         }

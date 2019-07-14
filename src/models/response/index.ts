@@ -4,3 +4,4 @@ export * from "./PaymentResponse";
 export * from "./AddSourceResponse";
 export * from "./CreateTokenResponse";
 export * from "./RetriveWebhookResponse";
+export * from "./RegisterWebhookRespose";

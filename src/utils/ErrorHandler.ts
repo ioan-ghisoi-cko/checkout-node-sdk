@@ -6,7 +6,8 @@ import {
     TooManyRequestsError,
     BadGateway,
     NotFoundError,
-    ActionNotAllowed
+    ActionNotAllowed,
+    UrlAlreadyRegistered
 } from "../models/response/HttpErrors";
 import { NoWebhooksConfigured } from "../models/response";
 
@@ -32,6 +33,8 @@ export const determineError = async (err: any): Promise<any> => {
             return new NotFoundError();
         case 403:
             return new ActionNotAllowed();
+        case 409:
+            return new UrlAlreadyRegistered();
         case 422:
             return new ValidationError(await errorJSON);
         case 429:

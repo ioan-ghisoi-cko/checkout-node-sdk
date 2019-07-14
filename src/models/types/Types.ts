@@ -319,13 +319,16 @@ export interface CreateTokenResponseType {
     name?: string;
 }
 
-export interface WebhookInstance {
-    id: string;
+export interface NewWebhookInstance {
     url: string;
-    active?: string;
-    headers?: string;
+    active?: boolean;
+    headers?: any;
     content_type?: ContentType;
-    event_types: [string];
+    event_types: string[];
+}
+
+export interface WebhookInstance extends NewWebhookInstance {
+    id: string;
 }
 
 export type RetriveWebhookResponseType = [WebhookInstance]

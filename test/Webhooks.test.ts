@@ -9,12 +9,13 @@ import {
 	TooManyRequestsError,
 	BadGateway,
 	NotFoundError,
-	ActionNotAllowed
+	ActionNotAllowed,
+	UrlAlreadyRegistered
 } from '../src/models/response/HttpErrors';
 import webhook from '../src/api/Webhooks';
 const nock = require("nock");
 
-describe("Webhooks", async () => {
+describe("Retrieve webhooks", async () => {
 	it("should create instance of Webhooks class with a HTTP configuration", async () => {
 		const hook = new webhook('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
 		expect(hook).to.be.instanceOf(webhook);
@@ -65,7 +66,7 @@ describe("Webhooks", async () => {
 			environment: Environment.Sandbox
 		});
 
-		let outcome = await hook.retrieve();
+		let outcome = await hook.retrieveWebhooks();
 		expect(outcome.instances[0].active).to.be.true;
 		expect(outcome.instances[0].id).to.equal("wh_f3vhjg7lhwgeleccuuwl55gmva")
 	});
@@ -81,7 +82,7 @@ describe("Webhooks", async () => {
 		});
 
 		try {
-			let outcome = await hook.retrieve();
+			let outcome = await hook.retrieveWebhooks();
 		} catch (error) {
 			const err = error as NoWebhooksConfigured;
 			expect(err).to.be.instanceOf(NoWebhooksConfigured)
@@ -101,11 +102,283 @@ describe("Webhooks", async () => {
 		});
 
 		try {
-			let outcome = await hook.retrieve();
+			let outcome = await hook.retrieveWebhooks();
 
 		} catch (err) {
 			const error = err as AuthenticationError;
 			expect(err).to.be.instanceOf(AuthenticationError)
+		}
+	});
+});
+
+describe("Register webhook", async () => {
+	it("should throw authentication error", async () => {
+		nock("https://api.sandbox.checkout.com")
+			.post("/webhooks")
+			.reply(201, {
+				id: "wh_387ac7a83a054e37ae140105429d76b5",
+				url: 'http://test.com/webhook',
+				active: true,
+				headers: {
+					authorization: "1234"
+				},
+				content_type: 'json',
+				event_types: [
+					"payment_approved",
+					"payment_flagged",
+					"payment_pending",
+					"payment_declined",
+					"payment_expired",
+					"payment_cancelled",
+					"payment_voided",
+					"payment_void_declined",
+					"payment_captured",
+					"payment_capture_declined",
+					"payment_capture_pending",
+					"payment_refunded",
+					"payment_refund_declined",
+					"payment_refund_pending"
+				],
+				_links: {
+					self: {
+						href: "https://api.checkout.com/webhooks/wh_387ac7a83a054e37ae140105429d76b5"
+					}
+				}
+			});
+
+		const hook = new webhook('sk_test_43ed9a7f-4799-461d-b201-a70507878b51', {
+			timeout: 4000,
+			environment: Environment.Sandbox
+		});
+
+		let outcome = await hook.register({
+			url: 'http://test.com/webhook',
+			active: true,
+			headers: {
+				authorization: "1234"
+			},
+			content_type: 'json',
+			event_types: [
+				"payment_approved",
+				"payment_flagged",
+				"payment_pending",
+				"payment_declined",
+				"payment_expired",
+				"payment_cancelled",
+				"payment_voided",
+				"payment_void_declined",
+				"payment_captured",
+				"payment_capture_declined",
+				"payment_capture_pending",
+				"payment_refunded",
+				"payment_refund_declined",
+				"payment_refund_pending"
+			]
+		});
+		expect(outcome.url).to.equal('http://test.com/webhook');
+		expect(outcome.headers.authorization).to.equal('1234');
+	});
+
+	it("should throw authentication error", async () => {
+		nock("https://api.sandbox.checkout.com")
+			.post("/webhooks")
+			.reply(401);
+
+		const hook = new webhook('sk_test_43ed9a7f-4799-461d-b201-a70507878b51', {
+			timeout: 4000,
+			environment: Environment.Sandbox
+		});
+
+		try {
+			let outcome = await hook.register({
+				url: 'http://test.com/webhook',
+				active: true,
+				headers: {
+					authorization: "1234"
+				},
+				content_type: 'json',
+				event_types: [
+					"payment_approved",
+					"payment_flagged",
+					"payment_pending",
+					"payment_declined",
+					"payment_expired",
+					"payment_cancelled",
+					"payment_voided",
+					"payment_void_declined",
+					"payment_captured",
+					"payment_capture_declined",
+					"payment_capture_pending",
+					"payment_refunded",
+					"payment_refund_declined",
+					"payment_refund_pending"
+				]
+			});
+
+		} catch (err) {
+			const error = err as AuthenticationError;
+			expect(err).to.be.instanceOf(AuthenticationError)
+		}
+	});
+
+	it("should throw URL already registered error", async () => {
+		nock("https://api.sandbox.checkout.com")
+			.post("/webhooks")
+			.reply(409);
+
+		const hook = new webhook('sk_test_43ed9a7f-4799-461d-b201-a70507878b51', {
+			timeout: 4000,
+			environment: Environment.Sandbox
+		});
+
+		try {
+			let outcome = await hook.register({
+				url: 'http://test.com/webhook',
+				active: true,
+				headers: {
+					authorization: "1234"
+				},
+				content_type: 'json',
+				event_types: [
+					"payment_approved",
+					"payment_flagged",
+					"payment_pending",
+					"payment_declined",
+					"payment_expired",
+					"payment_cancelled",
+					"payment_voided",
+					"payment_void_declined",
+					"payment_captured",
+					"payment_capture_declined",
+					"payment_capture_pending",
+					"payment_refunded",
+					"payment_refund_declined",
+					"payment_refund_pending"
+				]
+			});
+
+		} catch (err) {
+			const error = err as UrlAlreadyRegistered;
+			expect(err).to.be.instanceOf(UrlAlreadyRegistered)
+		}
+	});
+
+	it("should throw validation error", async () => {
+		nock("https://api.sandbox.checkout.com")
+			.post("/webhooks")
+			.reply(422);
+
+		const hook = new webhook('sk_test_43ed9a7f-4799-461d-b201-a70507878b51', {
+			timeout: 4000,
+			environment: Environment.Sandbox
+		});
+
+		try {
+			let outcome = await hook.register({
+				url: 'http://test.com/webhook',
+				active: true,
+				headers: {
+					authorization: "1234"
+				},
+				content_type: 'json',
+				event_types: [
+					"payment_approved",
+					"payment_flagged",
+					"payment_pending",
+					"payment_declined",
+					"payment_expired",
+					"payment_cancelled",
+					"payment_voided",
+					"payment_void_declined",
+					"payment_captured",
+					"payment_capture_declined",
+					"payment_capture_pending",
+					"payment_refunded",
+					"payment_refund_declined",
+					"payment_refund_pending"
+				]
+			});
+
+		} catch (err) {
+			expect(err).to.be.instanceOf(ValidationError)
+		}
+	});
+});
+
+describe("Retrieve webhook", async () => {
+	it("should retrieve webhook", async () => {
+		nock("https://api.sandbox.checkout.com")
+			.get("/webhooks/wh_387ac7a83a054e37ae140105429d76b5")
+			.reply(200, {
+				url: 'http://test.com/webhook',
+				active: true,
+				headers: {
+					authorization: "1234"
+				},
+				content_type: 'json',
+				event_types: [
+					"payment_approved",
+					"payment_flagged",
+					"payment_pending",
+					"payment_declined",
+					"payment_expired",
+					"payment_cancelled",
+					"payment_voided",
+					"payment_void_declined",
+					"payment_captured",
+					"payment_capture_declined",
+					"payment_capture_pending",
+					"payment_refunded",
+					"payment_refund_declined",
+					"payment_refund_pending"
+				]
+			});
+
+		const hook = new webhook('sk_test_43ed9a7f-4799-461d-b201-a70507878b51', {
+			timeout: 4000,
+			environment: Environment.Sandbox
+		});
+
+		let outcome = await hook.retrieveWebhook("wh_387ac7a83a054e37ae140105429d76b5");
+		expect(outcome.url).to.equal('http://test.com/webhook');
+		expect(outcome.headers.authorization).to.equal('1234');
+	});
+
+	it("should throw authentication error", async () => {
+		nock("https://api.sandbox.checkout.com")
+			.get("/webhooks/wh_387ac7a83a054e37ae140105429d76b5")
+			.reply(401);
+
+		const hook = new webhook('sk_test_43ed9a7f-4799-461d-b201-a70507878b51', {
+			timeout: 4000,
+			environment: Environment.Sandbox
+		});
+
+		try {
+			let outcome = await hook.retrieveWebhook('wh_387ac7a83a054e37ae140105429d76b5');
+
+		} catch (err) {
+			const error = err as AuthenticationError;
+			expect(err).to.be.instanceOf(AuthenticationError)
+		}
+	});
+
+	it("should throw not found error", async () => {
+		nock("https://api.sandbox.checkout.com")
+			.get("/webhooks/wh_387ac7a83a054e37ae140105429d76b5")
+			.reply(404);
+
+		const hook = new webhook('sk_test_43ed9a7f-4799-461d-b201-a70507878b51', {
+			timeout: 4000,
+			environment: Environment.Sandbox
+		});
+
+		try {
+			let outcome = await hook.retrieveWebhook('wh_387ac7a83a054e37ae140105429d76b5');
+
+		} catch (err) {
+			const error = err as NotFoundError;
+			expect(err).to.be.instanceOf(NotFoundError)
 		}
 	});
 });

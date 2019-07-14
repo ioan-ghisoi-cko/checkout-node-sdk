@@ -64,6 +64,24 @@ export class ActionNotAllowed extends Error {
 }
 
 /**
+ * UrlAlreadyRegistered
+ *
+ * @export
+ * @class UrlAlreadyRegistered
+ * @extends {Error}
+ */
+export class UrlAlreadyRegistered extends Error {
+    public http_code = 409;
+
+    constructor(message = "UrlAlreadyRegistered") {
+        super(message);
+        Object.setPrototypeOf(this, new.target.prototype);
+        this.name = UrlAlreadyRegistered.name;
+    }
+}
+
+
+/**
  * NotFoundError
  *
  * @export
