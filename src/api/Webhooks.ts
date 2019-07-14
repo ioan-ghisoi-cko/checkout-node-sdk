@@ -23,11 +23,11 @@ export default class Webhooks extends BaseEndpoint {
 
     public retrieveWebhooks = async (arg?: string): Promise<RetriveWebhookResponse> => {
         try {
-            const getPayment = await this._getHandler(`${this.httpConfiguration.environment}/webhooks`);
-            if (getPayment.status === 204) {
+            const getWebhooks = await this._getHandler(`${this.httpConfiguration.environment}/webhooks`);
+            if (getWebhooks.status === 204) {
                 throw { status: 204 }
             } else {
-                return new RetriveWebhookResponse(await getPayment.json);
+                return new RetriveWebhookResponse(await getWebhooks.json);
             }
         } catch (err) {
             throw await determineError(err);
@@ -36,8 +36,25 @@ export default class Webhooks extends BaseEndpoint {
 
     public retrieveWebhook = async (id: string): Promise<WebhookResponse> => {
         try {
-            const getPayment = await this._getHandler(`${this.httpConfiguration.environment}/webhooks/${id}`);
-            return new WebhookResponse(await getPayment.json);
+            const getWebhooks = await this._getHandler(`${this.httpConfiguration.environment}/webhooks/${id}`);
+            return new WebhookResponse(await getWebhooks.json);
+        } catch (err) {
+            throw await determineError(err);
+        }
+    };
+
+    public update = async (id: string, body: NewWebhookInstance): Promise<WebhookResponse> => {
+        try {
+            const http = new Http(this.httpConfiguration);
+            const response = await http.send({
+                method: "put",
+                url: `${this.httpConfiguration.environment}/webhooks/${id}`,
+                headers: {
+                    Authorization: this.key
+                },
+                body
+            });
+            return new WebhookResponse(await response.json);
         } catch (err) {
             throw await determineError(err);
         }
