@@ -47,23 +47,6 @@ export class AuthenticationError extends Error {
 }
 
 /**
- * NotConfiguredError
- *
- * @export
- * @class AuthenticationError
- * @extends {Error}
- */
-export class NotConfiguredError extends Error {
-    public http_code = 204;
-
-    constructor(message?: string) {
-        super(message);
-        Object.setPrototypeOf(this, new.target.prototype);
-        this.name = NotConfiguredError.name;
-    }
-}
-
-/**
  * ActionNotAllowed
  *
  * @export

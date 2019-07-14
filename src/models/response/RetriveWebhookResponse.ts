@@ -11,3 +11,11 @@ export class RetriveWebhookResponse {
         this.instances = response;
     }
 }
+
+export class NoWebhooksConfigured {
+    public http_code: number;
+
+    constructor(http_code: number) {
+        this.http_code = http_code;
+    }
+}

@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import tokens from '../src/api/Tokens';
-import { Environment, CardSource, ApplePaySource, GooglePaySource } from '../src';
+import { Environment, CardSource, ApplePaySource, GooglePaySource, NoWebhooksConfigured } from '../src';
 import {
 	ApiError,
 	ApiTimeout,
@@ -9,8 +9,7 @@ import {
 	TooManyRequestsError,
 	BadGateway,
 	NotFoundError,
-	ActionNotAllowed,
-	NotConfiguredError
+	ActionNotAllowed
 } from '../src/models/response/HttpErrors';
 import webhook from '../src/api/Webhooks';
 const nock = require("nock");
@@ -84,8 +83,10 @@ describe("Webhooks", async () => {
 		try {
 			let outcome = await hook.retrieve();
 		} catch (error) {
-			const err = error as NotConfiguredError;
-			expect(err).to.be.instanceOf(NotConfiguredError)
+			const err = error as NoWebhooksConfigured;
+			expect(err).to.be.instanceOf(NoWebhooksConfigured)
+			expect(error.http_code).to.equal(204);
+
 		}
 	});
 

@@ -6,9 +6,9 @@ import {
     TooManyRequestsError,
     BadGateway,
     NotFoundError,
-    ActionNotAllowed,
-    NotConfiguredError
+    ActionNotAllowed
 } from "../models/response/HttpErrors";
+import { NoWebhooksConfigured } from "../models/response";
 
 export const determineError = async (err: any): Promise<any> => {
     // Fot time outs
@@ -22,11 +22,12 @@ export const determineError = async (err: any): Promise<any> => {
             return data;
         }).catch(err => { }) : {};
 
+
     switch (err.status) {
         case 401:
             return new AuthenticationError();
         case 204:
-            return new NotConfiguredError();
+            return new NoWebhooksConfigured(204);
         case 404:
             return new NotFoundError();
         case 403:

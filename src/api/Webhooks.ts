@@ -1,13 +1,11 @@
 import {
     HttpConfigurationType,
     Http,
-    RetriveWebhookResponseType,
     RetriveWebhookResponse,
     Environment,
     DEFAULT_TIMEOUT
 } from "../index";
 import { determineError } from "../utils/ErrorHandler";
-import { CardSource, ApplePaySource, GooglePaySource } from "../models/request";
 import BaseEndpoint from "./BaseEndpoint";
 
 export default class Webhooks extends BaseEndpoint {
@@ -24,7 +22,11 @@ export default class Webhooks extends BaseEndpoint {
     public retrieve = async (): Promise<RetriveWebhookResponse> => {
         try {
             const getPayment = await this._getHandler(`${this.httpConfiguration.environment}/webhooks`);
-            return new RetriveWebhookResponse(await getPayment.json);
+            if (getPayment.status === 204) {
+                throw { status: 204 }
+            } else {
+                return new RetriveWebhookResponse(await getPayment.json);
+            }
         } catch (err) {
             throw await determineError(err);
         }
