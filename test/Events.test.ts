@@ -194,6 +194,112 @@ describe("Retrieve events", async () => {
 	});
 });
 
+describe("Retrieve event", async () => {
+	it("should retrieve events", async () => {
+		nock("https://api.sandbox.checkout.com")
+			.get("/events/evt_hxkvhyiokc6u7bd6mlo5u4dg3e")
+			.reply(200, {
+				"id": "evt_hxkvhyiokc6u7bd6mlo5u4dg3e",
+				"type": "charge.captured",
+				"version": "1.0",
+				"created_on": "2019-07-12T00:09:22Z",
+				"data": {
+					"original_id": "charge_test_CD1AE8ED246T623939E4",
+					"has_chargeback": "N",
+					"id": "charge_test_8F4AE8ED246I623936D2",
+					"live_mode": false,
+					"charge_mode": 1,
+					"response_code": "10000",
+					"created": "2019-07-12T00:09:22Z",
+					"value": 1200,
+					"currency": "EUR",
+					"track_id": "exp1",
+					"description": "Recurring #12 for recurring customer plan id: cp_AF2E29BF046G76B90791",
+					"response_message": "Approved",
+					"response_advanced_info": "Approved",
+					"status": "Captured",
+					"products": []
+				},
+				"notifications": [
+					{
+						"url": "http://requestbin.fullcontact.com/1nk9ip41",
+						"id": "ntf_ua4w3iqizxde3mnw6yzbm4qgqm",
+						"notification_type": "Webhook",
+						"success": false,
+						"_links": {
+							"self": {
+								"href": "https://api.sandbox.checkout.com/events/evt_hxkvhyiokc6u7bd6mlo5u4dg3e/notifications/ntf_ua4w3iqizxde3mnw6yzbm4qgqm"
+							}
+						}
+					},
+					{
+						"url": "http://requestbin.fullcontact.com/1nk9ip41",
+						"id": "ntf_i2siy6h22tpetp33pldltm25ti",
+						"notification_type": "Webhook",
+						"success": false,
+						"_links": {
+							"self": {
+								"href": "https://api.sandbox.checkout.com/events/evt_hxkvhyiokc6u7bd6mlo5u4dg3e/notifications/ntf_i2siy6h22tpetp33pldltm25ti"
+							}
+						}
+					}
+				],
+				"_links": {
+					"self": {
+						"href": "https://api.sandbox.checkout.com/events/evt_hxkvhyiokc6u7bd6mlo5u4dg3e"
+					},
+					"webhooks-retry": {
+						"href": "https://api.sandbox.checkout.com/events/evt_hxkvhyiokc6u7bd6mlo5u4dg3e/webhooks/retry"
+					}
+				}
+			});
+
+		const evt = new events('sk_test_43ed9a7f-4799-461d-b201-a70507878b51', {
+			timeout: 4000,
+			environment: Environment.Sandbox
+		});
+
+		const outcome = await evt.retrieveEvent("evt_hxkvhyiokc6u7bd6mlo5u4dg3e");
+		expect(outcome.id).to.equal("evt_hxkvhyiokc6u7bd6mlo5u4dg3e");
+	});
+
+	it("should throw authentication error", async () => {
+		nock("https://api.sandbox.checkout.com")
+			.get("/events/evt_hxkvhyiokc6u7bd6mlo5u4dg3e")
+			.reply(401);
+
+		const evt = new events('sk_test_43ed9a7f-4799-461d-b201-a70507878b51', {
+			timeout: 4000,
+			environment: Environment.Sandbox
+		});
+
+		try {
+			const outcome = await evt.retrieveEvent("evt_hxkvhyiokc6u7bd6mlo5u4dg3e");
+		} catch (err) {
+			const error = err as AuthenticationError;
+			expect(err).to.be.instanceOf(AuthenticationError)
+		}
+	});
+
+	it("should throw not found error", async () => {
+		nock("https://api.sandbox.checkout.com")
+			.get("/events/evt_hxkvhyiokc6u7bd6mlo5u4dg3e")
+			.reply(404);
+
+		const evt = new events('sk_test_43ed9a7f-4799-461d-b201-a70507878b51', {
+			timeout: 4000,
+			environment: Environment.Sandbox
+		});
+
+		try {
+			const outcome = await evt.retrieveEvent("evt_hxkvhyiokc6u7bd6mlo5u4dg3e");
+		} catch (err) {
+			const error = err as NotFoundError;
+			expect(err).to.be.instanceOf(NotFoundError)
+		}
+	});
+});
+
 describe("Retrieve event notification", async () => {
 	it("should retrieve event notification ", async () => {
 		nock("https://api.sandbox.checkout.com")
@@ -305,8 +411,57 @@ describe("Retrieve event notification", async () => {
 	});
 });
 
+describe("Retry webhook", async () => {
+	it("should retry event notification ", async () => {
+		nock("https://api.sandbox.checkout.com")
+			.post("/events/evt_hxkvhyiokc6u7bd6mlo5u4dg3e/webhooks/wh_f3vhjg7lhwgeleccuuwl55gmva/retry")
+			.reply(202);
 
-describe("Retrieve event notification", async () => {
+		const evt = new events('sk_test_43ed9a7f-4799-461d-b201-a70507878b51', {
+			timeout: 4000,
+			environment: Environment.Sandbox
+		});
+		const outcome = await evt.retry("evt_hxkvhyiokc6u7bd6mlo5u4dg3e", "wh_f3vhjg7lhwgeleccuuwl55gmva");
+	});
+
+	it("should throw authentication error", async () => {
+		nock("https://api.sandbox.checkout.com")
+			.post("/events/evt_hxkvhyiokc6u7bd6mlo5u4dg3e/webhooks/wh_f3vhjg7lhwgeleccuuwl55gmva/retry")
+			.reply(202);
+
+		const evt = new events('sk_test_43ed9a7f-4799-461d-b201-a70507878b51', {
+			timeout: 4000,
+			environment: Environment.Sandbox
+		});
+
+		try {
+			const outcome = await evt.retry("evt_hxkvhyiokc6u7bd6mlo5u4dg3e", "wh_f3vhjg7lhwgeleccuuwl55gmva");
+		} catch (err) {
+			const error = err as AuthenticationError;
+			expect(err).to.be.instanceOf(AuthenticationError)
+		}
+	});
+
+	it("should throw not found error", async () => {
+		nock("https://api.sandbox.checkout.com")
+			.post("/events/evt_hxkvhyiokc6u7bd6mlo5u4dg3e/webhooks/wh_f3vhjg7lhwgeleccuuwl55gmva/retry")
+			.reply(404);
+
+		const evt = new events('sk_test_43ed9a7f-4799-461d-b201-a70507878b51', {
+			timeout: 4000,
+			environment: Environment.Sandbox
+		});
+
+		try {
+			const outcome = await evt.retry("evt_hxkvhyiokc6u7bd6mlo5u4dg3e", "wh_f3vhjg7lhwgeleccuuwl55gmva");
+		} catch (err) {
+			const error = err as NotFoundError;
+			expect(err).to.be.instanceOf(NotFoundError)
+		}
+	});
+});
+
+describe("Retry all webhooks", async () => {
 	it("should retry event notification ", async () => {
 		nock("https://api.sandbox.checkout.com")
 			.post("/events/evt_hxkvhyiokc6u7bd6mlo5u4dg3e/webhooks/retry")
@@ -316,7 +471,7 @@ describe("Retrieve event notification", async () => {
 			timeout: 4000,
 			environment: Environment.Sandbox
 		});
-		const outcome = await evt.retry("evt_hxkvhyiokc6u7bd6mlo5u4dg3e");
+		const outcome = await evt.retryAll("evt_hxkvhyiokc6u7bd6mlo5u4dg3e");
 	});
 
 	it("should throw authentication error", async () => {
@@ -330,7 +485,7 @@ describe("Retrieve event notification", async () => {
 		});
 
 		try {
-			const outcome = await evt.retry("evt_hxkvhyiokc6u7bd6mlo5u4dg3e");
+			const outcome = await evt.retryAll("evt_hxkvhyiokc6u7bd6mlo5u4dg3e");
 		} catch (err) {
 			const error = err as AuthenticationError;
 			expect(err).to.be.instanceOf(AuthenticationError)
@@ -348,11 +503,10 @@ describe("Retrieve event notification", async () => {
 		});
 
 		try {
-			const outcome = await evt.retry("evt_hxkvhyiokc6u7bd6mlo5u4dg3e");
+			const outcome = await evt.retryAll("evt_hxkvhyiokc6u7bd6mlo5u4dg3e");
 		} catch (err) {
 			const error = err as NotFoundError;
 			expect(err).to.be.instanceOf(NotFoundError)
 		}
 	});
-
 });

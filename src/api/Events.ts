@@ -49,6 +49,7 @@ export default class Events extends BaseEndpoint {
     public retrieveEvent = async (id: string): Promise<RetriveEventResponse> => {
         try {
             const getEvents = await this._getHandler(`${this.httpConfiguration.environment}/events/${id}`);
+            console.log(getEvents);
             return new RetriveEventResponse(await getEvents.json);
         } catch (err) {
             throw await determineError(err);
@@ -64,7 +65,22 @@ export default class Events extends BaseEndpoint {
         }
     };
 
-    public retry = async (eventId: string) => {
+    public retry = async (eventId: string, webhookId: string) => {
+        const http = new Http(this.httpConfiguration);
+        try {
+            const response = await http.send({
+                method: "post",
+                url: `${this.httpConfiguration.environment}/events/${eventId}/webhooks/${webhookId}/retry`,
+                headers: {
+                    Authorization: this.key,
+                }
+            });
+        } catch (err) {
+            throw await determineError(err);
+        }
+    };
+
+    public retryAll = async (eventId: string) => {
         const http = new Http(this.httpConfiguration);
         try {
             const response = await http.send({
