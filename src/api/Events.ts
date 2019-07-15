@@ -26,9 +26,9 @@ export default class Events extends BaseEndpoint {
     /**
      * Creates an instance of Events.
      * @param {string} key
-     * @param {HttpConfigurationType} [http_options={
-     *             timeout: DEFAULT_TIMEOUT, environment: Environment.Sandbox
-     *         }]
+     * @param {http_options} HttpConfigurationType
+     * @param {HttpConfigurationType.timeout} HttpConfigurationType.timeout HTTP request timeout
+     * @param {HttpConfigurationType.environment} HttpConfigurationType.environment default: Sandbox; API Environment
      * @memberof Events
      */
     constructor(

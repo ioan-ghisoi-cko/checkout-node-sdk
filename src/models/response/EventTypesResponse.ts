@@ -3,6 +3,13 @@ import {
     EventType
 } from "../../index";
 
+
+/**
+ * EventTypesResponse class
+ *
+ * @export
+ * @class EventTypesResponse
+ */
 export class EventTypesResponse {
     public instances: [EventType];
 

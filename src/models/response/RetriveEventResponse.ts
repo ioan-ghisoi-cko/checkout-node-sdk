@@ -5,6 +5,13 @@ import {
     RetrieveEventResponseType
 } from "../../index";
 
+
+/**
+ * RetriveEventResponse class
+ *
+ * @export
+ * @class RetriveEventResponse
+ */
 export class RetriveEventResponse {
     public id: string;
     public type: string;

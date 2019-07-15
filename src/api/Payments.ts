@@ -29,9 +29,9 @@ export default class Payments extends BaseEndpoint {
      * Creates an instance of Payments.
      *
      * @param {string} key
-     * @param {HttpConfigurationType} http_options
-     * @param {HttpConfigurationType.timeout} number HTTP request timeout
-     * @param {HttpConfigurationType.environment} default: Sandbox; API Environment
+     * @param {http_options} HttpConfigurationType
+     * @param {HttpConfigurationType.timeout} HttpConfigurationType.timeout HTTP request timeout
+     * @param {HttpConfigurationType.environment} HttpConfigurationType.environment default: Sandbox; API Environment
      * @memberof Payments
      */
     constructor(

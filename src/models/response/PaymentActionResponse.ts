@@ -3,6 +3,13 @@ import {
     CapturedLinks
 } from "../types/Types";
 
+
+/**
+ * PaymentActionResponse class
+ *
+ * @export
+ * @class PaymentActionResponse
+ */
 export class PaymentActionResponse {
     action_id: string;
     reference: string;

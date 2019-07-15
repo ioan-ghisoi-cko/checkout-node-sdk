@@ -9,6 +9,12 @@ import {
 } from "../../index";
 
 
+/**
+ * CreateTokenResponse class
+ *
+ * @export
+ * @class CreateTokenResponse
+ */
 export class CreateTokenResponse {
     public type: string;
     public token: string;

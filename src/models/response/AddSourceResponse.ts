@@ -6,6 +6,12 @@ import {
 } from "../../index";
 
 
+/**
+ * AddSourceResponse class
+ *
+ * @export
+ * @class AddSourceResponse
+ */
 export class AddSourceResponse {
     public id: string;
     public type: string;

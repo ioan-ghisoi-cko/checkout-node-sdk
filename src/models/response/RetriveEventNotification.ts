@@ -4,6 +4,13 @@ import {
     Attempt
 } from "../../index";
 
+
+/**
+ * RetriveEventNotification class
+ *
+ * @export
+ * @class RetriveEventNotification
+ */
 export class RetriveEventNotification {
     public id: string;
     public url: string;

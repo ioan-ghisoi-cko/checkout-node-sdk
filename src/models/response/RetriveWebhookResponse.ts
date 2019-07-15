@@ -3,6 +3,13 @@ import {
 } from "../../index";
 import { WebhookInstance } from "../types/Types";
 
+
+/**
+ * RetriveWebhookResponse class
+ *
+ * @export
+ * @class RetriveWebhookResponse
+ */
 export class RetriveWebhookResponse {
     public instances: [WebhookInstance];
 
@@ -11,6 +18,12 @@ export class RetriveWebhookResponse {
     }
 }
 
+/**
+ * NoWebhooksConfigured class
+ *
+ * @export
+ * @class NoWebhooksConfigured
+ */
 export class NoWebhooksConfigured {
     public http_code: number;
 

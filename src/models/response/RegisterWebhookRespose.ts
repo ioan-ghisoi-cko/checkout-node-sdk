@@ -1,9 +1,13 @@
-import {
-    RetriveWebhookResponseType,
-    ContentType
-} from "../../index";
+import { ContentType } from "../../index";
 import { WebhookInstance } from "../types/Types";
 
+
+/**
+ * WebhookResponse
+ *
+ * @export
+ * @class WebhookResponse
+ */
 export class WebhookResponse {
     public id: string;
     public url: string;

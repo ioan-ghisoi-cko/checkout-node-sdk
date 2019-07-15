@@ -2,12 +2,11 @@ import { Environment } from "../../config/Environment";
 import {
     CardSource
 } from "../../models/request/index";
-import * as Source from "../request/Sources";
-export type RequestType = "get" | "post" | "put" | "patch" | "delete";
+
 type _SourceRequestType = "sepa";
-export type ContentType = "json" | 'xml';
 type SepaMandate = "single" | "recurring";
 type _EnvironmentType = Environment.Live | Environment.Sandbox;
+
 
 interface ThreeDSecure {
     enabled?: boolean;
@@ -21,10 +20,6 @@ interface Processing {
     mid: string;
 }
 
-export interface Metadata {
-    [prop: string]: any;
-}
-
 interface Headers {
     [prop: string]: any;
 }
@@ -33,6 +28,14 @@ interface Link {
     href: string;
 }
 
+export type PaymentType = "Regular" | "Recurring" | "MOTO";
+export type PaymentEventType = "Authorization" | "Card Verification" | "Void" | "Capture" | "Refund";
+export type ContentType = "json" | 'xml';
+export type RequestType = "get" | "post" | "put" | "patch" | "delete";
+export type RetriveWebhookResponseType = [WebhookInstance];
+export type EventTypesResponseType = [EventType];
+export type Notifications = [Notification];
+
 export interface PaymentEvent {
     id: string;
     type: PaymentEventType;
@@ -40,8 +43,9 @@ export interface PaymentEvent {
     response_summary: string;
 }
 
-export type PaymentType = "Regular" | "Recurring" | "MOTO";
-export type PaymentEventType = "Authorization" | "Card Verification" | "Void" | "Capture" | "Refund";
+export interface Metadata {
+    [prop: string]: any;
+}
 
 export interface Recipient {
     dob: string;
@@ -334,15 +338,11 @@ export interface WebhookInstance extends NewWebhookInstance {
     id: string;
 }
 
-
-export type RetriveWebhookResponseType = [WebhookInstance];
-
 export interface EventType {
     version: string;
     event_types: string[];
 }
 
-export type EventTypesResponseType = [EventType];
 
 export interface RetrieveEventsParams {
     from?: string;
@@ -399,9 +399,6 @@ export interface Notification {
     success: boolean;
     _links: Link;
 }
-
-export type Notifications = [Notification];
-
 
 export interface RetrieveEventResponseType {
     id: string;

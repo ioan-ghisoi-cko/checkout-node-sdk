@@ -15,21 +15,6 @@ export class ApiTimeout extends Error {
 }
 
 /**
- * Error raised for pre-api value validation
- *
- * @export
- * @class ValueError
- * @extends {Error}
- */
-// export class ValueError extends Error {
-// 	constructor(message?: string) {
-// 		super(message);
-// 		Object.setPrototypeOf(this, new.target.prototype);
-// 		this.name = ValueError.name;
-// 	}
-// }
-
-/**
  * AuthenticationError
  *
  * @export
@@ -80,7 +65,6 @@ export class UrlAlreadyRegistered extends Error {
     }
 }
 
-
 /**
  * NotFoundError
  *
@@ -130,7 +114,6 @@ export class ValidationError extends ErrorWithBody {
         super(422, error, message);
     }
 }
-
 
 /**
  * TooManyRequestsError

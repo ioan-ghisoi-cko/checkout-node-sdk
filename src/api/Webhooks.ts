@@ -10,8 +10,27 @@ import BaseEndpoint from "./BaseEndpoint";
 import { NewWebhookInstance } from "../models/types/Types";
 import { WebhookResponse } from "../models/response";
 
+
+/**
+ * Webhooks class
+ *
+ * @export
+ * @class Webhooks
+ * @extends {BaseEndpoint}
+ */
 export default class Webhooks extends BaseEndpoint {
 
+
+    /**
+     * Creates an instance of Webhooks.
+     *
+     * @param {string} key
+     * @param {http_options} HttpConfigurationType
+     * @param {HttpConfigurationType.timeout} HttpConfigurationType.timeout HTTP request timeout
+     * @param {HttpConfigurationType.environment} HttpConfigurationType.environment default: Sandbox; API Environment
+     * @memberof Payments
+     * @memberof Webhooks
+     */
     constructor(
         key: string,
         http_options: HttpConfigurationType = {
@@ -21,7 +40,14 @@ export default class Webhooks extends BaseEndpoint {
         super(key, http_options);
     }
 
-    public retrieveWebhooks = async (arg?: string): Promise<RetriveWebhookResponse> => {
+
+    /**
+     * Retrieves the webhooks configured for the channel identified by your API key
+     *
+     * @memberof Webhooks
+     * @return {Promise<RetriveWebhookResponse>} A promise to the retrieve webhooks response.
+     */
+    public retrieveWebhooks = async (): Promise<RetriveWebhookResponse> => {
         try {
             const getWebhooks = await this._getHandler(`${this.httpConfiguration.environment}/webhooks`);
             if (getWebhooks.status === 204) {
@@ -34,65 +60,13 @@ export default class Webhooks extends BaseEndpoint {
         }
     };
 
-    public retrieveWebhook = async (id: string): Promise<WebhookResponse> => {
-        try {
-            const getWebhooks = await this._getHandler(`${this.httpConfiguration.environment}/webhooks/${id}`);
-            return new WebhookResponse(await getWebhooks.json);
-        } catch (err) {
-            throw await determineError(err);
-        }
-    };
-
-    public update = async (id: string, body: NewWebhookInstance): Promise<WebhookResponse> => {
-        try {
-            const http = new Http(this.httpConfiguration);
-            const response = await http.send({
-                method: "put",
-                url: `${this.httpConfiguration.environment}/webhooks/${id}`,
-                headers: {
-                    Authorization: this.key
-                },
-                body
-            });
-            return new WebhookResponse(await response.json);
-        } catch (err) {
-            throw await determineError(err);
-        }
-    };
-
-    public partialUpdate = async (id: string, body: NewWebhookInstance): Promise<WebhookResponse> => {
-        try {
-            const http = new Http(this.httpConfiguration);
-            const response = await http.send({
-                method: "patch",
-                url: `${this.httpConfiguration.environment}/webhooks/${id}`,
-                headers: {
-                    Authorization: this.key
-                },
-                body
-            });
-            return new WebhookResponse(await response.json);
-        } catch (err) {
-            throw await determineError(err);
-        }
-    };
-
-    public remove = async (id: string) => {
-        try {
-            const http = new Http(this.httpConfiguration);
-            const response = await http.send({
-                method: "delete",
-                url: `${this.httpConfiguration.environment}/webhooks/${id}`,
-                headers: {
-                    Authorization: this.key
-                }
-            });
-            return new WebhookResponse(await response.json);
-        } catch (err) {
-            throw await determineError(err);
-        }
-    };
-
+    /**
+     * Register a new webhook endpoint that Checkout.com will POST all or selected events to
+     *
+     * @memberof Webhooks
+     * @param {arg} NewWebhookInstance Webhook body
+     * @return {Promise<WebhookResponse>} A promise to the update webhook response.
+     */
     public register = async (arg: NewWebhookInstance): Promise<WebhookResponse> => {
         try {
             const http = new Http(this.httpConfiguration);
@@ -110,6 +84,100 @@ export default class Webhooks extends BaseEndpoint {
         }
     };
 
+    /**
+     * Register a new webhook endpoint that Checkout.com will POST all or selected events to.
+     *
+     * @memberof Webhooks
+     * @param {id} string The webhook identifier, for example wh_387ac7a83a054e37ae140105429d76b5
+     * @return {Promise<WebhookResponse>} A promise to the retrieve webhook response.
+     */
+    public retrieveWebhook = async (id: string): Promise<WebhookResponse> => {
+        try {
+            const getWebhooks = await this._getHandler(`${this.httpConfiguration.environment}/webhooks/${id}`);
+            return new WebhookResponse(await getWebhooks.json);
+        } catch (err) {
+            throw await determineError(err);
+        }
+    };
+
+    /**
+     * Updates an existing webhook
+     *
+     * @memberof Webhooks
+     * @param {id} string The webhook identifier, for example wh_387ac7a83a054e37ae140105429d76b5
+     * @param {body} NewWebhookInstance Webhook body
+     * @return {Promise<WebhookResponse>} A promise to the update webhook response.
+     */
+    public update = async (id: string, body: NewWebhookInstance): Promise<WebhookResponse> => {
+        try {
+            const http = new Http(this.httpConfiguration);
+            const response = await http.send({
+                method: "put",
+                url: `${this.httpConfiguration.environment}/webhooks/${id}`,
+                headers: {
+                    Authorization: this.key
+                },
+                body
+            });
+            return new WebhookResponse(await response.json);
+        } catch (err) {
+            throw await determineError(err);
+        }
+    };
+
+    /**
+     * Partially updates an existing webhook
+     *
+     * @memberof Webhooks
+     * @param {id} string The webhook identifier, for example wh_387ac7a83a054e37ae140105429d76b5
+     * @param {body} NewWebhookInstance Webhook body
+     * @return {Promise<WebhookResponse>} A promise to the partial update webhook response.
+     */
+    public partialUpdate = async (id: string, body: NewWebhookInstance): Promise<WebhookResponse> => {
+        try {
+            const http = new Http(this.httpConfiguration);
+            const response = await http.send({
+                method: "patch",
+                url: `${this.httpConfiguration.environment}/webhooks/${id}`,
+                headers: {
+                    Authorization: this.key
+                },
+                body
+            });
+            return new WebhookResponse(await response.json);
+        } catch (err) {
+            throw await determineError(err);
+        }
+    };
+
+    /**
+     * Partially updates an existing webhook
+     *
+     * @memberof Webhooks
+     * @param {id} string The webhook identifier, for example wh_387ac7a83a054e37ae140105429d76b5
+     */
+    public remove = async (id: string) => {
+        try {
+            const http = new Http(this.httpConfiguration);
+            const response = await http.send({
+                method: "delete",
+                url: `${this.httpConfiguration.environment}/webhooks/${id}`,
+                headers: {
+                    Authorization: this.key
+                }
+            });
+            return new WebhookResponse(await response.json);
+        } catch (err) {
+            throw await determineError(err);
+        }
+    };
+
+    /**
+     * Handle all GET requests to remove duplication
+     *
+     * @private
+     * @memberof Payments
+     */
     private _getHandler = async (
         url: string,
     ): Promise<any> => {

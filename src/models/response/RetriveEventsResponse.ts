@@ -3,6 +3,13 @@ import {
     EventSummary
 } from "../../index";
 
+
+/**
+ * RetriveEventsResponse class
+ *
+ * @export
+ * @class RetriveEventsResponse
+ */
 export class RetriveEventsResponse {
     public total_count: number;
     public limit: number;

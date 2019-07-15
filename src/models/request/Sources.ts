@@ -7,6 +7,14 @@ import {
     GoogleTokenData
 } from "../types/Types";
 
+
+
+/**
+ * CardSource class
+ *
+ * @export
+ * @class CardSource
+ */
 export class CardSource {
     private readonly type: string = "card";
     public number: string;
@@ -30,6 +38,12 @@ export class CardSource {
     }
 }
 
+/**
+ * ApplePaySource class
+ *
+ * @export
+ * @class ApplePaySource
+ */
 export class ApplePaySource {
     private readonly type: string = "applepay";
     public token_data: TokenData<AppleTokenData>;
@@ -39,6 +53,13 @@ export class ApplePaySource {
     }
 }
 
+
+/**
+ * GooglePaySource class
+ *
+ * @export
+ * @class GooglePaySource
+ */
 export class GooglePaySource {
     private readonly type: string = "googlepay";
     public token_data: TokenData<GoogleTokenData>;

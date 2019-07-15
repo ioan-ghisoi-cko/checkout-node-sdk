@@ -15,6 +15,13 @@ import {
     PaymentEvent
 } from "../types/Types";
 
+
+/**
+ * GetPaymentResponse class
+ *
+ * @export
+ * @class GetPaymentResponse
+ */
 export class GetPaymentResponse {
     id: string;
     requested_on: string;

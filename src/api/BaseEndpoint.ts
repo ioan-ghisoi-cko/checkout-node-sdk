@@ -33,9 +33,9 @@ export default class BaseEndpoint {
     /**
      * Creates an instance of BaseEndpoint.
      * @param {string} key
-     * @param {HttpConfigurationType} [http_options={
-     *             timeout: DEFAULT_TIMEOUT, environment: Environment.Sandbox
-     *         }]
+     * @param {http_options} HttpConfigurationType
+     * @param {HttpConfigurationType.timeout} HttpConfigurationType.timeout HTTP request timeout
+     * @param {HttpConfigurationType.environment} HttpConfigurationType.environment default: Sandbox; API Environment
      * @memberof BaseEndpoint
      */
     constructor(

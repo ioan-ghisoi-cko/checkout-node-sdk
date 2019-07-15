@@ -8,6 +8,12 @@ import {
 } from "../../index";
 
 
+/**
+ * PaymentResponse class
+ *
+ * @export
+ * @class PaymentResponse
+ */
 export class PaymentResponse {
     public id: string;
     public action_id: string;
