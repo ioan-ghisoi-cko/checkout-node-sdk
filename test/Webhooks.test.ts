@@ -1,15 +1,9 @@
 import { expect } from 'chai'
-import tokens from '../src/api/Tokens';
 import { Environment, CardSource, ApplePaySource, GooglePaySource, NoWebhooksConfigured } from '../src';
 import {
-	ApiError,
-	ApiTimeout,
 	AuthenticationError,
 	ValidationError,
-	TooManyRequestsError,
-	BadGateway,
 	NotFoundError,
-	ActionNotAllowed,
 	UrlAlreadyRegistered
 } from '../src/models/response/HttpErrors';
 import webhook from '../src/api/Webhooks';
@@ -1019,6 +1013,4 @@ describe("Remove webhook", async () => {
 			expect(err).to.be.instanceOf(NotFoundError)
 		}
 	});
-
-
 });

@@ -2,14 +2,8 @@ import { expect } from 'chai'
 import tokens from '../src/api/Tokens';
 import { Environment, CardSource, ApplePaySource, GooglePaySource } from '../src';
 import {
-	ApiError,
-	ApiTimeout,
 	AuthenticationError,
 	ValidationError,
-	TooManyRequestsError,
-	BadGateway,
-	NotFoundError,
-	ActionNotAllowed
 } from '../src/models/response/HttpErrors';
 const nock = require("nock");
 

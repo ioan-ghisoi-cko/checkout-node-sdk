@@ -1,4 +1,7 @@
 import { Environment } from "../../config/Environment";
+import {
+    CardSource
+} from "../../models/request/index";
 import * as Source from "../request/Sources";
 export type RequestType = "get" | "post" | "put" | "patch" | "delete";
 type _SourceRequestType = "sepa";
@@ -331,4 +334,102 @@ export interface WebhookInstance extends NewWebhookInstance {
     id: string;
 }
 
-export type RetriveWebhookResponseType = [WebhookInstance]
+
+export type RetriveWebhookResponseType = [WebhookInstance];
+
+export interface EventType {
+    version: string;
+    event_types: string[];
+}
+
+export type EventTypesResponseType = [EventType];
+
+export interface RetrieveEventsParams {
+    from?: string;
+    to?: string;
+    limit?: string;
+    skip?: string;
+    payment_id?: string;
+    reference?: string;
+}
+
+export interface RetrieveEventsLinks {
+    self: Link;
+    webhooks_retry?: Link;
+}
+
+export interface EventSummary {
+    id: string;
+    type: string;
+    created_on: string;
+    _links: RetrieveEventsLinks;
+}
+
+export interface RetrieveEventsResponseType {
+    total_count: number;
+    limit: number;
+    skip: number;
+    from: string;
+    to: string;
+    data: EventSummary[];
+}
+
+export interface EventData {
+    id: string;
+    action_id: string;
+    amount: number;
+    currency: number;
+    approved: boolean;
+    status: string;
+    auth_code: string;
+    response_code: string;
+    response_summary: string;
+    '3ds': ThreeDSecureResponse;
+    flagged: boolean;
+    source: CardSource;
+    customer: Customer;
+    processed_on: string;
+    reference: string;
+    metadata: any;
+}
+
+export interface Notification {
+    id: string;
+    url: string;
+    success: boolean;
+    _links: Link;
+}
+
+export type Notifications = [Notification];
+
+
+export interface RetrieveEventResponseType {
+    id: string;
+    type: string;
+    version: string;
+    created_on: string;
+    data: EventData;
+    notifications: Notifications;
+    _links: RetrieveEventsLinks;
+}
+
+export interface Attempt {
+    status_code: number;
+    response_body: string;
+    retry_mode: string;
+    timestamp: string;
+}
+
+export interface RetrieveEventNotificationLinks {
+    self: Link;
+    retry?: Link;
+}
+
+export interface RetrieveEventNotificationType {
+    id: string;
+    url: string;
+    success: boolean;
+    content_type: ContentType;
+    attempts: Attempt[];
+    _links: RetrieveEventNotificationLinks[];
+}

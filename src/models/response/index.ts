@@ -5,3 +5,7 @@ export * from "./AddSourceResponse";
 export * from "./CreateTokenResponse";
 export * from "./RetriveWebhookResponse";
 export * from "./RegisterWebhookRespose";
+export * from "./EventTypesResponse";
+export * from "./RetriveEventsResponse";
+export * from "./RetriveEventResponse";
+export * from "./RetriveEventNotification";

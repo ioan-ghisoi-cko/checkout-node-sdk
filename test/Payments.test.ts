@@ -2,8 +2,6 @@ import { expect } from 'chai'
 import payments from '../src/api/Payments';
 import { Http, CardSource, Environment } from '../src/index';
 import {
-    ApiError,
-    ApiTimeout,
     AuthenticationError,
     ValidationError,
     TooManyRequestsError,

@@ -1,10 +1,6 @@
 import { expect } from 'chai'
 import checkout from '../src/index';
 import { Environment } from '../src';
-import {
-	ValidationError,
-	BadGateway,
-} from '../src/models/response/HttpErrors';
 const nock = require("nock");
 
 describe("Checkout", async () => {
