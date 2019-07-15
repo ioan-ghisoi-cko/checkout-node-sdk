@@ -1,6 +1,5 @@
 import {
     RetriveWebhookResponseType,
-    ContentType
 } from "../../index";
 import { WebhookInstance } from "../types/Types";
 

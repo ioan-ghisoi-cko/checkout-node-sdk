@@ -9,6 +9,7 @@
     "sourceMap": true,
     "noEmit": true,
     "noImplicitAny": false,
+    "resolveJsonModule": true
   },
   "include": [
     "src",

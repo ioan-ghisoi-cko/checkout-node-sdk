@@ -4,12 +4,40 @@ import {
     DEFAULT_TIMEOUT
 } from "../index";
 
-
+/**
+ * The base class for API endpoints in the Unified Payments API
+ *
+ * @export
+ * @class BaseEndpoint
+ */
 export default class BaseEndpoint {
 
-    key: string;
-    httpConfiguration: HttpConfigurationType;
+    /**
+     * The key used in the authorisation header for requests
+     * made to the Unified Payments API.
+     *
+     * @type {string}
+     * @memberof BaseEndpoint
+     */
+    public key: string;
 
+    /**
+     *
+     *
+     * @type {HttpConfigurationType}
+     * @memberof BaseEndpoint
+     */
+    public httpConfiguration: HttpConfigurationType;
+
+
+    /**
+     * Creates an instance of BaseEndpoint.
+     * @param {string} key
+     * @param {HttpConfigurationType} [http_options={
+     *             timeout: DEFAULT_TIMEOUT, environment: Environment.Sandbox
+     *         }]
+     * @memberof BaseEndpoint
+     */
     constructor(
         key: string,
         http_options: HttpConfigurationType = {
