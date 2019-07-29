@@ -159,8 +159,8 @@ export interface PaymentRequest<T, S> {
 
 export interface CardSourceType {
     number: string;
-    expiry_month: string;
-    expiry_year: string;
+    expiry_month: number;
+    expiry_year: number;
     name?: string;
     cvv?: string;
     stored?: boolean;

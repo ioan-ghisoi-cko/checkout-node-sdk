@@ -61,8 +61,8 @@ export class IdSource {
 export class CardSource {
     private readonly type: string = "card";
     public number: string;
-    public expiry_month: string;
-    public expiry_year: string;
+    public expiry_month: number;
+    public expiry_year: number;
     public name?: string;
     public cvv?: string;
     public stored?: boolean;

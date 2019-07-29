@@ -78,8 +78,8 @@ describe("Tokens", async () => {
 
 		let token = await tok.request(new CardSource({
 			number: "4543474002249996",
-			expiry_month: "06",
-			expiry_year: "2029",
+			expiry_month: 6,
+			expiry_year: 2029,
 			cvv: "956"
 		}));
 
@@ -175,8 +175,8 @@ describe("Tokens", async () => {
 
 			let token = await tok.request(new CardSource({
 				number: "4543474002249996",
-				expiry_month: "06",
-				expiry_year: "2029",
+				expiry_month: 6,
+				expiry_year: 2029,
 				cvv: "956"
 			}));
 		} catch (err) {
@@ -204,8 +204,8 @@ describe("Tokens", async () => {
 
 			let token = await tok.request(new CardSource({
 				number: "4543474002249996",
-				expiry_month: "06",
-				expiry_year: "2029",
+				expiry_month: 6,
+				expiry_year: 2029,
 				cvv: "956"
 			}));
 		} catch (err) {

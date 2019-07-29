@@ -135,8 +135,8 @@ describe("Request Payment with card source", async () => {
         let transaction = await pay.request<CardSource>({
             source: new CardSource({
                 number: "4242424242424242",
-                expiry_month: "06",
-                expiry_year: "2029",
+                expiry_month: 6,
+                expiry_year: 2029,
                 cvv: "100"
             }),
             currency: "USD",
@@ -174,8 +174,8 @@ describe("Request Payment with card source", async () => {
         let transaction = await pay.request<CardSource>({
             source: new CardSource({
                 number: "4242424242424242",
-                expiry_month: "06",
-                expiry_year: "2029",
+                expiry_month: 6,
+                expiry_year: 2029,
                 cvv: "100"
             }),
             currency: "USD",
@@ -248,8 +248,8 @@ describe("Request Payment with card source", async () => {
         let transaction = await pay.request<CardSource>({
             source: new CardSource({
                 number: "4242424242424242",
-                expiry_month: "06",
-                expiry_year: "2029",
+                expiry_month: 6,
+                expiry_year: 2029,
                 cvv: "100"
             }),
             currency: "USD",
@@ -276,8 +276,8 @@ describe("Request Payment with card source", async () => {
             let transaction = await pay.request<CardSource>({
                 source: new CardSource({
                     number: "4242424242424242",
-                    expiry_month: "06",
-                    expiry_year: "2029",
+                    expiry_month: 6,
+                    expiry_year: 2029,
                     cvv: "100"
                 }),
                 currency: "USD",
@@ -301,8 +301,8 @@ describe("Request Payment with card source", async () => {
             let transaction = await pay.request<CardSource>({
                 source: new CardSource({
                     number: "4242424242424242",
-                    expiry_month: "06",
-                    expiry_year: "2029",
+                    expiry_month: 6,
+                    expiry_year: 2029,
                     cvv: "100"
                 }),
                 currency: "USD",
@@ -325,8 +325,8 @@ describe("Request Payment with card source", async () => {
             let transaction = await pay.request<CardSource>({
                 source: new CardSource({
                     number: "4242424242424242",
-                    expiry_month: "06",
-                    expiry_year: "2029",
+                    expiry_month: 6,
+                    expiry_year: 2029,
                     cvv: "100"
                 }),
                 currency: "USD",
@@ -354,8 +354,8 @@ describe("Request Payment with card source", async () => {
             let transaction = await pay.request<CardSource>({
                 source: new CardSource({
                     number: "4242424242424242",
-                    expiry_month: "06",
-                    expiry_year: "2029",
+                    expiry_month: 6,
+                    expiry_year: 2029,
                     cvv: "100"
                 }),
                 currency: "USD",
@@ -384,8 +384,8 @@ describe("Request Payment with card source", async () => {
             let transaction = await pay.request<CardSource>({
                 source: new CardSource({
                     number: "4242424242424242",
-                    expiry_month: "06",
-                    expiry_year: "2029",
+                    expiry_month: 6,
+                    expiry_year: 2029,
                     cvv: "100"
                 }),
                 currency: "USD",
@@ -408,8 +408,8 @@ describe("Request Payment with card source", async () => {
             let transaction = await pay.request<CardSource>({
                 source: new CardSource({
                     number: "4242424242424242",
-                    expiry_month: "06",
-                    expiry_year: "2029",
+                    expiry_month: 6,
+                    expiry_year: 2029,
                     cvv: "100"
                 }),
                 currency: "USD",
