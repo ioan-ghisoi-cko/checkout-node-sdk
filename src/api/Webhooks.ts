@@ -3,7 +3,8 @@ import {
     Http,
     RetriveWebhookResponse,
     Environment,
-    DEFAULT_TIMEOUT
+    DEFAULT_TIMEOUT,
+    RequestType
 } from "../index";
 import { determineError } from "../utils/ErrorHandler";
 import BaseEndpoint from "./BaseEndpoint";
@@ -108,22 +109,11 @@ export default class Webhooks extends BaseEndpoint {
      * @param {body} NewWebhookInstance Webhook body
      * @return {Promise<WebhookResponse>} A promise to the update webhook response.
      */
-    public update = async (id: string, body: NewWebhookInstance): Promise<WebhookResponse> => {
-        try {
-            const http = new Http(this.httpConfiguration);
-            const response = await http.send({
-                method: "put",
-                url: `${this.httpConfiguration.environment}/webhooks/${id}`,
-                headers: {
-                    Authorization: this.key
-                },
-                body
-            });
-            return new WebhookResponse(await response.json);
-        } catch (err) {
-            throw await determineError(err);
-        }
-    };
+    public update = async (id: string, body: NewWebhookInstance): Promise<WebhookResponse> => this._updateHandler(
+        "put",
+        `${this.httpConfiguration.environment}/webhooks/${id}`,
+        body,
+    );
 
     /**
      * Partially updates an existing webhook
@@ -133,22 +123,11 @@ export default class Webhooks extends BaseEndpoint {
      * @param {body} NewWebhookInstance Webhook body
      * @return {Promise<WebhookResponse>} A promise to the partial update webhook response.
      */
-    public partialUpdate = async (id: string, body: NewWebhookInstance): Promise<WebhookResponse> => {
-        try {
-            const http = new Http(this.httpConfiguration);
-            const response = await http.send({
-                method: "patch",
-                url: `${this.httpConfiguration.environment}/webhooks/${id}`,
-                headers: {
-                    Authorization: this.key
-                },
-                body
-            });
-            return new WebhookResponse(await response.json);
-        } catch (err) {
-            throw await determineError(err);
-        }
-    };
+    public partialUpdate = async (id: string, body: NewWebhookInstance): Promise<WebhookResponse> => this._updateHandler(
+        "patch",
+        `${this.httpConfiguration.environment}/webhooks/${id}`,
+        body,
+    );
 
     /**
      * Partially updates an existing webhook
@@ -189,5 +168,32 @@ export default class Webhooks extends BaseEndpoint {
                 Authorization: this.key
             },
         });
+    }
+
+    /**
+     * Handle all PATCH/PUT requests to remove duplication
+     *
+     * @private
+     * @memberof Webhooks
+     */
+    private _updateHandler = async (
+        action: RequestType,
+        url: string,
+        body?: NewWebhookInstance,
+    ): Promise<WebhookResponse> => {
+        const http = new Http(this.httpConfiguration);
+        try {
+            const response = await http.send({
+                method: action,
+                url,
+                headers: {
+                    Authorization: this.key
+                },
+                body
+            });
+            return new WebhookResponse(await response.json);
+        } catch (err) {
+            throw await determineError(err);
+        }
     }
 }

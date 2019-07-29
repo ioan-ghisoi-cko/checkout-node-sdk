@@ -12,6 +12,8 @@ import {
 import { determineError } from "../utils/ErrorHandler";
 import BaseEndpoint from "./BaseEndpoint";
 
+const querystring = require("querystring");
+
 
 /**
  * Events API endpoints Class.
@@ -75,13 +77,8 @@ export default class Events extends BaseEndpoint {
     public retrieveEvents = async (arg?: RetrieveEventsParams): Promise<RetriveEventsResponse> => {
         try {
             // build query params
-            let queryParams = '';
-            if (arg) {
-                Object.keys(arg).map((key) => {
-                    queryParams += `?${key}=${arg[key]}`;
-                });
-            }
-            const getEvents = await this._getHandler(`${this.httpConfiguration.environment}/events${queryParams}`);
+            let params = querystring.stringify(arg).length > 0 ? `?${querystring.stringify(arg)}` : '';
+            const getEvents = await this._getHandler(`${this.httpConfiguration.environment}/events${params}`);
             return new RetriveEventsResponse(await getEvents.json);
         } catch (err) {
             throw await determineError(err);
