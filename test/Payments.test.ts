@@ -19,7 +19,8 @@ import {
     KnetSource,
     PoliSource,
     QpaySource,
-    SofortSource
+    SofortSource,
+    CardDestination
 } from '../src/index';
 import {
     AuthenticationError,
@@ -4802,6 +4803,75 @@ describe("Request Payment with Sofort Source", async () => {
             });
         } catch (err) {
             expect(err).to.be.instanceOf(BadGateway)
+        }
+    });
+});
+
+describe("Payout with a card source", async () => {
+    it("should perform a payout request with a Card Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(201, {
+                "id": "pay_dd4wf2r5ebg4tp6hcsps6vvacu",
+                "action_id": "act_dd4wf2r5ebg4tp6hcsps6vvacu",
+                "amount": 100,
+                "currency": "USD",
+                "approved": true,
+                "status": "Paid",
+                "auth_code": "928892",
+                "response_code": "10000",
+                "response_summary": "Approved",
+                "destination": {
+                    "id": "src_bvlx3x7f4xhedntgjeznclkzzq",
+                    "type": "card",
+                    "expiry_month": 6,
+                    "expiry_year": 2029,
+                    "name": "Maga Test",
+                    "scheme": "Visa",
+                    "last4": "4242",
+                    "fingerprint": "107A352DFAE35E3EEBA5D0856FCDFB88ECF91E8CFDE4275ABBC791FD9579AB2C",
+                    "bin": "424242",
+                    "card_type": "Credit",
+                    "card_category": "Consumer",
+                    "issuer": "JPMORGAN CHASE BANK NA",
+                    "issuer_country": "US",
+                    "product_id": "A",
+                    "product_type": "Visa Traditional"
+                },
+                "customer": {
+                    "id": "cus_35vhrjee2csu7j7gz2yxwmbvpe"
+                },
+                "processed_on": "2019-07-29T16:49:43Z",
+                "reference": "Test",
+                "_links": {
+                    "self": {
+                        "href": "https://api.sandbox.checkout.com/payments/pay_dd4wf2r5ebg4tp6hcsps6vvacu"
+                    },
+                    "actions": {
+                        "href": "https://api.sandbox.checkout.com/payments/pay_dd4wf2r5ebg4tp6hcsps6vvacu/actions"
+                    }
+                }
+            });
+
+        const pay = new payments('sk_test_0b9b5db6-f223-49d0-b68f-f6643dd4f808');
+
+        let transaction = await pay.request<CardSource, CardDestination>({
+            destination: new CardDestination({
+                number: "4242424242424242",
+                expiry_month: 6,
+                expiry_year: 2029,
+                first_name: "Maga",
+                last_name: "Test"
+            }),
+            currency: "USD",
+            amount: 100,
+            reference: "Test"
+        });
+
+        if (transaction.destination !== undefined) {
+            expect(transaction.destination.last4).to.equal("4242");
+            expect(transaction.destination.scheme).to.equal("Visa");
+            expect(transaction.status).to.equal("Paid");
         }
     });
 });

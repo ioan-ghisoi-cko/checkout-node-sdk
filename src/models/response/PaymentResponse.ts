@@ -4,7 +4,8 @@ import {
     Risk,
     SourceResponse,
     Customer,
-    Links
+    Links,
+    DestinationResponse
 } from "../../index";
 
 
@@ -27,6 +28,7 @@ export class PaymentResponse {
     public "3ds": ThreeDSecureResponse;
     public risk: Risk;
     public source: SourceResponse;
+    public destination?: DestinationResponse;
     public customer: Customer;
     public processed_on: string;
     public reference: string;
@@ -46,6 +48,7 @@ export class PaymentResponse {
         this.response_summary = response.response_summary;
         this["3ds"] = response["3ds"];
         this.risk = response.risk;
+        this.destination = response.destination;
         this.source = response.source;
         this.customer = response.customer;
         this.processed_on = response.processed_on;

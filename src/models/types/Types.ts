@@ -33,6 +33,7 @@ export type PaymentEventType = "Authorization" | "Card Verification" | "Void" | 
 export type NetworkTokenType = "vts" | "mdes" | "applepay" | "googlepay";
 export type ContentType = "json" | 'xml';
 export type RequestType = "get" | "post" | "put" | "patch" | "delete";
+export type CardCategoryType = "Credit" | "Debit" | "Prepaid";
 export type RetriveWebhookResponseType = [WebhookInstance];
 export type EventTypesResponseType = [EventType];
 export type Notifications = [Notification];
@@ -132,8 +133,9 @@ export interface SourceRequest {
     source_data: SepaSourceData;
 }
 
-export interface PaymentRequest<T> {
-    source: T;
+export interface PaymentRequest<T, S> {
+    source?: T;
+    destination?: S;
     currency: string;
     amount?: number | string;
     payment_type?: PaymentType;
@@ -367,6 +369,25 @@ export interface AddSourceResponseType {
     _links: AddSourceLinks;
 }
 
+export interface DestinationResponse {
+    id?: string;
+    billing_address?: Address;
+    phone?: Phone;
+    expiry_month: number;
+    expiry_year: number;
+    name?: string;
+    scheme?: string;
+    last4: string;
+    fingerprint: string;
+    bin: string;
+    card_type?: string;
+    card_category?: CardCategoryType;
+    issuer: string;
+    issuer_country: string;
+    product_id: string;
+    product_type: string;
+}
+
 export interface PaymentResponseType {
     id: string;
     action_id: string;
@@ -380,6 +401,7 @@ export interface PaymentResponseType {
     "3ds": ThreeDSecureResponse;
     risk: Risk;
     source: SourceResponse;
+    destination?: DestinationResponse;
     customer: Customer;
     processed_on: string;
     reference: string;
@@ -509,7 +531,7 @@ export interface CreateTokenResponseType {
     last4: string;
     bin: string;
     card_type: string;
-    card_category: string;
+    card_category: CardCategoryType;
     issuer: string;
     issuer_country: string;
     product_id: string;
@@ -622,4 +644,29 @@ export interface RetrieveEventNotificationType {
     content_type: ContentType;
     attempts: Attempt[];
     _links: RetrieveEventNotificationLinks[];
+}
+
+export interface TokenDestinationType {
+    token: string;
+    first_name: string;
+    last_name: string;
+    billing_address?: Address;
+    phone?: Phone;
+}
+
+export interface IdDestinationType {
+    id: string;
+    first_name: string;
+    last_name: string;
+}
+
+export interface CardDestinationType {
+    number: string;
+    expiry_month: number;
+    expiry_year: number;
+    first_name: string;
+    last_name: string;
+    name?: string;
+    billing_address?: Address;
+    phone?: Phone;
 }
