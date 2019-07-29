@@ -15,7 +15,17 @@ import {
     KlarnaSourceType,
     QiwiSourceType,
     InfoFields,
-    NetworkTokenType
+    NetworkTokenType,
+    BancontactSourceType,
+    EpsSourceType,
+    FawrySourceType,
+    FawryProduct,
+    KlarnaAddress,
+    KlarnaCustomer,
+    KlarnaProduct,
+    KnetSourceType,
+    KnetLanguage,
+    QpaySourceType
 } from "../types/Types";
 
 export class TokenSource {
@@ -162,10 +172,84 @@ export class BoletoSource {
     }
 }
 
+export class BancontactSource {
+    private readonly type: string = 'bancontact';
+    public payment_country: string;
+    public account_holder_name: string;
+    public billing_descriptor?: string;
+
+    public constructor(source: BancontactSourceType) {
+        this.payment_country = source.payment_country;
+        this.account_holder_name = source.account_holder_name;
+        this.billing_descriptor = source.billing_descriptor;
+    }
+}
+
+export class EpsSource {
+    private readonly type: string = 'eps';
+    public purpose: string;
+    public bic?: string;
+
+    public constructor(source: EpsSourceType) {
+        this.purpose = source.purpose;
+        this.bic = source.bic;
+    }
+}
+
+export class FawrySource {
+    private readonly type: string = 'fawry';
+    public description: string;
+    public customer_profile_id?: string;
+    public customer_email: string;
+    public expires_on?: string;
+    public products: FawryProduct[];
+
+    public constructor(source: FawrySourceType) {
+        this.description = source.description;
+        this.customer_profile_id = source.customer_profile_id;
+        this.customer_email = source.customer_email;
+        this.expires_on = source.expires_on;
+        this.products = source.products;
+    }
+}
+
+export class KlarnaSource {
+    private readonly type: string = 'klarna';
+    public authorization_token: string;
+    public locale: string;
+    public purchase_country: string;
+    public auto_capture?: boolean;
+    public billing_address: KlarnaAddress;
+    public shipping_address?: KlarnaAddress;
+    public tax_amount: number;
+    public products: KlarnaProduct[];
+    public customer?: KlarnaCustomer;
+    public merchant_reference1?: string;
+    public merchant_reference2?: string;
+    public merchant_data?: string;
+    public attachment?: any;
+
+    public constructor(source: KlarnaSourceType) {
+        this.authorization_token = source.authorization_token;
+        this.locale = source.locale;
+        this.purchase_country = source.purchase_country;
+        this.auto_capture = this.auto_capture;
+        this.billing_address = source.billing_address;
+        this.shipping_address = source.shipping_address;
+        this.tax_amount = source.tax_amount;
+        this.products = source.products;
+        this.customer = source.customer;
+        this.merchant_reference1 = source.merchant_reference1;
+        this.merchant_reference2 = source.merchant_reference2;
+        this.merchant_data = source.merchant_data;
+        this.attachment = source.attachment;
+    }
+}
+
 export class GiropaySource {
     private readonly type: string = 'giropay';
     public purpose: string;
-    public bic: string;
+    public bic?: string;
     public iban?: string;
     public info_fields?: InfoFields;
 
@@ -190,36 +274,44 @@ export class IdealSource {
     }
 }
 
-export class KlarnaSource {
-    private readonly type: string = 'klarna';
-    public authorization_token: string;
-    public locale: string;
-    public purchase_country: string;
-    public auto_capture?: boolean;
-    public billing_address: any;
-    public shipping_address?: any;
-    public tax_amount: number;
-    public products: any;
-    public customer?: any;
-    public merchant_reference1?: string;
-    public merchant_reference2?: string;
-    public merchant_data?: any;
+export class KnetSource {
+    private readonly type: string = 'knet';
+    public language: KnetLanguage;
+    public user_defined_field1?: string;
+    public user_defined_field2?: string;
+    public user_defined_field3?: string;
+    public user_defined_field4?: string;
+    public user_defined_field5?: string;
+    public card_token?: string;
+    public ptlf?: string;
 
-    public constructor(source: KlarnaSourceType) {
-        this.authorization_token = source.authorization_token;
-        this.locale = source.locale;
-        this.purchase_country = source.purchase_country;
-        this.auto_capture = source.auto_capture;
-        this.billing_address = source.billing_address;
-        this.shipping_address = source.shipping_address;
-        this.tax_amount = source.tax_amount;
-        this.products = source.products;
-        this.customer = source.customer;
-        this.merchant_reference1 = source.merchant_reference1;
-        this.merchant_reference2 = source.merchant_reference2;
-        this.merchant_data = source.merchant_data;
+    public constructor(source: KnetSourceType) {
+        this.language = source.language;
+        this.user_defined_field1 = source.user_defined_field1;
+        this.user_defined_field2 = source.user_defined_field2;
+        this.user_defined_field3 = source.user_defined_field3;
+        this.user_defined_field4 = source.user_defined_field4;
+        this.user_defined_field5 = source.user_defined_field5;
+        this.card_token = source.card_token;
+        this.ptlf = source.ptlf;
     }
 }
+
+export class QpaySource {
+    private readonly type: string = 'qpay';
+    public quantity?: number;
+    public description: string;
+    public language?: string;
+    public national_id?: string;
+
+    public constructor(source: QpaySourceType) {
+        this.quantity = source.quantity;
+        this.description = source.description;
+        this.language = source.language;
+        this.national_id = source.national_id;
+    }
+}
+
 
 export class PoliSource {
     private readonly type: string = 'poli';

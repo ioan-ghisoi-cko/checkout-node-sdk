@@ -1,17 +1,38 @@
 import { expect } from 'chai'
 import payments from '../src/api/Payments';
-import { Http, CardSource, Environment } from '../src/index';
+import {
+    Http,
+    CardSource,
+    Environment,
+    TokenSource,
+    IdSource,
+    CustomerSource,
+    NetworkTokenSource,
+    AlipaySource,
+    BoletoSource,
+    BancontactSource,
+    EpsSource,
+    FawrySource,
+    GiropaySource,
+    IdealSource,
+    KlarnaSource,
+    KnetSource,
+    PoliSource,
+    QpaySource,
+    SofortSource
+} from '../src/index';
 import {
     AuthenticationError,
     ValidationError,
     TooManyRequestsError,
     BadGateway,
     NotFoundError,
-    ActionNotAllowed
+    ActionNotAllowed,
 } from '../src/models/response/HttpErrors';
+
 const nock = require("nock");
 
-describe("Request Payment", async () => {
+describe("Request Payment with card source", async () => {
     it("should create instance of payments class with a HTTP configuration", async () => {
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
         expect(pay).to.be.instanceOf(payments);
@@ -1028,6 +1049,3759 @@ describe("Void payment", async () => {
         } catch (err) {
             const error = err as ValidationError;
             expect(err).to.be.instanceOf(ValidationError)
+        }
+    });
+});
+
+describe("Request Payment with token source", async () => {
+
+    it("should perform normal payment request with a Token Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(201, {
+                isPending: [Function],
+                id: 'pay_s44rxo5y5u7ulbsi5dyg23in24',
+                action_id: 'act_s44rxo5y5u7ulbsi5dyg23in24',
+                amount: 100,
+                currency: 'USD',
+                approved: true,
+                status: 'Authorized',
+                auth_code: '908603',
+                response_code: '10000',
+                response_summary: 'Approved',
+                '3ds': undefined,
+                risk: { flagged: false },
+                source:
+                {
+                    id: 'src_3zeom6j6gx6ehkkz3weeektvaa',
+                    type: 'card',
+                    expiry_month: 6,
+                    expiry_year: 2028,
+                    scheme: 'Visa',
+                    last4: '4242',
+                    fingerprint: '35D40AFFDC82BCAC9890181E14655B05D8924C0B4986D29F99D13946A3B59513',
+                    bin: '424242',
+                    card_type: 'Credit',
+                    card_category: 'Consumer',
+                    issuer: 'JPMORGAN CHASE BANK NA',
+                    issuer_country: 'US',
+                    product_id: 'A',
+                    product_type: 'Visa Traditional',
+                    avs_check: 'S',
+                    cvv_check: 'Y'
+                },
+                customer: { id: 'cus_myjw7hyjhmyefbfw5a3zb6rqhe' },
+                processed_on: '2019-07-29T11:16:11Z',
+                reference: undefined,
+                eci: '05',
+                scheme_id: '638284745624527',
+                _links:
+                {
+                    self: { href: 'https://api.sandbox.checkout.com/payments/pay_s44rxo5y5u7ulbsi5dyg23in24' },
+                    actions: { href: 'https://api.sandbox.checkout.com/payments/pay_s44rxo5y5u7ulbsi5dyg23in24/actions' },
+                    capture: { href: 'https://api.sandbox.checkout.com/payments/pay_s44rxo5y5u7ulbsi5dyg23in24/captures' },
+                    void: { href: 'https://api.sandbox.checkout.com/payments/pay_s44rxo5y5u7ulbsi5dyg23in24/voids' }
+                }
+            });
+
+        const pay = new payments('sk_test_0b9b5db6-f223-49d0-b68f-f6643dd4f808');
+
+        let transaction = await pay.request<TokenSource>({
+            source: new TokenSource({
+                token: "tok_6dvfwja4i4ie3djvvb2gb7djue"
+            }),
+            currency: "USD",
+            amount: 100
+        });
+
+        expect(transaction.approved).to.be.true;
+        expect(transaction.risk.flagged).to.be.false;
+        expect(transaction._links.redirect).to.be.undefined;
+    });
+
+    it("should perform 3dS payment request with a Token Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(202, {
+                "id": "pay_y3oqhf46pyzuxjbcn2giaqnb44",
+                "status": "Pending",
+                "reference": "ORD-5023-4E89",
+                "customer": {
+                    "id": "cus_y3oqhf46pyzuxjbcn2giaqnb44",
+                    "email": "jokershere@gmail.com",
+                    "name": "Jack Napier"
+                },
+                "3ds": {
+                    "downgraded": false,
+                    "enrolled": "Y"
+                },
+                "_links": {
+                    "self": {},
+                    "redirect": {}
+                }
+            });
+
+        const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+
+        let transaction = await pay.request<TokenSource>({
+            source: new TokenSource({
+                token: "tok_6dvfwja4i4ie3djvvb2gb7djue"
+            }),
+            currency: "USD",
+            amount: 100,
+            '3ds': {
+                enabled: true
+            }
+        });
+        expect(transaction.isPending()).to.be.true;
+        expect(transaction.status).to.equal('Pending');
+    });
+
+    it("should decline payment request with a Token Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(201, {
+                isPending: [Function],
+                id: 'pay_idt2rgacxglehoyhiu7fu3e4we',
+                action_id: 'act_idt2rgacxglehoyhiu7fu3e4we',
+                amount: 1005,
+                currency: 'USD',
+                approved: false,
+                status: 'Declined',
+                auth_code: '000000',
+                response_code: '20005',
+                response_summary: 'Declined - Do Not Honour',
+                '3ds': undefined,
+                risk: { flagged: false },
+                source:
+                {
+                    type: 'card',
+                    expiry_month: 6,
+                    expiry_year: 2029,
+                    scheme: 'Visa',
+                    last4: '4242',
+                    fingerprint:
+                        '107A352DFAE35E3EEBA5D0856FCDFB88ECF91E8CFDE4275ABBC791FD9579AB2C',
+                    bin: '424242',
+                    card_type: 'Credit',
+                    card_category: 'Consumer',
+                    issuer: 'JPMORGAN CHASE BANK NA',
+                    issuer_country: 'US',
+                    product_id: 'A',
+                    product_type: 'Visa Traditional',
+                    avs_check: 'S',
+                    cvv_check: 'Y'
+                },
+                customer: { id: 'cus_xthycmncbhmujauqjebmhwkwle' },
+                processed_on: '2019-06-09T22:54:00Z',
+                reference: undefined,
+                eci: '05',
+                scheme_id: '638284745624527',
+                _links:
+                {
+                    self:
+                    {
+                        href:
+                            'https://api.sandbox.checkout.com/payments/pay_idt2rgacxglehoyhiu7fu3e4we'
+                    },
+                    actions:
+                    {
+                        href:
+                            'https://api.sandbox.checkout.com/payments/pay_idt2rgacxglehoyhiu7fu3e4we/actions'
+                    }
+                }
+            });
+
+        const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+
+        let transaction = await pay.request<TokenSource>({
+            source: new TokenSource({
+                token: "tok_6dvfwja4i4ie3djvvb2gb7djue"
+            }),
+            currency: "USD",
+            amount: 1005,
+        });
+
+        expect(transaction.approved).to.be.false;
+        expect(transaction.status).to.equal('Declined');
+        expect(transaction.status).to.equal('Declined');
+    });
+
+    it("should timeout payment request with a Token Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .delay(20)
+            .reply(201, {});
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            pay.httpConfiguration = {
+                timeout: 10,
+                environment: Environment.Sandbox
+            }
+            let transaction = await pay.request<TokenSource>({
+                source: new TokenSource({
+                    token: "tok_6dvfwja4i4ie3djvvb2gb7djue"
+                }),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('ApiTimeout');
+        }
+    });
+
+    it("should error out with API Error for payment request with a Token Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(500, {
+                error: 'error'
+            });
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+
+            let transaction = await pay.request<TokenSource>({
+                source: new TokenSource({
+                    token: "tok_6dvfwja4i4ie3djvvb2gb7djue"
+                }),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('API Error');
+        }
+    });
+
+    it("should throw AuthenticationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(401);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+
+            let transaction = await pay.request<TokenSource>({
+                source: new TokenSource({
+                    token: "tok_6dvfwja4i4ie3djvvb2gb7djue"
+                }),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('AuthenticationError');
+        }
+    });
+
+    it("should throw ValidationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(422, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+
+            let transaction = await pay.request<TokenSource>({
+                source: new TokenSource({
+                    token: "tok_6dvfwja4i4ie3djvvb2gb7djue"
+                }),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(ValidationError)
+        }
+    });
+
+    it("should throw TooManyRequestsError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(429, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+
+            let transaction = await pay.request<TokenSource>({
+                source: new TokenSource({
+                    token: "tok_6dvfwja4i4ie3djvvb2gb7djue"
+                }),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(TooManyRequestsError)
+        }
+    });
+
+    it("should throw BadGateway", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(502);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+
+            let transaction = await pay.request<TokenSource>({
+                source: new TokenSource({
+                    token: "tok_6dvfwja4i4ie3djvvb2gb7djue"
+                }),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(BadGateway)
+        }
+    });
+});
+
+describe("Request Payment with token source", async () => {
+
+    it("should perform normal payment request with a Id Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(201, {
+                isPending: [Function],
+                id: 'pay_s44rxo5y5u7ulbsi5dyg23in24',
+                action_id: 'act_s44rxo5y5u7ulbsi5dyg23in24',
+                amount: 100,
+                currency: 'USD',
+                approved: true,
+                status: 'Authorized',
+                auth_code: '908603',
+                response_code: '10000',
+                response_summary: 'Approved',
+                '3ds': undefined,
+                risk: { flagged: false },
+                source:
+                {
+                    id: 'src_3zeom6j6gx6ehkkz3weeektvaa',
+                    type: 'card',
+                    expiry_month: 6,
+                    expiry_year: 2028,
+                    scheme: 'Visa',
+                    last4: '4242',
+                    fingerprint: '35D40AFFDC82BCAC9890181E14655B05D8924C0B4986D29F99D13946A3B59513',
+                    bin: '424242',
+                    card_type: 'Credit',
+                    card_category: 'Consumer',
+                    issuer: 'JPMORGAN CHASE BANK NA',
+                    issuer_country: 'US',
+                    product_id: 'A',
+                    product_type: 'Visa Traditional',
+                    avs_check: 'S',
+                    cvv_check: 'Y'
+                },
+                customer: { id: 'cus_myjw7hyjhmyefbfw5a3zb6rqhe' },
+                processed_on: '2019-07-29T11:16:11Z',
+                reference: undefined,
+                eci: '05',
+                scheme_id: '638284745624527',
+                _links:
+                {
+                    self: { href: 'https://api.sandbox.checkout.com/payments/pay_s44rxo5y5u7ulbsi5dyg23in24' },
+                    actions: { href: 'https://api.sandbox.checkout.com/payments/pay_s44rxo5y5u7ulbsi5dyg23in24/actions' },
+                    capture: { href: 'https://api.sandbox.checkout.com/payments/pay_s44rxo5y5u7ulbsi5dyg23in24/captures' },
+                    void: { href: 'https://api.sandbox.checkout.com/payments/pay_s44rxo5y5u7ulbsi5dyg23in24/voids' }
+                }
+            });
+
+        const pay = new payments('sk_test_0b9b5db6-f223-49d0-b68f-f6643dd4f808');
+
+        let transaction = await pay.request<IdSource>({
+            source: new IdSource({
+                id: "src_6jofmhuzt6ne7kt73t27tg3qni"
+            }),
+            currency: "USD",
+            amount: 100
+        });
+
+        expect(transaction.approved).to.be.true;
+        expect(transaction.risk.flagged).to.be.false;
+        expect(transaction._links.redirect).to.be.undefined;
+    });
+
+    it("should perform 3dS payment request with a Id Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(202, {
+                "id": "pay_y3oqhf46pyzuxjbcn2giaqnb44",
+                "status": "Pending",
+                "reference": "ORD-5023-4E89",
+                "customer": {
+                    "id": "cus_y3oqhf46pyzuxjbcn2giaqnb44",
+                    "email": "jokershere@gmail.com",
+                    "name": "Jack Napier"
+                },
+                "3ds": {
+                    "downgraded": false,
+                    "enrolled": "Y"
+                },
+                "_links": {
+                    "self": {},
+                    "redirect": {}
+                }
+            });
+
+        const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+
+        let transaction = await pay.request<IdSource>({
+            source: new IdSource({
+                id: "src_6jofmhuzt6ne7kt73t27tg3qni"
+            }),
+            currency: "USD",
+            amount: 100,
+            '3ds': {
+                enabled: true
+            }
+        });
+        expect(transaction.isPending()).to.be.true;
+        expect(transaction.status).to.equal('Pending');
+    });
+
+    it("should decline payment request with a Id Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(201, {
+                isPending: [Function],
+                id: 'pay_idt2rgacxglehoyhiu7fu3e4we',
+                action_id: 'act_idt2rgacxglehoyhiu7fu3e4we',
+                amount: 1005,
+                currency: 'USD',
+                approved: false,
+                status: 'Declined',
+                auth_code: '000000',
+                response_code: '20005',
+                response_summary: 'Declined - Do Not Honour',
+                '3ds': undefined,
+                risk: { flagged: false },
+                source:
+                {
+                    type: 'card',
+                    expiry_month: 6,
+                    expiry_year: 2029,
+                    scheme: 'Visa',
+                    last4: '4242',
+                    fingerprint:
+                        '107A352DFAE35E3EEBA5D0856FCDFB88ECF91E8CFDE4275ABBC791FD9579AB2C',
+                    bin: '424242',
+                    card_type: 'Credit',
+                    card_category: 'Consumer',
+                    issuer: 'JPMORGAN CHASE BANK NA',
+                    issuer_country: 'US',
+                    product_id: 'A',
+                    product_type: 'Visa Traditional',
+                    avs_check: 'S',
+                    cvv_check: 'Y'
+                },
+                customer: { id: 'cus_xthycmncbhmujauqjebmhwkwle' },
+                processed_on: '2019-06-09T22:54:00Z',
+                reference: undefined,
+                eci: '05',
+                scheme_id: '638284745624527',
+                _links:
+                {
+                    self:
+                    {
+                        href:
+                            'https://api.sandbox.checkout.com/payments/pay_idt2rgacxglehoyhiu7fu3e4we'
+                    },
+                    actions:
+                    {
+                        href:
+                            'https://api.sandbox.checkout.com/payments/pay_idt2rgacxglehoyhiu7fu3e4we/actions'
+                    }
+                }
+            });
+
+        const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+
+        let transaction = await pay.request<IdSource>({
+            source: new IdSource({
+                id: "src_6jofmhuzt6ne7kt73t27tg3qni"
+            }),
+            currency: "USD",
+            amount: 1005,
+        });
+
+        expect(transaction.approved).to.be.false;
+        expect(transaction.status).to.equal('Declined');
+        expect(transaction.status).to.equal('Declined');
+    });
+
+    it("should timeout payment request with a Id Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .delay(20)
+            .reply(201, {});
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            pay.httpConfiguration = {
+                timeout: 10,
+                environment: Environment.Sandbox
+            }
+            let transaction = await pay.request<IdSource>({
+                source: new IdSource({
+                    id: "src_6jofmhuzt6ne7kt73t27tg3qni"
+                }),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('ApiTimeout');
+        }
+    });
+
+    it("should error out with API Error for payment request with a Id Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(500, {
+                error: 'error'
+            });
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+
+            let transaction = await pay.request<IdSource>({
+                source: new IdSource({
+                    id: "src_6jofmhuzt6ne7kt73t27tg3qni"
+                }),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('API Error');
+        }
+    });
+
+    it("should throw AuthenticationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(401);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+
+            let transaction = await pay.request<IdSource>({
+                source: new IdSource({
+                    id: "src_6jofmhuzt6ne7kt73t27tg3qni"
+                }),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('AuthenticationError');
+        }
+    });
+
+    it("should throw ValidationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(422, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+
+            let transaction = await pay.request<IdSource>({
+                source: new IdSource({
+                    id: "src_6jofmhuzt6ne7kt73t27tg3qni"
+                }),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(ValidationError)
+        }
+    });
+
+    it("should throw TooManyRequestsError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(429, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+
+            let transaction = await pay.request<IdSource>({
+                source: new IdSource({
+                    id: "src_6jofmhuzt6ne7kt73t27tg3qni"
+                }),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(TooManyRequestsError)
+        }
+    });
+
+    it("should throw BadGateway", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(502);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+
+            let transaction = await pay.request<IdSource>({
+                source: new IdSource({
+                    id: "src_6jofmhuzt6ne7kt73t27tg3qni"
+                }),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(BadGateway)
+        }
+    });
+});
+
+describe("Request Payment with customer source", async () => {
+
+    it("should perform normal payment request with a Customer Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(201, {
+                isPending: [Function],
+                id: 'pay_s44rxo5y5u7ulbsi5dyg23in24',
+                action_id: 'act_s44rxo5y5u7ulbsi5dyg23in24',
+                amount: 100,
+                currency: 'USD',
+                approved: true,
+                status: 'Authorized',
+                auth_code: '908603',
+                response_code: '10000',
+                response_summary: 'Approved',
+                '3ds': undefined,
+                risk: { flagged: false },
+                source:
+                {
+                    id: 'src_3zeom6j6gx6ehkkz3weeektvaa',
+                    type: 'card',
+                    expiry_month: 6,
+                    expiry_year: 2028,
+                    scheme: 'Visa',
+                    last4: '4242',
+                    fingerprint: '35D40AFFDC82BCAC9890181E14655B05D8924C0B4986D29F99D13946A3B59513',
+                    bin: '424242',
+                    card_type: 'Credit',
+                    card_category: 'Consumer',
+                    issuer: 'JPMORGAN CHASE BANK NA',
+                    issuer_country: 'US',
+                    product_id: 'A',
+                    product_type: 'Visa Traditional',
+                    avs_check: 'S',
+                    cvv_check: 'Y'
+                },
+                customer: { id: 'cus_myjw7hyjhmyefbfw5a3zb6rqhe' },
+                processed_on: '2019-07-29T11:16:11Z',
+                reference: undefined,
+                eci: '05',
+                scheme_id: '638284745624527',
+                _links:
+                {
+                    self: { href: 'https://api.sandbox.checkout.com/payments/pay_s44rxo5y5u7ulbsi5dyg23in24' },
+                    actions: { href: 'https://api.sandbox.checkout.com/payments/pay_s44rxo5y5u7ulbsi5dyg23in24/actions' },
+                    capture: { href: 'https://api.sandbox.checkout.com/payments/pay_s44rxo5y5u7ulbsi5dyg23in24/captures' },
+                    void: { href: 'https://api.sandbox.checkout.com/payments/pay_s44rxo5y5u7ulbsi5dyg23in24/voids' }
+                }
+            });
+
+        const pay = new payments('sk_test_0b9b5db6-f223-49d0-b68f-f6643dd4f808');
+
+        let transaction = await pay.request<CustomerSource>({
+            source: new CustomerSource({
+                "id": "cus_ye63fc7hx3dednq47lcecjauci"
+            }),
+            currency: "USD",
+            amount: 100
+        });
+
+        expect(transaction.approved).to.be.true;
+        expect(transaction.risk.flagged).to.be.false;
+        expect(transaction._links.redirect).to.be.undefined;
+    });
+
+    it("should perform 3dS payment request with a Customer Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(202, {
+                "id": "pay_y3oqhf46pyzuxjbcn2giaqnb44",
+                "status": "Pending",
+                "reference": "ORD-5023-4E89",
+                "customer": {
+                    "id": "cus_y3oqhf46pyzuxjbcn2giaqnb44",
+                    "email": "jokershere@gmail.com",
+                    "name": "Jack Napier"
+                },
+                "3ds": {
+                    "downgraded": false,
+                    "enrolled": "Y"
+                },
+                "_links": {
+                    "self": {},
+                    "redirect": {}
+                }
+            });
+
+        const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+
+        let transaction = await pay.request<CustomerSource>({
+            source: new CustomerSource({
+                "id": "cus_ye63fc7hx3dednq47lcecjauci"
+            }),
+            currency: "USD",
+            amount: 100,
+            '3ds': {
+                enabled: true
+            }
+        });
+        expect(transaction.isPending()).to.be.true;
+        expect(transaction.status).to.equal('Pending');
+    });
+
+    it("should decline payment request with a Customer Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(201, {
+                isPending: [Function],
+                id: 'pay_idt2rgacxglehoyhiu7fu3e4we',
+                action_id: 'act_idt2rgacxglehoyhiu7fu3e4we',
+                amount: 1005,
+                currency: 'USD',
+                approved: false,
+                status: 'Declined',
+                auth_code: '000000',
+                response_code: '20005',
+                response_summary: 'Declined - Do Not Honour',
+                '3ds': undefined,
+                risk: { flagged: false },
+                source:
+                {
+                    type: 'card',
+                    expiry_month: 6,
+                    expiry_year: 2029,
+                    scheme: 'Visa',
+                    last4: '4242',
+                    fingerprint:
+                        '107A352DFAE35E3EEBA5D0856FCDFB88ECF91E8CFDE4275ABBC791FD9579AB2C',
+                    bin: '424242',
+                    card_type: 'Credit',
+                    card_category: 'Consumer',
+                    issuer: 'JPMORGAN CHASE BANK NA',
+                    issuer_country: 'US',
+                    product_id: 'A',
+                    product_type: 'Visa Traditional',
+                    avs_check: 'S',
+                    cvv_check: 'Y'
+                },
+                customer: { id: 'cus_xthycmncbhmujauqjebmhwkwle' },
+                processed_on: '2019-06-09T22:54:00Z',
+                reference: undefined,
+                eci: '05',
+                scheme_id: '638284745624527',
+                _links:
+                {
+                    self:
+                    {
+                        href:
+                            'https://api.sandbox.checkout.com/payments/pay_idt2rgacxglehoyhiu7fu3e4we'
+                    },
+                    actions:
+                    {
+                        href:
+                            'https://api.sandbox.checkout.com/payments/pay_idt2rgacxglehoyhiu7fu3e4we/actions'
+                    }
+                }
+            });
+
+        const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+
+        let transaction = await pay.request<CustomerSource>({
+            source: new CustomerSource({
+                "id": "cus_ye63fc7hx3dednq47lcecjauci"
+            }),
+            currency: "USD",
+            amount: 1005,
+        });
+
+        expect(transaction.approved).to.be.false;
+        expect(transaction.status).to.equal('Declined');
+        expect(transaction.status).to.equal('Declined');
+    });
+
+    it("should timeout payment request with a Customer Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .delay(20)
+            .reply(201, {});
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            pay.httpConfiguration = {
+                timeout: 10,
+                environment: Environment.Sandbox
+            }
+            let transaction = await pay.request<CustomerSource>({
+                source: new CustomerSource({
+                    "id": "cus_ye63fc7hx3dednq47lcecjauci"
+                }),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('ApiTimeout');
+        }
+    });
+
+    it("should error out with API Error for payment request with a Customer Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(500, {
+                error: 'error'
+            });
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+
+            let transaction = await pay.request<CustomerSource>({
+                source: new CustomerSource({
+                    "id": "cus_ye63fc7hx3dednq47lcecjauci"
+                }),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('API Error');
+        }
+    });
+
+    it("should throw AuthenticationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(401);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+
+            let transaction = await pay.request<CustomerSource>({
+                source: new CustomerSource({
+                    "id": "cus_ye63fc7hx3dednq47lcecjauci"
+                }),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('AuthenticationError');
+        }
+    });
+
+    it("should throw ValidationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(422, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+
+            let transaction = await pay.request<CustomerSource>({
+                source: new CustomerSource({
+                    "id": "cus_ye63fc7hx3dednq47lcecjauci"
+                }),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(ValidationError)
+        }
+    });
+
+    it("should throw TooManyRequestsError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(429, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+
+            let transaction = await pay.request<CustomerSource>({
+                source: new CustomerSource({
+                    "id": "cus_ye63fc7hx3dednq47lcecjauci"
+                }),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(TooManyRequestsError)
+        }
+    });
+
+    it("should throw BadGateway", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(502);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+
+            let transaction = await pay.request<CustomerSource>({
+                source: new CustomerSource({
+                    "id": "cus_ye63fc7hx3dednq47lcecjauci"
+                }),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(BadGateway)
+        }
+    });
+});
+
+describe("Request Payment with network token source", async () => {
+
+    it("should perform normal payment request with a NetworkToken Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(201, {
+                isPending: [Function],
+                id: 'pay_s44rxo5y5u7ulbsi5dyg23in24',
+                action_id: 'act_s44rxo5y5u7ulbsi5dyg23in24',
+                amount: 100,
+                currency: 'USD',
+                approved: true,
+                status: 'Authorized',
+                auth_code: '908603',
+                response_code: '10000',
+                response_summary: 'Approved',
+                '3ds': undefined,
+                risk: { flagged: false },
+                source:
+                {
+                    id: 'src_3zeom6j6gx6ehkkz3weeektvaa',
+                    type: 'card',
+                    expiry_month: 6,
+                    expiry_year: 2028,
+                    scheme: 'Visa',
+                    last4: '4242',
+                    fingerprint: '35D40AFFDC82BCAC9890181E14655B05D8924C0B4986D29F99D13946A3B59513',
+                    bin: '424242',
+                    card_type: 'Credit',
+                    card_category: 'Consumer',
+                    issuer: 'JPMORGAN CHASE BANK NA',
+                    issuer_country: 'US',
+                    product_id: 'A',
+                    product_type: 'Visa Traditional',
+                    avs_check: 'S',
+                    cvv_check: 'Y'
+                },
+                customer: { id: 'cus_myjw7hyjhmyefbfw5a3zb6rqhe' },
+                processed_on: '2019-07-29T11:16:11Z',
+                reference: undefined,
+                eci: '05',
+                scheme_id: '638284745624527',
+                _links:
+                {
+                    self: { href: 'https://api.sandbox.checkout.com/payments/pay_s44rxo5y5u7ulbsi5dyg23in24' },
+                    actions: { href: 'https://api.sandbox.checkout.com/payments/pay_s44rxo5y5u7ulbsi5dyg23in24/actions' },
+                    capture: { href: 'https://api.sandbox.checkout.com/payments/pay_s44rxo5y5u7ulbsi5dyg23in24/captures' },
+                    void: { href: 'https://api.sandbox.checkout.com/payments/pay_s44rxo5y5u7ulbsi5dyg23in24/voids' }
+                }
+            });
+
+        const pay = new payments('sk_test_0b9b5db6-f223-49d0-b68f-f6643dd4f808');
+
+        let transaction = await pay.request<NetworkTokenSource>({
+            source: new NetworkTokenSource({
+                "token": "4242424242424242",
+                "expiry_month": 6,
+                "expiry_year": 2025,
+                "token_type": "vts",
+                "cryptogram": "hv8mUFzPzRZoCAAAAAEQBDMAAAA=",
+                "eci": "05"
+            }),
+            currency: "USD",
+            amount: 100
+        });
+
+        expect(transaction.approved).to.be.true;
+        expect(transaction.risk.flagged).to.be.false;
+        expect(transaction._links.redirect).to.be.undefined;
+    });
+
+    it("should perform 3dS payment request with a NetworkToken Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(202, {
+                "id": "pay_y3oqhf46pyzuxjbcn2giaqnb44",
+                "status": "Pending",
+                "reference": "ORD-5023-4E89",
+                "customer": {
+                    "id": "cus_y3oqhf46pyzuxjbcn2giaqnb44",
+                    "email": "jokershere@gmail.com",
+                    "name": "Jack Napier"
+                },
+                "3ds": {
+                    "downgraded": false,
+                    "enrolled": "Y"
+                },
+                "_links": {
+                    "self": {},
+                    "redirect": {}
+                }
+            });
+
+        const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+
+        let transaction = await pay.request<NetworkTokenSource>({
+            source: new NetworkTokenSource({
+                "token": "4242424242424242",
+                "expiry_month": 6,
+                "expiry_year": 2025,
+                "token_type": "vts",
+                "cryptogram": "hv8mUFzPzRZoCAAAAAEQBDMAAAA=",
+                "eci": "05"
+            }),
+            currency: "USD",
+            amount: 100,
+            '3ds': {
+                enabled: true
+            }
+        });
+        expect(transaction.isPending()).to.be.true;
+        expect(transaction.status).to.equal('Pending');
+    });
+
+    it("should decline payment request with a NetworkToken Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(201, {
+                isPending: [Function],
+                id: 'pay_idt2rgacxglehoyhiu7fu3e4we',
+                action_id: 'act_idt2rgacxglehoyhiu7fu3e4we',
+                amount: 1005,
+                currency: 'USD',
+                approved: false,
+                status: 'Declined',
+                auth_code: '000000',
+                response_code: '20005',
+                response_summary: 'Declined - Do Not Honour',
+                '3ds': undefined,
+                risk: { flagged: false },
+                source:
+                {
+                    type: 'card',
+                    expiry_month: 6,
+                    expiry_year: 2029,
+                    scheme: 'Visa',
+                    last4: '4242',
+                    fingerprint:
+                        '107A352DFAE35E3EEBA5D0856FCDFB88ECF91E8CFDE4275ABBC791FD9579AB2C',
+                    bin: '424242',
+                    card_type: 'Credit',
+                    card_category: 'Consumer',
+                    issuer: 'JPMORGAN CHASE BANK NA',
+                    issuer_country: 'US',
+                    product_id: 'A',
+                    product_type: 'Visa Traditional',
+                    avs_check: 'S',
+                    cvv_check: 'Y'
+                },
+                customer: { id: 'cus_xthycmncbhmujauqjebmhwkwle' },
+                processed_on: '2019-06-09T22:54:00Z',
+                reference: undefined,
+                eci: '05',
+                scheme_id: '638284745624527',
+                _links:
+                {
+                    self:
+                    {
+                        href:
+                            'https://api.sandbox.checkout.com/payments/pay_idt2rgacxglehoyhiu7fu3e4we'
+                    },
+                    actions:
+                    {
+                        href:
+                            'https://api.sandbox.checkout.com/payments/pay_idt2rgacxglehoyhiu7fu3e4we/actions'
+                    }
+                }
+            });
+
+        const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+
+        let transaction = await pay.request<NetworkTokenSource>({
+            source: new NetworkTokenSource({
+                "token": "4242424242424242",
+                "expiry_month": 6,
+                "expiry_year": 2025,
+                "token_type": "vts",
+                "cryptogram": "hv8mUFzPzRZoCAAAAAEQBDMAAAA=",
+                "eci": "05"
+            }),
+            currency: "USD",
+            amount: 1005,
+        });
+
+        expect(transaction.approved).to.be.false;
+        expect(transaction.status).to.equal('Declined');
+        expect(transaction.status).to.equal('Declined');
+    });
+
+    it("should timeout payment request with a NetworkToken Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .delay(20)
+            .reply(201, {});
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            pay.httpConfiguration = {
+                timeout: 10,
+                environment: Environment.Sandbox
+            }
+            let transaction = await pay.request<NetworkTokenSource>({
+                source: new NetworkTokenSource({
+
+                    "token": "4242424242424242",
+                    "expiry_month": 6,
+                    "expiry_year": 2025,
+                    "token_type": "vts",
+                    "cryptogram": "hv8mUFzPzRZoCAAAAAEQBDMAAAA=",
+                    "eci": "05"
+                }),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('ApiTimeout');
+        }
+    });
+
+    it("should error out with API Error for payment request with a NetworkToken Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(500, {
+                error: 'error'
+            });
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+
+            let transaction = await pay.request<NetworkTokenSource>({
+                source: new NetworkTokenSource({
+
+                    "token": "4242424242424242",
+                    "expiry_month": 6,
+                    "expiry_year": 2025,
+                    "token_type": "vts",
+                    "cryptogram": "hv8mUFzPzRZoCAAAAAEQBDMAAAA=",
+                    "eci": "05"
+                }),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('API Error');
+        }
+    });
+
+    it("should throw AuthenticationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(401);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+
+            let transaction = await pay.request<NetworkTokenSource>({
+                source: new NetworkTokenSource({
+
+                    "token": "4242424242424242",
+                    "expiry_month": 6,
+                    "expiry_year": 2025,
+                    "token_type": "vts",
+                    "cryptogram": "hv8mUFzPzRZoCAAAAAEQBDMAAAA=",
+                    "eci": "05"
+                }),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('AuthenticationError');
+        }
+    });
+
+    it("should throw ValidationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(422, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+
+            let transaction = await pay.request<NetworkTokenSource>({
+                source: new NetworkTokenSource({
+
+                    "token": "4242424242424242",
+                    "expiry_month": 6,
+                    "expiry_year": 2025,
+                    "token_type": "vts",
+                    "cryptogram": "hv8mUFzPzRZoCAAAAAEQBDMAAAA=",
+                    "eci": "05"
+                }),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(ValidationError)
+        }
+    });
+
+    it("should throw TooManyRequestsError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(429, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+
+            let transaction = await pay.request<NetworkTokenSource>({
+                source: new NetworkTokenSource({
+
+                    "token": "4242424242424242",
+                    "expiry_month": 6,
+                    "expiry_year": 2025,
+                    "token_type": "vts",
+                    "cryptogram": "hv8mUFzPzRZoCAAAAAEQBDMAAAA=",
+                    "eci": "05"
+                }),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(TooManyRequestsError)
+        }
+    });
+
+    it("should throw BadGateway", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(502);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+
+            let transaction = await pay.request<NetworkTokenSource>({
+                source: new NetworkTokenSource({
+                    "token": "4242424242424242",
+                    "expiry_month": 6,
+                    "expiry_year": 2025,
+                    "token_type": "vts",
+                    "cryptogram": "hv8mUFzPzRZoCAAAAAEQBDMAAAA=",
+                    "eci": "05"
+                }),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(BadGateway)
+        }
+    });
+});
+
+describe("Request Payment with alipay source", async () => {
+
+    it("should perform normal payment request with a Alipay Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(202, {
+                "id": "pay_qxkkv6kcwwfehgekufp426krja",
+                "status": "Pending",
+                "reference": "bill",
+                "customer": {
+                    "id": "cus_ah6ax2fswwmujfessvmhj6yfdu"
+                },
+                "_links": {
+                    "self": {
+                        "href": "https://api.sandbox.checkout.com/payments/pay_qxkkv6kcwwfehgekufp426krja"
+                    },
+                    "redirect": {
+                        "href": "https://sandbox.checkout.com/LP.Core/api/payment/149272"
+                    }
+                }
+            });
+
+        const pay = new payments('sk_test_0b9b5db6-f223-49d0-b68f-f6643dd4f808');
+
+        let transaction = await pay.request<AlipaySource>({
+            source: new AlipaySource(),
+            currency: "USD",
+            amount: 100
+        });
+
+        expect(transaction.status).to.equal("Pending");
+        expect(transaction.isPending()).to.be.true;
+    });
+
+
+    it("should timeout payment request with a Alipay Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .delay(20)
+            .reply(201, {});
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            pay.httpConfiguration = {
+                timeout: 10,
+                environment: Environment.Sandbox
+            }
+            let transaction = await pay.request<AlipaySource>({
+                source: new AlipaySource(),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('ApiTimeout');
+        }
+    });
+
+    it("should error out with API Error for payment request with a Alipay Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(500, {
+                error: 'error'
+            });
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<AlipaySource>({
+                source: new AlipaySource(),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('API Error');
+        }
+    });
+
+    it("should throw AuthenticationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(401);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<AlipaySource>({
+                source: new AlipaySource(),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('AuthenticationError');
+        }
+    });
+
+    it("should throw ValidationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(422, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<AlipaySource>({
+                source: new AlipaySource(),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(ValidationError)
+        }
+    });
+
+    it("should throw TooManyRequestsError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(429, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<AlipaySource>({
+                source: new AlipaySource(),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(TooManyRequestsError)
+        }
+    });
+
+    it("should throw BadGateway", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(502);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<AlipaySource>({
+                source: new AlipaySource(),
+                currency: "USD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(BadGateway)
+        }
+    });
+});
+
+describe("Request Payment with boleto source", async () => {
+
+    it("should perform normal payment request with a Boleto Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(202, {
+                "id": "pay_qxkkv6kcwwfehgekufp426krja",
+                "status": "Pending",
+                "reference": "bill",
+                "customer": {
+                    "id": "cus_ah6ax2fswwmujfessvmhj6yfdu"
+                },
+                "_links": {
+                    "self": {
+                        "href": "https://api.sandbox.checkout.com/payments/pay_qxkkv6kcwwfehgekufp426krja"
+                    },
+                    "redirect": {
+                        "href": "https://sandbox.checkout.com/LP.Core/api/payment/149272"
+                    }
+                }
+            });
+
+        const pay = new payments('sk_test_0b9b5db6-f223-49d0-b68f-f6643dd4f808');
+
+        let transaction = await pay.request<BoletoSource>({
+            source: new BoletoSource({
+                "birthDate": "1973-11-11",
+                "cpf": "00003456789",
+                "customerName": "Rafael Goncalves"
+            }),
+            currency: "BRL",
+            amount: 100
+        });
+
+        expect(transaction.status).to.equal("Pending");
+        expect(transaction.isPending()).to.be.true;
+    });
+
+
+
+    it("should timeout payment request with a Boleto Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .delay(20)
+            .reply(201, {});
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            pay.httpConfiguration = {
+                timeout: 10,
+                environment: Environment.Sandbox
+            }
+            let transaction = await pay.request<BoletoSource>({
+                source: new BoletoSource({
+                    "birthDate": "1973-11-11",
+                    "cpf": "00003456789",
+                    "customerName": "Rafael Goncalves"
+                }),
+                currency: "BRL",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('ApiTimeout');
+        }
+    });
+
+    it("should error out with API Error for payment request with a Boleto Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(500, {
+                error: 'error'
+            });
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<BoletoSource>({
+                source: new BoletoSource({
+                    "birthDate": "1973-11-11",
+                    "cpf": "00003456789",
+                    "customerName": "Rafael Goncalves"
+                }),
+                currency: "BRL",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('API Error');
+        }
+    });
+
+    it("should throw AuthenticationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(401);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<BoletoSource>({
+                source: new BoletoSource({
+                    "birthDate": "1973-11-11",
+                    "cpf": "00003456789",
+                    "customerName": "Rafael Goncalves"
+                }),
+                currency: "BRL",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('AuthenticationError');
+        }
+    });
+
+    it("should throw ValidationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(422, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<BoletoSource>({
+                source: new BoletoSource({
+                    "birthDate": "1973-11-11",
+                    "cpf": "00003456789",
+                    "customerName": "Rafael Goncalves"
+                }),
+                currency: "BRL",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(ValidationError)
+        }
+    });
+
+    it("should throw TooManyRequestsError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(429, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<BoletoSource>({
+                source: new BoletoSource({
+                    "birthDate": "1973-11-11",
+                    "cpf": "00003456789",
+                    "customerName": "Rafael Goncalves"
+                }),
+                currency: "BRL",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(TooManyRequestsError)
+        }
+    });
+
+    it("should throw BadGateway", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(502);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<BoletoSource>({
+                source: new BoletoSource({
+                    "birthDate": "1973-11-11",
+                    "cpf": "00003456789",
+                    "customerName": "Rafael Goncalves"
+                }),
+                currency: "BRL",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(BadGateway)
+        }
+    });
+});
+
+describe("Request Payment with bancontact source", async () => {
+
+    it("should perform normal payment request with a Bancontact Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(202, {
+                "id": "pay_n6n3gepww4surejytdp4ozjoly",
+                "status": "Pending",
+                "customer": {
+                    "id": "cus_6mg4oy74euburertf2dirrmuw4"
+                },
+                "_links": {
+                    "self": {
+                        "href": "https://api.sandbox.checkout.com/payments/pay_n6n3gepww4surejytdp4ozjoly"
+                    },
+                    "redirect": {
+                        "href": "https://trusted.girogate.de/ti/dumbdummy?tx=486276883&rs=bTkokE0uuZv6DtH0Tb4KNJB4Y8MY0199&cs=f88e86113dd159f6c399daafb3054e43c065d6c726a1b2a4f81f481fb877f629"
+                    }
+                }
+            });
+
+        const pay = new payments('sk_test_0b9b5db6-f223-49d0-b68f-f6643dd4f808');
+
+        let transaction = await pay.request<BancontactSource>({
+            source: new BancontactSource({
+                "account_holder_name": "Bruce Wayne",
+                "payment_country": "BE",
+                "billing_descriptor": "CKO Demo - bancontact"
+            }),
+            currency: "EUR",
+            amount: 100
+        });
+
+        expect(transaction.status).to.equal("Pending");
+        expect(transaction.isPending()).to.be.true;
+    });
+
+
+
+    it("should timeout payment request with a Bancontact Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .delay(20)
+            .reply(201, {});
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            pay.httpConfiguration = {
+                timeout: 10,
+                environment: Environment.Sandbox
+            }
+            let transaction = await pay.request<BancontactSource>({
+                source: new BancontactSource({
+                    "account_holder_name": "Bruce Wayne",
+                    "payment_country": "BE",
+                    "billing_descriptor": "CKO Demo - bancontact"
+                }),
+                currency: "EUR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('ApiTimeout');
+        }
+    });
+
+    it("should error out with API Error for payment request with a Bancontact Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(500, {
+                error: 'error'
+            });
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<BancontactSource>({
+                source: new BancontactSource({
+                    "account_holder_name": "Bruce Wayne",
+                    "payment_country": "BE",
+                    "billing_descriptor": "CKO Demo - bancontact"
+                }),
+                currency: "EUR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('API Error');
+        }
+    });
+
+    it("should throw AuthenticationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(401);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<BancontactSource>({
+                source: new BancontactSource({
+                    "account_holder_name": "Bruce Wayne",
+                    "payment_country": "BE",
+                    "billing_descriptor": "CKO Demo - bancontact"
+                }),
+                currency: "EUR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('AuthenticationError');
+        }
+    });
+
+    it("should throw ValidationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(422, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<BancontactSource>({
+                source: new BancontactSource({
+                    "account_holder_name": "Bruce Wayne",
+                    "payment_country": "BE",
+                    "billing_descriptor": "CKO Demo - bancontact"
+                }),
+                currency: "EUR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(ValidationError)
+        }
+    });
+
+    it("should throw TooManyRequestsError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(429, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<BancontactSource>({
+                source: new BancontactSource({
+                    "account_holder_name": "Bruce Wayne",
+                    "payment_country": "BE",
+                    "billing_descriptor": "CKO Demo - bancontact"
+                }),
+                currency: "EUR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(TooManyRequestsError)
+        }
+    });
+
+    it("should throw BadGateway", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(502);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<BancontactSource>({
+                source: new BancontactSource({
+                    "account_holder_name": "Bruce Wayne",
+                    "payment_country": "BE",
+                    "billing_descriptor": "CKO Demo - bancontact"
+                }),
+                currency: "EUR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(BadGateway)
+        }
+    });
+});
+
+describe("Request Payment with eps source", async () => {
+
+    it("should perform normal payment request with a Eps Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(202, {
+                "id": "pay_n6n3gepww4surejytdp4ozjoly",
+                "status": "Pending",
+                "customer": {
+                    "id": "cus_6mg4oy74euburertf2dirrmuw4"
+                },
+                "_links": {
+                    "self": {
+                        "href": "https://api.sandbox.checkout.com/payments/pay_n6n3gepww4surejytdp4ozjoly"
+                    },
+                    "redirect": {
+                        "href": "https://trusted.girogate.de/ti/dumbdummy?tx=486276883&rs=bTkokE0uuZv6DtH0Tb4KNJB4Y8MY0199&cs=f88e86113dd159f6c399daafb3054e43c065d6c726a1b2a4f81f481fb877f629"
+                    }
+                }
+            });
+
+        const pay = new payments('sk_test_0b9b5db6-f223-49d0-b68f-f6643dd4f808');
+
+        let transaction = await pay.request<EpsSource>({
+            source: new EpsSource({
+                "purpose": "Mens black t-shirt L"
+            }),
+            currency: "EUR",
+            amount: 100
+        });
+
+        expect(transaction.status).to.equal("Pending");
+        expect(transaction.isPending()).to.be.true;
+    });
+
+
+
+    it("should timeout payment request with a Eps Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .delay(20)
+            .reply(201, {});
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            pay.httpConfiguration = {
+                timeout: 10,
+                environment: Environment.Sandbox
+            }
+            let transaction = await pay.request<EpsSource>({
+                source: new EpsSource({
+                    "purpose": "Mens black t-shirt L"
+                }),
+                currency: "EUR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('ApiTimeout');
+        }
+    });
+
+    it("should error out with API Error for payment request with a Eps Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(500, {
+                error: 'error'
+            });
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<EpsSource>({
+                source: new EpsSource({
+                    "purpose": "Mens black t-shirt L"
+                }),
+                currency: "EUR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('API Error');
+        }
+    });
+
+    it("should throw AuthenticationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(401);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<EpsSource>({
+                source: new EpsSource({
+                    "purpose": "Mens black t-shirt L"
+                }),
+                currency: "EUR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('AuthenticationError');
+        }
+    });
+
+    it("should throw ValidationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(422, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<EpsSource>({
+                source: new EpsSource({
+                    "purpose": "Mens black t-shirt L"
+                }),
+                currency: "EUR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(ValidationError)
+        }
+    });
+
+    it("should throw TooManyRequestsError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(429, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<EpsSource>({
+                source: new EpsSource({
+                    "purpose": "Mens black t-shirt L"
+                }),
+                currency: "EUR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(TooManyRequestsError)
+        }
+    });
+
+    it("should throw BadGateway", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(502);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<EpsSource>({
+                source: new EpsSource({
+                    "purpose": "Mens black t-shirt L"
+                }),
+                currency: "EUR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(BadGateway)
+        }
+    });
+});
+
+describe("Request Payment with fawry source", async () => {
+
+    it("should perform normal payment request with a Fawry Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(202, {
+                "id": "pay_xjndyxg5hm6ujfyxhn4ctdwnv4",
+                "status": "Pending",
+                "customer": {
+                    "id": "cus_6fb5ub5rlsiehg66tbtbp64auq"
+                },
+                "_links": {
+                    "self": {
+                        "href": "https://api.sandbox.checkout.com/payments/pay_xjndyxg5hm6ujfyxhn4ctdwnv4"
+                    },
+                    "approve": {
+                        "href": "https://api.sandbox.checkout.com/fawry/payments/1192437644/approval"
+                    },
+                    "cancel": {
+                        "href": "https://api.sandbox.checkout.com/fawry/payments/1192437644/cancellation"
+                    }
+                }
+            });
+
+        const pay = new payments('sk_test_0b9b5db6-f223-49d0-b68f-f6643dd4f808');
+
+        let transaction = await pay.request<FawrySource>({
+            source: new FawrySource({
+                "description": "Fawry Demo Payment",
+                "customer_mobile": "0102800991193847299",
+                "customer_email": "bruce@wayne-enterprises.com",
+                "products": [
+                    {
+                        "product_id": "0123456789",
+                        "quantity": 1,
+                        "price": 1000,
+                        "description": "Fawry Demo Product"
+                    }
+                ]
+            }),
+            currency: "EGP",
+            amount: 100
+        });
+
+        expect(transaction.status).to.equal("Pending");
+        expect(transaction.isPending()).to.be.true;
+    });
+
+
+
+    it("should timeout payment request with a Fawry Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .delay(20)
+            .reply(201, {});
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            pay.httpConfiguration = {
+                timeout: 10,
+                environment: Environment.Sandbox
+            }
+            let transaction = await pay.request<FawrySource>({
+                source: new FawrySource({
+                    "description": "Fawry Demo Payment",
+                    "customer_mobile": "0102800991193847299",
+                    "customer_email": "bruce@wayne-enterprises.com",
+                    "products": [
+                        {
+                            "product_id": "0123456789",
+                            "quantity": 1,
+                            "price": 1000,
+                            "description": "Fawry Demo Product"
+                        }
+                    ]
+                }),
+                currency: "EGP",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('ApiTimeout');
+        }
+    });
+
+    it("should error out with API Error for payment request with a Fawry Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(500, {
+                error: 'error'
+            });
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<FawrySource>({
+                source: new FawrySource({
+                    "description": "Fawry Demo Payment",
+                    "customer_mobile": "0102800991193847299",
+                    "customer_email": "bruce@wayne-enterprises.com",
+                    "products": [
+                        {
+                            "product_id": "0123456789",
+                            "quantity": 1,
+                            "price": 1000,
+                            "description": "Fawry Demo Product"
+                        }
+                    ]
+                }),
+                currency: "EGP",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('API Error');
+        }
+    });
+
+    it("should throw AuthenticationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(401);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<FawrySource>({
+                source: new FawrySource({
+                    "description": "Fawry Demo Payment",
+                    "customer_mobile": "0102800991193847299",
+                    "customer_email": "bruce@wayne-enterprises.com",
+                    "products": [
+                        {
+                            "product_id": "0123456789",
+                            "quantity": 1,
+                            "price": 1000,
+                            "description": "Fawry Demo Product"
+                        }
+                    ]
+                }),
+                currency: "EGP",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('AuthenticationError');
+        }
+    });
+
+    it("should throw ValidationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(422, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<FawrySource>({
+                source: new FawrySource({
+                    "description": "Fawry Demo Payment",
+                    "customer_mobile": "0102800991193847299",
+                    "customer_email": "bruce@wayne-enterprises.com",
+                    "products": [
+                        {
+                            "product_id": "0123456789",
+                            "quantity": 1,
+                            "price": 1000,
+                            "description": "Fawry Demo Product"
+                        }
+                    ]
+                }),
+                currency: "EGP",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(ValidationError)
+        }
+    });
+
+    it("should throw TooManyRequestsError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(429, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<FawrySource>({
+                source: new FawrySource({
+                    "description": "Fawry Demo Payment",
+                    "customer_mobile": "0102800991193847299",
+                    "customer_email": "bruce@wayne-enterprises.com",
+                    "products": [
+                        {
+                            "product_id": "0123456789",
+                            "quantity": 1,
+                            "price": 1000,
+                            "description": "Fawry Demo Product"
+                        }
+                    ]
+                }),
+                currency: "EGP",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(TooManyRequestsError)
+        }
+    });
+
+    it("should throw BadGateway", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(502);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<FawrySource>({
+                source: new FawrySource({
+                    "description": "Fawry Demo Payment",
+                    "customer_mobile": "0102800991193847299",
+                    "customer_email": "bruce@wayne-enterprises.com",
+                    "products": [
+                        {
+                            "product_id": "0123456789",
+                            "quantity": 1,
+                            "price": 1000,
+                            "description": "Fawry Demo Product"
+                        }
+                    ]
+                }),
+                currency: "EGP",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(BadGateway)
+        }
+    });
+});
+
+describe("Request Payment with giropay source", async () => {
+
+    it("should perform normal payment request with a Giropay Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(202, {
+                "id": "pay_xjndyxg5hm6ujfyxhn4ctdwnv4",
+                "status": "Pending",
+                "customer": {
+                    "id": "cus_6fb5ub5rlsiehg66tbtbp64auq"
+                },
+                "_links": {
+                    "self": {
+                        "href": "https://api.sandbox.checkout.com/payments/pay_xjndyxg5hm6ujfyxhn4ctdwnv4"
+                    },
+                    "approve": {
+                        "href": "https://api.sandbox.checkout.com/fawry/payments/1192437644/approval"
+                    },
+                    "cancel": {
+                        "href": "https://api.sandbox.checkout.com/fawry/payments/1192437644/cancellation"
+                    }
+                }
+            });
+
+        const pay = new payments('sk_test_0b9b5db6-f223-49d0-b68f-f6643dd4f808');
+
+        let transaction = await pay.request<GiropaySource>({
+            source: new GiropaySource({
+                "purpose": "Mens black t-shirt L"
+            }),
+            currency: "EGP",
+            amount: 100
+        });
+
+        expect(transaction.status).to.equal("Pending");
+        expect(transaction.isPending()).to.be.true;
+    });
+
+
+
+    it("should timeout payment request with a Giropay Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .delay(20)
+            .reply(201, {});
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            pay.httpConfiguration = {
+                timeout: 10,
+                environment: Environment.Sandbox
+            }
+            let transaction = await pay.request<GiropaySource>({
+                source: new GiropaySource({
+                    "purpose": "Mens black t-shirt L"
+                }),
+                currency: "EGP",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('ApiTimeout');
+        }
+    });
+
+    it("should error out with API Error for payment request with a Giropay Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(500, {
+                error: 'error'
+            });
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<GiropaySource>({
+                source: new GiropaySource({
+                    "purpose": "Mens black t-shirt L"
+                }),
+                currency: "EGP",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('API Error');
+        }
+    });
+
+    it("should throw AuthenticationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(401);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<GiropaySource>({
+                source: new GiropaySource({
+                    "purpose": "Mens black t-shirt L"
+                }),
+                currency: "EGP",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('AuthenticationError');
+        }
+    });
+
+    it("should throw ValidationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(422, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<GiropaySource>({
+                source: new GiropaySource({
+                    "purpose": "Mens black t-shirt L"
+                }),
+                currency: "EGP",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(ValidationError)
+        }
+    });
+
+    it("should throw TooManyRequestsError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(429, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<GiropaySource>({
+                source: new GiropaySource({
+                    "purpose": "Mens black t-shirt L"
+                }),
+                currency: "EGP",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(TooManyRequestsError)
+        }
+    });
+
+    it("should throw BadGateway", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(502);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<GiropaySource>({
+                source: new GiropaySource({
+                    "purpose": "Mens black t-shirt L"
+                }),
+                currency: "EGP",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(BadGateway)
+        }
+    });
+});
+
+describe("Request Payment with ideal source", async () => {
+
+    it("should perform normal payment request with a iDeal Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(202, {
+                "id": "pay_xjndyxg5hm6ujfyxhn4ctdwnv4",
+                "status": "Pending",
+                "customer": {
+                    "id": "cus_6fb5ub5rlsiehg66tbtbp64auq"
+                },
+                "_links": {
+                    "self": {
+                        "href": "https://api.sandbox.checkout.com/payments/pay_xjndyxg5hm6ujfyxhn4ctdwnv4"
+                    },
+                    "approve": {
+                        "href": "https://api.sandbox.checkout.com/fawry/payments/1192437644/approval"
+                    },
+                    "cancel": {
+                        "href": "https://api.sandbox.checkout.com/fawry/payments/1192437644/cancellation"
+                    }
+                }
+            });
+
+        const pay = new payments('sk_test_0b9b5db6-f223-49d0-b68f-f6643dd4f808');
+
+        let transaction = await pay.request<IdealSource>({
+            source: new IdealSource({
+                "bic": "INGBNL2A",
+                "description": "ORD123",
+                "language": "nl"
+            }),
+            currency: "EUR",
+            amount: 100
+        });
+
+        expect(transaction.status).to.equal("Pending");
+        expect(transaction.isPending()).to.be.true;
+    });
+
+
+
+    it("should timeout payment request with a iDeal Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .delay(20)
+            .reply(201, {});
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            pay.httpConfiguration = {
+                timeout: 10,
+                environment: Environment.Sandbox
+            }
+            let transaction = await pay.request<IdealSource>({
+                source: new IdealSource({
+                    "bic": "INGBNL2A",
+                    "description": "ORD123",
+                    "language": "nl"
+                }),
+                currency: "EUR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('ApiTimeout');
+        }
+    });
+
+    it("should error out with API Error for payment request with a iDeal Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(500, {
+                error: 'error'
+            });
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<IdealSource>({
+                source: new IdealSource({
+                    "bic": "INGBNL2A",
+                    "description": "ORD123",
+                    "language": "nl"
+                }),
+                currency: "EUR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('API Error');
+        }
+    });
+
+    it("should throw AuthenticationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(401);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<IdealSource>({
+                source: new IdealSource({
+                    "bic": "INGBNL2A",
+                    "description": "ORD123",
+                    "language": "nl"
+                }),
+                currency: "EUR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('AuthenticationError');
+        }
+    });
+
+    it("should throw ValidationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(422, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<IdealSource>({
+                source: new IdealSource({
+                    "bic": "INGBNL2A",
+                    "description": "ORD123",
+                    "language": "nl"
+                }),
+                currency: "EUR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(ValidationError)
+        }
+    });
+
+    it("should throw TooManyRequestsError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(429, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<IdealSource>({
+                source: new IdealSource({
+                    "bic": "INGBNL2A",
+                    "description": "ORD123",
+                    "language": "nl"
+                }),
+                currency: "EUR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(TooManyRequestsError)
+        }
+    });
+
+    it("should throw BadGateway", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(502);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<IdealSource>({
+                source: new IdealSource({
+                    "bic": "INGBNL2A",
+                    "description": "ORD123",
+                    "language": "nl"
+                }),
+                currency: "EUR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(BadGateway)
+        }
+    });
+});
+
+describe("Request Payment with Klarna Source", async () => {
+
+    it("should perform normal payment request with a Klarna Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(202, {
+                "id": "pay_xjndyxg5hm6ujfyxhn4ctdwnv4",
+                "status": "Pending",
+                "customer": {
+                    "id": "cus_6fb5ub5rlsiehg66tbtbp64auq"
+                },
+                "_links": {
+                    "self": {
+                        "href": "https://api.sandbox.checkout.com/payments/pay_xjndyxg5hm6ujfyxhn4ctdwnv4"
+                    },
+                    "approve": {
+                        "href": "https://api.sandbox.checkout.com/fawry/payments/1192437644/approval"
+                    },
+                    "cancel": {
+                        "href": "https://api.sandbox.checkout.com/fawry/payments/1192437644/cancellation"
+                    }
+                }
+            });
+
+        const pay = new payments('sk_test_0b9b5db6-f223-49d0-b68f-f6643dd4f808');
+
+        let transaction = await pay.request<KlarnaSource>({
+            source: new KlarnaSource({
+                "authorization_token": "b4bd3423-24e3",
+                "locale": "en-GB",
+                "purchase_country": "GB",
+                "tax_amount": 0,
+                "billing_address": {
+                    "given_name": "John",
+                    "family_name": "Doe",
+                    "email": "johndoe@email.com",
+                    "title": "Mr",
+                    "street_address": "13 New Burlington St",
+                    "street_address2": "Apt 214",
+                    "postal_code": "W13 3BG",
+                    "city": "London",
+                    "phone": "01895808221",
+                    "country": "GB"
+                },
+                "customer": {
+                    "date_of_birth": "1970-01-01",
+                    "gender": "male"
+                },
+                "products": [
+                    {
+                        "name": "Battery Power Pack",
+                        "quantity": 1,
+                        "unit_price": 1000,
+                        "tax_rate": 0,
+                        "total_amount": 1000,
+                        "total_tax_amount": 0
+                    }
+                ]
+            }),
+            currency: "GBP",
+            amount: 100
+        });
+
+        expect(transaction.status).to.equal("Pending");
+        expect(transaction.isPending()).to.be.true;
+    });
+
+
+
+    it("should timeout payment request with a Klarna Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .delay(20)
+            .reply(201, {});
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            pay.httpConfiguration = {
+                timeout: 10,
+                environment: Environment.Sandbox
+            }
+            let transaction = await pay.request<KlarnaSource>({
+                source: new KlarnaSource({
+                    "authorization_token": "b4bd3423-24e3",
+                    "locale": "en-GB",
+                    "purchase_country": "GB",
+                    "tax_amount": 0,
+                    "billing_address": {
+                        "given_name": "John",
+                        "family_name": "Doe",
+                        "email": "johndoe@email.com",
+                        "title": "Mr",
+                        "street_address": "13 New Burlington St",
+                        "street_address2": "Apt 214",
+                        "postal_code": "W13 3BG",
+                        "city": "London",
+                        "phone": "01895808221",
+                        "country": "GB"
+                    },
+                    "customer": {
+                        "date_of_birth": "1970-01-01",
+                        "gender": "male"
+                    },
+                    "products": [
+                        {
+                            "name": "Battery Power Pack",
+                            "quantity": 1,
+                            "unit_price": 1000,
+                            "tax_rate": 0,
+                            "total_amount": 1000,
+                            "total_tax_amount": 0
+                        }
+                    ]
+                }),
+                currency: "GBP",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('ApiTimeout');
+        }
+    });
+
+    it("should error out with API Error for payment request with a Klarna Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(500, {
+                error: 'error'
+            });
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<KlarnaSource>({
+                source: new KlarnaSource({
+                    "authorization_token": "b4bd3423-24e3",
+                    "locale": "en-GB",
+                    "purchase_country": "GB",
+                    "tax_amount": 0,
+                    "billing_address": {
+                        "given_name": "John",
+                        "family_name": "Doe",
+                        "email": "johndoe@email.com",
+                        "title": "Mr",
+                        "street_address": "13 New Burlington St",
+                        "street_address2": "Apt 214",
+                        "postal_code": "W13 3BG",
+                        "city": "London",
+                        "phone": "01895808221",
+                        "country": "GB"
+                    },
+                    "customer": {
+                        "date_of_birth": "1970-01-01",
+                        "gender": "male"
+                    },
+                    "products": [
+                        {
+                            "name": "Battery Power Pack",
+                            "quantity": 1,
+                            "unit_price": 1000,
+                            "tax_rate": 0,
+                            "total_amount": 1000,
+                            "total_tax_amount": 0
+                        }
+                    ]
+                }),
+                currency: "GBP",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('API Error');
+        }
+    });
+
+    it("should throw AuthenticationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(401);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<KlarnaSource>({
+                source: new KlarnaSource({
+                    "authorization_token": "b4bd3423-24e3",
+                    "locale": "en-GB",
+                    "purchase_country": "GB",
+                    "tax_amount": 0,
+                    "billing_address": {
+                        "given_name": "John",
+                        "family_name": "Doe",
+                        "email": "johndoe@email.com",
+                        "title": "Mr",
+                        "street_address": "13 New Burlington St",
+                        "street_address2": "Apt 214",
+                        "postal_code": "W13 3BG",
+                        "city": "London",
+                        "phone": "01895808221",
+                        "country": "GB"
+                    },
+                    "customer": {
+                        "date_of_birth": "1970-01-01",
+                        "gender": "male"
+                    },
+                    "products": [
+                        {
+                            "name": "Battery Power Pack",
+                            "quantity": 1,
+                            "unit_price": 1000,
+                            "tax_rate": 0,
+                            "total_amount": 1000,
+                            "total_tax_amount": 0
+                        }
+                    ]
+                }),
+                currency: "GBP",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('AuthenticationError');
+        }
+    });
+
+    it("should throw ValidationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(422, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<KlarnaSource>({
+                source: new KlarnaSource({
+                    "authorization_token": "b4bd3423-24e3",
+                    "locale": "en-GB",
+                    "purchase_country": "GB",
+                    "tax_amount": 0,
+                    "billing_address": {
+                        "given_name": "John",
+                        "family_name": "Doe",
+                        "email": "johndoe@email.com",
+                        "title": "Mr",
+                        "street_address": "13 New Burlington St",
+                        "street_address2": "Apt 214",
+                        "postal_code": "W13 3BG",
+                        "city": "London",
+                        "phone": "01895808221",
+                        "country": "GB"
+                    },
+                    "customer": {
+                        "date_of_birth": "1970-01-01",
+                        "gender": "male"
+                    },
+                    "products": [
+                        {
+                            "name": "Battery Power Pack",
+                            "quantity": 1,
+                            "unit_price": 1000,
+                            "tax_rate": 0,
+                            "total_amount": 1000,
+                            "total_tax_amount": 0
+                        }
+                    ]
+                }),
+                currency: "GBP",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(ValidationError)
+        }
+    });
+
+    it("should throw TooManyRequestsError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(429, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<KlarnaSource>({
+                source: new KlarnaSource({
+                    "authorization_token": "b4bd3423-24e3",
+                    "locale": "en-GB",
+                    "purchase_country": "GB",
+                    "tax_amount": 0,
+                    "billing_address": {
+                        "given_name": "John",
+                        "family_name": "Doe",
+                        "email": "johndoe@email.com",
+                        "title": "Mr",
+                        "street_address": "13 New Burlington St",
+                        "street_address2": "Apt 214",
+                        "postal_code": "W13 3BG",
+                        "city": "London",
+                        "phone": "01895808221",
+                        "country": "GB"
+                    },
+                    "customer": {
+                        "date_of_birth": "1970-01-01",
+                        "gender": "male"
+                    },
+                    "products": [
+                        {
+                            "name": "Battery Power Pack",
+                            "quantity": 1,
+                            "unit_price": 1000,
+                            "tax_rate": 0,
+                            "total_amount": 1000,
+                            "total_tax_amount": 0
+                        }
+                    ]
+                }),
+                currency: "GBP",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(TooManyRequestsError)
+        }
+    });
+
+    it("should throw BadGateway", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(502);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<KlarnaSource>({
+                source: new KlarnaSource({
+                    "authorization_token": "b4bd3423-24e3",
+                    "locale": "en-GB",
+                    "purchase_country": "GB",
+                    "tax_amount": 0,
+                    "billing_address": {
+                        "given_name": "John",
+                        "family_name": "Doe",
+                        "email": "johndoe@email.com",
+                        "title": "Mr",
+                        "street_address": "13 New Burlington St",
+                        "street_address2": "Apt 214",
+                        "postal_code": "W13 3BG",
+                        "city": "London",
+                        "phone": "01895808221",
+                        "country": "GB"
+                    },
+                    "customer": {
+                        "date_of_birth": "1970-01-01",
+                        "gender": "male"
+                    },
+                    "products": [
+                        {
+                            "name": "Battery Power Pack",
+                            "quantity": 1,
+                            "unit_price": 1000,
+                            "tax_rate": 0,
+                            "total_amount": 1000,
+                            "total_tax_amount": 0
+                        }
+                    ]
+                }),
+                currency: "GBP",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(BadGateway)
+        }
+    });
+});
+
+describe("Request Payment with Knet Source", async () => {
+
+    it("should perform normal payment request with a Knet Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(202, {
+                "id": "pay_vbyf6f4kd7ee5oj2ittsljetwa",
+                "status": "Pending",
+                "customer": {
+                    "id": "cus_qo2kuoc3jwhu3f36tuajddvlue"
+                },
+                "_links": {
+                    "self": {
+                        "href": "https://api.sandbox.checkout.com/payments/pay_vbyf6f4kd7ee5oj2ittsljetwa"
+                    },
+                    "redirect": {
+                        "href": "https://sbapi.ckotech.co/knet-external/redirect/tok_w6cfo43agmde7kc3tyvteqfc5m/pay"
+                    }
+                }
+            });
+
+        const pay = new payments('sk_test_0b9b5db6-f223-49d0-b68f-f6643dd4f808');
+
+        let transaction = await pay.request<KnetSource>({
+            source: new KnetSource({
+                "language": "en",
+                "user_defined_field1": "first user defined field",
+                "user_defined_field2": "second user defined field",
+                "card_token": "01234567",
+                "user_defined_field4": "fourth user defined field",
+                "ptlf": "96033587c7b5"
+            }),
+            currency: "KWD",
+            amount: 100
+        });
+
+        expect(transaction.status).to.equal("Pending");
+        expect(transaction.isPending()).to.be.true;
+    });
+
+
+
+    it("should timeout payment request with a Kner Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .delay(20)
+            .reply(201, {});
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            pay.httpConfiguration = {
+                timeout: 10,
+                environment: Environment.Sandbox
+            }
+            let transaction = await pay.request<KnetSource>({
+                source: new KnetSource({
+                    "language": "en",
+                    "user_defined_field1": "first user defined field",
+                    "user_defined_field2": "second user defined field",
+                    "card_token": "01234567",
+                    "user_defined_field4": "fourth user defined field",
+                    "ptlf": "96033587c7b5"
+                }),
+                currency: "KWD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('ApiTimeout');
+        }
+    });
+
+    it("should error out with API Error for payment request with a Knet Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(500, {
+                error: 'error'
+            });
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<KnetSource>({
+                source: new KnetSource({
+                    "language": "en",
+                    "user_defined_field1": "first user defined field",
+                    "user_defined_field2": "second user defined field",
+                    "card_token": "01234567",
+                    "user_defined_field4": "fourth user defined field",
+                    "ptlf": "96033587c7b5"
+                }),
+                currency: "KWD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('API Error');
+        }
+    });
+
+    it("should throw AuthenticationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(401);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<KnetSource>({
+                source: new KnetSource({
+                    "language": "en",
+                    "user_defined_field1": "first user defined field",
+                    "user_defined_field2": "second user defined field",
+                    "card_token": "01234567",
+                    "user_defined_field4": "fourth user defined field",
+                    "ptlf": "96033587c7b5"
+                }),
+                currency: "KWD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('AuthenticationError');
+        }
+    });
+
+    it("should throw ValidationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(422, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<KnetSource>({
+                source: new KnetSource({
+                    "language": "en",
+                    "user_defined_field1": "first user defined field",
+                    "user_defined_field2": "second user defined field",
+                    "card_token": "01234567",
+                    "user_defined_field4": "fourth user defined field",
+                    "ptlf": "96033587c7b5"
+                }),
+                currency: "KWD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(ValidationError)
+        }
+    });
+
+    it("should throw TooManyRequestsError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(429, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<KnetSource>({
+                source: new KnetSource({
+                    "language": "en",
+                    "user_defined_field1": "first user defined field",
+                    "user_defined_field2": "second user defined field",
+                    "card_token": "01234567",
+                    "user_defined_field4": "fourth user defined field",
+                    "ptlf": "96033587c7b5"
+                }),
+                currency: "KWD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(TooManyRequestsError)
+        }
+    });
+
+    it("should throw BadGateway", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(502);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<KnetSource>({
+                source: new KnetSource({
+                    "language": "en",
+                    "user_defined_field1": "first user defined field",
+                    "user_defined_field2": "second user defined field",
+                    "card_token": "01234567",
+                    "user_defined_field4": "fourth user defined field",
+                    "ptlf": "96033587c7b5"
+                }),
+                currency: "KWD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(BadGateway)
+        }
+    });
+});
+
+describe("Request Payment with Poli Source", async () => {
+
+    it("should perform normal payment request with a Poli Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(202, {
+                "id": "pay_xjndyxg5hm6ujfyxhn4ctdwnv4",
+                "status": "Pending",
+                "customer": {
+                    "id": "cus_6fb5ub5rlsiehg66tbtbp64auq"
+                },
+                "_links": {
+                    "self": {
+                        "href": "https://api.sandbox.checkout.com/payments/pay_xjndyxg5hm6ujfyxhn4ctdwnv4"
+                    },
+                    "approve": {
+                        "href": "https://api.sandbox.checkout.com/fawry/payments/1192437644/approval"
+                    },
+                    "cancel": {
+                        "href": "https://api.sandbox.checkout.com/fawry/payments/1192437644/cancellation"
+                    }
+                }
+            });
+
+        const pay = new payments('sk_test_0b9b5db6-f223-49d0-b68f-f6643dd4f808');
+
+        let transaction = await pay.request<PoliSource>({
+            source: new PoliSource(),
+            currency: "AUD",
+            amount: 100
+        });
+
+        expect(transaction.status).to.equal("Pending");
+        expect(transaction.isPending()).to.be.true;
+    });
+
+
+
+    it("should timeout payment request with a Kner Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .delay(20)
+            .reply(201, {});
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            pay.httpConfiguration = {
+                timeout: 10,
+                environment: Environment.Sandbox
+            }
+            let transaction = await pay.request<PoliSource>({
+                source: new PoliSource(),
+                currency: "AUD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('ApiTimeout');
+        }
+    });
+
+    it("should error out with API Error for payment request with a Poli Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(500, {
+                error: 'error'
+            });
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<PoliSource>({
+                source: new PoliSource(),
+                currency: "AUD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('API Error');
+        }
+    });
+
+    it("should throw AuthenticationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(401);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<PoliSource>({
+                source: new PoliSource(),
+                currency: "AUD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('AuthenticationError');
+        }
+    });
+
+    it("should throw ValidationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(422, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<PoliSource>({
+                source: new PoliSource(),
+                currency: "AUD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(ValidationError)
+        }
+    });
+
+    it("should throw TooManyRequestsError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(429, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<PoliSource>({
+                source: new PoliSource(),
+                currency: "AUD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(TooManyRequestsError)
+        }
+    });
+
+    it("should throw BadGateway", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(502);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<PoliSource>({
+                source: new PoliSource(),
+                currency: "AUD",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(BadGateway)
+        }
+    });
+});
+
+describe("Request Payment with Qpay Source", async () => {
+
+    it("should perform normal payment request with a Qpay Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(202, {
+                "id": "pay_xjndyxg5hm6ujfyxhn4ctdwnv4",
+                "status": "Pending",
+                "customer": {
+                    "id": "cus_6fb5ub5rlsiehg66tbtbp64auq"
+                },
+                "_links": {
+                    "self": {
+                        "href": "https://api.sandbox.checkout.com/payments/pay_xjndyxg5hm6ujfyxhn4ctdwnv4"
+                    },
+                    "approve": {
+                        "href": "https://api.sandbox.checkout.com/fawry/payments/1192437644/approval"
+                    },
+                    "cancel": {
+                        "href": "https://api.sandbox.checkout.com/fawry/payments/1192437644/cancellation"
+                    }
+                }
+            });
+
+        const pay = new payments('sk_test_0b9b5db6-f223-49d0-b68f-f6643dd4f808');
+
+        let transaction = await pay.request<QpaySource>({
+            source: new QpaySource({
+                "description": "QPay Demo Payment",
+                "language": "en",
+                "quantity": 1,
+                "national_id": "070AYY010BU234M"
+            }),
+            currency: "QAR",
+            amount: 100
+        });
+
+        expect(transaction.status).to.equal("Pending");
+        expect(transaction.isPending()).to.be.true;
+    });
+
+
+
+    it("should timeout payment request with a Qpay Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .delay(20)
+            .reply(201, {});
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            pay.httpConfiguration = {
+                timeout: 10,
+                environment: Environment.Sandbox
+            }
+            let transaction = await pay.request<QpaySource>({
+                source: new QpaySource({
+                    "description": "QPay Demo Payment",
+                    "language": "en",
+                    "quantity": 1,
+                    "national_id": "070AYY010BU234M"
+                }),
+                currency: "QAR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('ApiTimeout');
+        }
+    });
+
+    it("should error out with API Error for payment request with a Qpay Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(500, {
+                error: 'error'
+            });
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<QpaySource>({
+                source: new QpaySource({
+                    "description": "QPay Demo Payment",
+                    "language": "en",
+                    "quantity": 1,
+                    "national_id": "070AYY010BU234M"
+                }),
+                currency: "QAR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('API Error');
+        }
+    });
+
+    it("should throw AuthenticationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(401);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<QpaySource>({
+                source: new QpaySource({
+                    "description": "QPay Demo Payment",
+                    "language": "en",
+                    "quantity": 1,
+                    "national_id": "070AYY010BU234M"
+                }),
+                currency: "QAR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('AuthenticationError');
+        }
+    });
+
+    it("should throw ValidationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(422, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<QpaySource>({
+                source: new QpaySource({
+                    "description": "QPay Demo Payment",
+                    "language": "en",
+                    "quantity": 1,
+                    "national_id": "070AYY010BU234M"
+                }),
+                currency: "QAR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(ValidationError)
+        }
+    });
+
+    it("should throw TooManyRequestsError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(429, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<QpaySource>({
+                source: new QpaySource({
+                    "description": "QPay Demo Payment",
+                    "language": "en",
+                    "quantity": 1,
+                    "national_id": "070AYY010BU234M"
+                }),
+                currency: "QAR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(TooManyRequestsError)
+        }
+    });
+
+    it("should throw BadGateway", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(502);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<QpaySource>({
+                source: new QpaySource({
+                    "description": "QPay Demo Payment",
+                    "language": "en",
+                    "quantity": 1,
+                    "national_id": "070AYY010BU234M"
+                }),
+                currency: "QAR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(BadGateway)
+        }
+    });
+});
+
+describe("Request Payment with Sofort Source", async () => {
+
+    it("should perform normal payment request with a Sofort Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(202, {
+                "id": "pay_xjndyxg5hm6ujfyxhn4ctdwnv4",
+                "status": "Pending",
+                "customer": {
+                    "id": "cus_6fb5ub5rlsiehg66tbtbp64auq"
+                },
+                "_links": {
+                    "self": {
+                        "href": "https://api.sandbox.checkout.com/payments/pay_xjndyxg5hm6ujfyxhn4ctdwnv4"
+                    },
+                    "approve": {
+                        "href": "https://api.sandbox.checkout.com/fawry/payments/1192437644/approval"
+                    },
+                    "cancel": {
+                        "href": "https://api.sandbox.checkout.com/fawry/payments/1192437644/cancellation"
+                    }
+                }
+            });
+
+        const pay = new payments('sk_test_0b9b5db6-f223-49d0-b68f-f6643dd4f808');
+
+        let transaction = await pay.request<SofortSource>({
+            source: new SofortSource(),
+            currency: "EUR",
+            amount: 100
+        });
+
+        expect(transaction.status).to.equal("Pending");
+        expect(transaction.isPending()).to.be.true;
+    });
+
+
+
+    it("should timeout payment request with a Sofort Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .delay(20)
+            .reply(201, {});
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            pay.httpConfiguration = {
+                timeout: 10,
+                environment: Environment.Sandbox
+            }
+            let transaction = await pay.request<SofortSource>({
+                source: new SofortSource(),
+                currency: "EUR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('ApiTimeout');
+        }
+    });
+
+    it("should error out with API Error for payment request with a Sofort Source", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(500, {
+                error: 'error'
+            });
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<SofortSource>({
+                source: new SofortSource(),
+                currency: "EUR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('API Error');
+        }
+    });
+
+    it("should throw AuthenticationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(401);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<SofortSource>({
+                source: new SofortSource(),
+                currency: "EUR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err.name).to.equal('AuthenticationError');
+        }
+    });
+
+    it("should throw ValidationError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(422, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<SofortSource>({
+                source: new SofortSource(),
+                currency: "EUR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(ValidationError)
+        }
+    });
+
+    it("should throw TooManyRequestsError", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(429, {
+                "request_id": "0HL80RJLS76I7",
+                "error_type": "request_invalid",
+                "error_codes": [
+                    "payment_source_required"
+                ]
+            });
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<SofortSource>({
+                source: new SofortSource(),
+                currency: "EUR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(TooManyRequestsError)
+        }
+    });
+
+    it("should throw BadGateway", async () => {
+        nock("https://api.sandbox.checkout.com")
+            .post("/payments")
+            .reply(502);
+        const http = new Http();
+
+        try {
+            const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+            let transaction = await pay.request<SofortSource>({
+                source: new SofortSource(),
+                currency: "EUR",
+                amount: 1005,
+            });
+        } catch (err) {
+            expect(err).to.be.instanceOf(BadGateway)
         }
     });
 });

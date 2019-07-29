@@ -202,6 +202,136 @@ export type BoletoSourceType = {
     customerName: string;
 };
 
+export type BancontactSourceType = {
+    payment_country: string;
+    account_holder_name: string;
+    billing_descriptor?: string;
+};
+
+export type EpsSourceType = {
+    purpose: string;
+    bic?: string;
+};
+
+export type FawryProduct = {
+    product_id: string;
+    quantity: number;
+    price: number;
+    description: string;
+};
+
+
+export type FawrySourceType = {
+    description: string;
+    customer_profile_id?: string;
+    customer_email: string;
+    customer_mobile: string;
+    expires_on?: string;
+    products: FawryProduct[];
+};
+
+export type KlarnaAddress = {
+    organization_name?: string;
+    reference?: string;
+    attention?: string;
+    given_name?: string;
+    family_name?: string;
+    email?: string;
+    title?: string;
+    street_address?: string;
+    street_address2?: string;
+    street_name?: string;
+    street_number?: string;
+    house_extension?: string;
+    postal_code?: string;
+    city?: string;
+    region?: string;
+    phone?: string;
+    country?: string;
+    care_of?: string;
+};
+
+
+export type KlarnaProductIdentifiers = {
+    category_path?: string;
+    global_trade_item_number?: string;
+    manufacturer_part_number?: string;
+    brand?: string;
+};
+
+export type KlarnaProductDimensions = {
+    height?: number;
+    width?: string;
+    length?: string;
+};
+
+export type KlarnaShippingAttributes = {
+    weight?: number;
+    dimensions?: KlarnaProductDimensions;
+    tags?: string[];
+};
+
+export type KlarnaProduct = {
+    type?: string;
+    reference?: string;
+    name?: string;
+    quantity?: number;
+    quantity_unit?: number;
+    unit_price?: number;
+    tax_rate?: number;
+    total_amount?: number;
+    total_discount_amount?: number;
+    total_tax_amount?: number;
+    merchant_data?: string;
+    product_url?: string;
+    image_url?: string;
+    product_identifiers?: KlarnaProductIdentifiers;
+    shipping_attributes?: KlarnaShippingAttributes;
+};
+
+export type KlarnaCustomer = {
+    date_of_birth?: string;
+    type?: string;
+    organization_registration_id?: string;
+    gender?: string;
+};
+
+export type KlarnaSourceType = {
+    authorization_token: string;
+    locale: string;
+    purchase_country: string;
+    auto_capture?: boolean;
+    billing_address: KlarnaAddress;
+    shipping_address?: KlarnaAddress;
+    tax_amount: number;
+    products: KlarnaProduct[];
+    customer?: KlarnaCustomer;
+    merchant_reference1?: string;
+    merchant_reference2?: string;
+    merchant_data?: string;
+    attachment?: any;
+};
+
+export type KnetLanguage = "ar" | "en";
+
+export type KnetSourceType = {
+    language: KnetLanguage;
+    user_defined_field1?: string;
+    user_defined_field2?: string;
+    user_defined_field3?: string;
+    user_defined_field4?: string;
+    user_defined_field5?: string;
+    card_token?: string;
+    ptlf?: string;
+};
+
+export type QpaySourceType = {
+    quantity?: number;
+    description: string;
+    language?: string;
+    national_id?: string;
+};
+
 export interface InfoField {
     label: string;
     text: string;
@@ -213,7 +343,7 @@ export interface InfoFields {
 
 export type GiropaySourceType = {
     purpose: string;
-    bic: string;
+    bic?: string;
     iban?: string;
     info_fields?: InfoFields;
 };
@@ -222,20 +352,6 @@ export type IdealSourceType = {
     description: string;
     bic: string;
     language?: string;
-};
-export type KlarnaSourceType = {
-    authorization_token: string;
-    locale: string;
-    purchase_country: string;
-    auto_capture?: boolean;
-    billing_address: any;
-    shipping_address?: any;
-    tax_amount: number;
-    products: any;
-    customer?: any;
-    merchant_reference1?: string;
-    merchant_reference2?: string;
-    merchant_data?: any;
 };
 
 export type QiwiSourceType = {
