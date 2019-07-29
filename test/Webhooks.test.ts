@@ -712,11 +712,6 @@ describe("Partially update webhook", async () => {
 			environment: Environment.Sandbox
 		});
 
-		try {
-
-		} catch (er) {
-			console.log(er)
-		}
 		let outcome = await hook.partialUpdate("wh_c7v25q36lxeuvl3bjksr5ybbhu", {
 			"url": "http://requestbin.fullcontact.com/ysvfvyys",
 			"active": true,

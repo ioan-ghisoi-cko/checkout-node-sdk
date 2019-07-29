@@ -77,9 +77,9 @@ export default class Events extends BaseEndpoint {
             // build query params
             let queryParams = '';
             if (arg) {
-                for (let [key, value] of Object.entries(arg)) {
-                    queryParams += `?${key}=${value}`;
-                }
+                Object.keys(arg).map((key) => {
+                    queryParams += `?${key}=${arg[key]}`;
+                });
             }
             const getEvents = await this._getHandler(`${this.httpConfiguration.environment}/events${queryParams}`);
             return new RetriveEventsResponse(await getEvents.json);
@@ -98,7 +98,6 @@ export default class Events extends BaseEndpoint {
     public retrieveEvent = async (id: string): Promise<RetriveEventResponse> => {
         try {
             const getEvents = await this._getHandler(`${this.httpConfiguration.environment}/events/${id}`);
-            console.log(getEvents);
             return new RetriveEventResponse(await getEvents.json);
         } catch (err) {
             throw await determineError(err);

@@ -30,6 +30,7 @@ interface Link {
 
 export type PaymentType = "Regular" | "Recurring" | "MOTO";
 export type PaymentEventType = "Authorization" | "Card Verification" | "Void" | "Capture" | "Refund";
+export type NetworkTokenType = "vts" | "mdes" | "applepay" | "googlepay";
 export type ContentType = "json" | 'xml';
 export type RequestType = "get" | "post" | "put" | "patch" | "delete";
 export type RetriveWebhookResponseType = [WebhookInstance];
@@ -164,6 +165,82 @@ export interface CardSourceType {
     billing_address?: Address;
     phone?: Phone;
 }
+
+export type TokenSourceType = {
+    token: string;
+    billing_address?: Address;
+    phone?: Phone;
+};
+
+export type IdSourceType = {
+    id: string;
+    cvv?: string;
+};
+
+export type CustomerSourceType = {
+    id?: string;
+    email?: string;
+};
+
+export type NetworkTokenSourceType = {
+    token: string;
+    expiry_month: number;
+    expiry_year: number;
+    token_type: NetworkTokenType;
+    cryptogram: string;
+    eci: string;
+    stored?: string;
+    name?: string;
+    cvv?: string;
+    billing_address?: Address;
+    phone?: Phone;
+};
+
+export type BoletoSourceType = {
+    birthDate: string;
+    cpf: string;
+    customerName: string;
+};
+
+export interface InfoField {
+    label: string;
+    text: string;
+}
+
+export interface InfoFields {
+    [key: string]: InfoField;
+}
+
+export type GiropaySourceType = {
+    purpose: string;
+    bic: string;
+    iban?: string;
+    info_fields?: InfoFields;
+};
+
+export type IdealSourceType = {
+    description: string;
+    bic: string;
+    language?: string;
+};
+export type KlarnaSourceType = {
+    authorization_token: string;
+    locale: string;
+    purchase_country: string;
+    auto_capture?: boolean;
+    billing_address: any;
+    shipping_address?: any;
+    tax_amount: number;
+    products: any;
+    customer?: any;
+    merchant_reference1?: string;
+    merchant_reference2?: string;
+    merchant_data?: any;
+};
+
+export type QiwiSourceType = {
+    walletId: string;
+};
 
 export interface AddSourceResponseType {
     id: string,
