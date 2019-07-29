@@ -312,24 +312,8 @@ export class QpaySource {
     }
 }
 
-
 export class PoliSource {
     private readonly type: string = 'poli';
-
-    public constructor() { }
-}
-
-export class QiwiSource {
-    private readonly type: string = 'qiwi';
-    public walletId: string;
-
-    public constructor(source: QiwiSourceType) {
-        this.walletId = source.walletId;
-    }
-}
-
-export class SafetypaySource {
-    private readonly type: string = 'safetypay';
 
     public constructor() { }
 }
