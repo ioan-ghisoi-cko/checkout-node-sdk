@@ -13,6 +13,7 @@ import {
     GiropaySourceType,
     IdealSourceType,
     KlarnaSourceType,
+    QiwiSourceType,
     InfoFields,
     NetworkTokenType,
     BancontactSourceType,
@@ -28,10 +29,10 @@ import {
 } from "../types/Types";
 
 export class TokenSource {
-    private readonly type: string = "token";
+    private readonly type: string = 'token';
     public token: string;
     public billing_address?: Address;
-    public phone?: Phone;
+    public phone?: Phone
 
     public constructor(source: TokenSourceType) {
         this.token = source.token;
@@ -41,7 +42,7 @@ export class TokenSource {
 }
 
 export class IdSource {
-    private readonly type: string = "id";
+    private readonly type: string = 'id';
     public id: string;
     public cvv?: string;
 
@@ -113,7 +114,7 @@ export class GooglePaySource {
 
 
 export class CustomerSource {
-    private readonly type: string = "customer";
+    private readonly type: string = 'customer';
     public id?: string;
     public email?: string;
 
@@ -124,7 +125,7 @@ export class CustomerSource {
 }
 
 export class NetworkTokenSource {
-    private readonly type: string = "network_token";
+    private readonly type: string = 'network_token';
     public token: string;
     public expiry_month: number;
     public expiry_year: number;
@@ -153,13 +154,13 @@ export class NetworkTokenSource {
 }
 
 export class AlipaySource {
-    private readonly type: string = "alipay";
+    private readonly type: string = 'alipay';
 
     public constructor() { }
 }
 
 export class BoletoSource {
-    private readonly type: string = "boleto";
+    private readonly type: string = 'boleto';
     public birthDate: string;
     public cpf: string;
     public customerName: string;
@@ -172,7 +173,7 @@ export class BoletoSource {
 }
 
 export class BancontactSource {
-    private readonly type: string = "bancontact";
+    private readonly type: string = 'bancontact';
     public payment_country: string;
     public account_holder_name: string;
     public billing_descriptor?: string;
@@ -185,7 +186,7 @@ export class BancontactSource {
 }
 
 export class EpsSource {
-    private readonly type: string = "eps";
+    private readonly type: string = 'eps';
     public purpose: string;
     public bic?: string;
 
@@ -196,7 +197,7 @@ export class EpsSource {
 }
 
 export class FawrySource {
-    private readonly type: string = "fawry";
+    private readonly type: string = 'fawry';
     public description: string;
     public customer_profile_id?: string;
     public customer_email: string;
@@ -213,7 +214,7 @@ export class FawrySource {
 }
 
 export class KlarnaSource {
-    private readonly type: string = "klarna";
+    private readonly type: string = 'klarna';
     public authorization_token: string;
     public locale: string;
     public purchase_country: string;
@@ -232,7 +233,7 @@ export class KlarnaSource {
         this.authorization_token = source.authorization_token;
         this.locale = source.locale;
         this.purchase_country = source.purchase_country;
-        this.auto_capture = source.auto_capture;
+        this.auto_capture = this.auto_capture;
         this.billing_address = source.billing_address;
         this.shipping_address = source.shipping_address;
         this.tax_amount = source.tax_amount;
@@ -246,7 +247,7 @@ export class KlarnaSource {
 }
 
 export class GiropaySource {
-    private readonly type: string = "giropay";
+    private readonly type: string = 'giropay';
     public purpose: string;
     public bic?: string;
     public iban?: string;
@@ -261,7 +262,7 @@ export class GiropaySource {
 }
 
 export class IdealSource {
-    private readonly type: string = "ideal";
+    private readonly type: string = 'ideal';
     public description: string;
     public bic: string;
     public language?: string;
@@ -274,7 +275,7 @@ export class IdealSource {
 }
 
 export class KnetSource {
-    private readonly type: string = "knet";
+    private readonly type: string = 'knet';
     public language: KnetLanguage;
     public user_defined_field1?: string;
     public user_defined_field2?: string;
@@ -297,7 +298,7 @@ export class KnetSource {
 }
 
 export class QpaySource {
-    private readonly type: string = "qpay";
+    private readonly type: string = 'qpay';
     public quantity?: number;
     public description: string;
     public language?: string;
@@ -312,13 +313,13 @@ export class QpaySource {
 }
 
 export class PoliSource {
-    private readonly type: string = "poli";
+    private readonly type: string = 'poli';
 
     public constructor() { }
 }
 
 export class SofortSource {
-    private readonly type: string = "sofort";
+    private readonly type: string = 'sofort';
 
     public constructor() { }
 }

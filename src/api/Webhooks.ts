@@ -6,11 +6,11 @@ import {
     DEFAULT_TIMEOUT,
     RequestType
 } from "../index";
-import { performRequest } from "../utils/RequestHandler";
 import { determineError } from "../utils/ErrorHandler";
 import BaseEndpoint from "./BaseEndpoint";
 import { NewWebhookInstance } from "../models/types/Types";
 import { WebhookResponse } from "../models/response";
+
 
 /**
  * Webhooks class
@@ -20,6 +20,7 @@ import { WebhookResponse } from "../models/response";
  * @extends {BaseEndpoint}
  */
 export default class Webhooks extends BaseEndpoint {
+
 
     /**
      * Creates an instance of Webhooks.
@@ -47,8 +48,18 @@ export default class Webhooks extends BaseEndpoint {
      * @memberof Webhooks
      * @return {Promise<RetriveWebhookResponse>} A promise to the retrieve webhooks response.
      */
-    public retrieveWebhooks = async (): Promise<RetriveWebhookResponse> =>
-        new RetriveWebhookResponse(await this._getHandler(`${this.httpConfiguration.environment}/webhooks`));
+    public retrieveWebhooks = async (): Promise<RetriveWebhookResponse> => {
+        try {
+            const getWebhooks = await this._getHandler(`${this.httpConfiguration.environment}/webhooks`);
+            if (getWebhooks.status === 204) {
+                throw { status: 204 }
+            } else {
+                return new RetriveWebhookResponse(await getWebhooks.json);
+            }
+        } catch (err) {
+            throw await determineError(err);
+        }
+    };
 
     /**
      * Register a new webhook endpoint that Checkout.com will POST all or selected events to
@@ -81,8 +92,14 @@ export default class Webhooks extends BaseEndpoint {
      * @param {id} string The webhook identifier, for example wh_387ac7a83a054e37ae140105429d76b5
      * @return {Promise<WebhookResponse>} A promise to the retrieve webhook response.
      */
-    public retrieveWebhook = async (id: string): Promise<WebhookResponse> =>
-        new WebhookResponse(await this._getHandler(`${this.httpConfiguration.environment}/webhooks/${id}`));
+    public retrieveWebhook = async (id: string): Promise<WebhookResponse> => {
+        try {
+            const getWebhooks = await this._getHandler(`${this.httpConfiguration.environment}/webhooks/${id}`);
+            return new WebhookResponse(await getWebhooks.json);
+        } catch (err) {
+            throw await determineError(err);
+        }
+    };
 
     /**
      * Updates an existing webhook
@@ -142,15 +159,16 @@ export default class Webhooks extends BaseEndpoint {
      */
     private _getHandler = async (
         url: string,
-    ): Promise<any> =>
-        performRequest({
-            config: this.httpConfiguration,
+    ): Promise<any> => {
+        const http = new Http(this.httpConfiguration);
+        return http.send({
             method: "get",
             url,
             headers: {
                 Authorization: this.key
             },
-        })
+        });
+    }
 
     /**
      * Handle all PATCH/PUT requests to remove duplication

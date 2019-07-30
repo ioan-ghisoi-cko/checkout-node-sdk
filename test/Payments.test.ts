@@ -790,7 +790,7 @@ describe("Refund payment", async () => {
             .reply(202, (uri, requestBody) => {
                 return {
                     action_id: "",
-                    reference: "johnny",
+                    reference: requestBody.reference,
                     "_links": {
                         "payment": {
                             "href": "https://api.sandbox.checkout.com/payments/pay_aawyswqytsne7p76b7rhc3dhhq"

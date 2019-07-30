@@ -31,7 +31,7 @@ interface Link {
 export type PaymentType = "Regular" | "Recurring" | "MOTO";
 export type PaymentEventType = "Authorization" | "Card Verification" | "Void" | "Capture" | "Refund";
 export type NetworkTokenType = "vts" | "mdes" | "applepay" | "googlepay";
-export type ContentType = "json" | "xml";
+export type ContentType = "json" | 'xml';
 export type RequestType = "get" | "post" | "put" | "patch" | "delete";
 export type CardCategoryType = "Credit" | "Debit" | "Prepaid";
 export type RetriveWebhookResponseType = [WebhookInstance];
@@ -168,23 +168,23 @@ export interface CardSourceType {
     phone?: Phone;
 }
 
-export interface TokenSourceType {
+export type TokenSourceType = {
     token: string;
     billing_address?: Address;
     phone?: Phone;
-}
+};
 
-export interface IdSourceType {
+export type IdSourceType = {
     id: string;
     cvv?: string;
-}
+};
 
-export interface CustomerSourceType {
+export type CustomerSourceType = {
     id?: string;
     email?: string;
-}
+};
 
-export interface NetworkTokenSourceType {
+export type NetworkTokenSourceType = {
     token: string;
     expiry_month: number;
     expiry_year: number;
@@ -196,43 +196,43 @@ export interface NetworkTokenSourceType {
     cvv?: string;
     billing_address?: Address;
     phone?: Phone;
-}
+};
 
-export interface BoletoSourceType {
+export type BoletoSourceType = {
     birthDate: string;
     cpf: string;
     customerName: string;
-}
+};
 
-export interface BancontactSourceType {
+export type BancontactSourceType = {
     payment_country: string;
     account_holder_name: string;
     billing_descriptor?: string;
-}
+};
 
-export interface EpsSourceType {
+export type EpsSourceType = {
     purpose: string;
     bic?: string;
-}
+};
 
-export interface FawryProduct {
+export type FawryProduct = {
     product_id: string;
     quantity: number;
     price: number;
     description: string;
-}
+};
 
 
-export interface FawrySourceType {
+export type FawrySourceType = {
     description: string;
     customer_profile_id?: string;
     customer_email: string;
     customer_mobile: string;
     expires_on?: string;
     products: FawryProduct[];
-}
+};
 
-export interface KlarnaAddress {
+export type KlarnaAddress = {
     organization_name?: string;
     reference?: string;
     attention?: string;
@@ -251,29 +251,29 @@ export interface KlarnaAddress {
     phone?: string;
     country?: string;
     care_of?: string;
-}
+};
 
 
-export interface KlarnaProductIdentifiers {
+export type KlarnaProductIdentifiers = {
     category_path?: string;
     global_trade_item_number?: string;
     manufacturer_part_number?: string;
     brand?: string;
-}
+};
 
-export interface KlarnaProductDimensions {
+export type KlarnaProductDimensions = {
     height?: number;
     width?: string;
     length?: string;
-}
+};
 
-export interface KlarnaShippingAttributes {
+export type KlarnaShippingAttributes = {
     weight?: number;
     dimensions?: KlarnaProductDimensions;
     tags?: string[];
-}
+};
 
-export interface KlarnaProduct {
+export type KlarnaProduct = {
     type?: string;
     reference?: string;
     name?: string;
@@ -289,16 +289,16 @@ export interface KlarnaProduct {
     image_url?: string;
     product_identifiers?: KlarnaProductIdentifiers;
     shipping_attributes?: KlarnaShippingAttributes;
-}
+};
 
-export interface KlarnaCustomer {
+export type KlarnaCustomer = {
     date_of_birth?: string;
     type?: string;
     organization_registration_id?: string;
     gender?: string;
-}
+};
 
-export interface KlarnaSourceType {
+export type KlarnaSourceType = {
     authorization_token: string;
     locale: string;
     purchase_country: string;
@@ -312,11 +312,11 @@ export interface KlarnaSourceType {
     merchant_reference2?: string;
     merchant_data?: string;
     attachment?: any;
-}
+};
 
 export type KnetLanguage = "ar" | "en";
 
-export interface KnetSourceType {
+export type KnetSourceType = {
     language: KnetLanguage;
     user_defined_field1?: string;
     user_defined_field2?: string;
@@ -325,14 +325,14 @@ export interface KnetSourceType {
     user_defined_field5?: string;
     card_token?: string;
     ptlf?: string;
-}
+};
 
-export interface QpaySourceType {
+export type QpaySourceType = {
     quantity?: number;
     description: string;
     language?: string;
     national_id?: string;
-}
+};
 
 export interface InfoField {
     label: string;
@@ -343,27 +343,27 @@ export interface InfoFields {
     [key: string]: InfoField;
 }
 
-export interface GiropaySourceType {
+export type GiropaySourceType = {
     purpose: string;
     bic?: string;
     iban?: string;
     info_fields?: InfoFields;
-}
+};
 
-export interface IdealSourceType {
+export type IdealSourceType = {
     description: string;
     bic: string;
     language?: string;
-}
+};
 
-export interface QiwiSourceType {
+export type QiwiSourceType = {
     walletId: string;
-}
+};
 
 export interface AddSourceResponseType {
-    id: string;
-    type: string;
-    response_code: string;
+    id: string,
+    type: string,
+    response_code: string,
     customer?: Customer;
     response_data: SepaMandateReference;
     _links: AddSourceLinks;
@@ -472,7 +472,7 @@ export interface PaymentAction {
     response_summary?: string;
     reference?: string;
     processing?: ActionProcessing;
-    metadata: Metadata;
+    metadata: Metadata
 }
 
 
@@ -599,7 +599,7 @@ export interface EventData {
     auth_code: string;
     response_code: string;
     response_summary: string;
-    "3ds": ThreeDSecureResponse;
+    '3ds': ThreeDSecureResponse;
     flagged: boolean;
     source: CardSource;
     customer: Customer;
@@ -669,12 +669,4 @@ export interface CardDestinationType {
     name?: string;
     billing_address?: Address;
     phone?: Phone;
-}
-
-export interface RequestHandlerType {
-    config: HttpConfigurationType;
-    method: RequestType;
-    url: string;
-    headers: any;
-    body?: any;
 }

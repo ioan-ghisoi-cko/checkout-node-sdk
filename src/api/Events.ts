@@ -10,8 +10,6 @@ import {
     DEFAULT_TIMEOUT
 } from "../index";
 import { determineError } from "../utils/ErrorHandler";
-import { performRequest } from "../utils/RequestHandler";
-
 import BaseEndpoint from "./BaseEndpoint";
 
 const querystring = require("querystring");
@@ -52,8 +50,14 @@ export default class Events extends BaseEndpoint {
      * @return {Promise<EventTypesResponse>} A promise to events types response.
      * @memberof Events
      */
-    public retrieveEventTypes = async (version?: string): Promise<EventTypesResponse> =>
-        new EventTypesResponse(await this._getHandler(`${this.httpConfiguration.environment}/event-types?version=${version}`));
+    public retrieveEventTypes = async (version?: string): Promise<EventTypesResponse> => {
+        try {
+            const getEvents = await this._getHandler(`${this.httpConfiguration.environment}/event-types?version=${version}`);
+            return new EventTypesResponse(await getEvents.json);
+        } catch (err) {
+            throw await determineError(err);
+        }
+    };
 
     /**
      * Retrieves Events from the Unified Payments API.
@@ -71,8 +75,14 @@ export default class Events extends BaseEndpoint {
      * @memberof Events
      */
     public retrieveEvents = async (arg?: RetrieveEventsParams): Promise<RetriveEventsResponse> => {
-        const params = querystring.stringify(arg).length > 0 ? `?${querystring.stringify(arg)}` : "";
-        return new RetriveEventsResponse(await this._getHandler(`${this.httpConfiguration.environment}/events${params}`));
+        try {
+            // build query params
+            let params = querystring.stringify(arg).length > 0 ? `?${querystring.stringify(arg)}` : '';
+            const getEvents = await this._getHandler(`${this.httpConfiguration.environment}/events${params}`);
+            return new RetriveEventsResponse(await getEvents.json);
+        } catch (err) {
+            throw await determineError(err);
+        }
     };
 
     /**
@@ -82,8 +92,15 @@ export default class Events extends BaseEndpoint {
      * @return {Promise<RetriveEventResponse>} A promise to event response.
      * @memberof Events
      */
-    public retrieveEvent = async (id: string): Promise<RetriveEventResponse> =>
-        new RetriveEventResponse(await this._getHandler(`${this.httpConfiguration.environment}/events/${id}`));
+    public retrieveEvent = async (id: string): Promise<RetriveEventResponse> => {
+        try {
+            const getEvents = await this._getHandler(`${this.httpConfiguration.environment}/events/${id}`);
+            return new RetriveEventResponse(await getEvents.json);
+        } catch (err) {
+            throw await determineError(err);
+        }
+    };
+
     /**
      * Retrieves Event Notification from the Unified Payments API.
      *
@@ -92,8 +109,14 @@ export default class Events extends BaseEndpoint {
      * @return {Promise<RetriveEventResponse>} A promise to event response.
      * @memberof Events
      */
-    public retrieveEventNotification = async (eventId: string, notificationId: string): Promise<RetriveEventNotification> =>
-        new RetriveEventNotification(await this._getHandler(`${this.httpConfiguration.environment}/events/${eventId}/notifications/${notificationId}`));
+    public retrieveEventNotification = async (eventId: string, notificationId: string): Promise<RetriveEventNotification> => {
+        try {
+            const getEvents = await this._getHandler(`${this.httpConfiguration.environment}/events/${eventId}/notifications/${notificationId}`);
+            return new RetriveEventNotification(await getEvents.json);
+        } catch (err) {
+            throw await determineError(err);
+        }
+    };
 
 
     /**
@@ -144,18 +167,18 @@ export default class Events extends BaseEndpoint {
      * Handle all GET requests to remove duplication
      *
      * @private
-     * @memberof Payments
+     * @memberof Events
      */
     private _getHandler = async (
         url: string,
-    ): Promise<any> =>
-        performRequest({
-            config: this.httpConfiguration,
+    ): Promise<any> => {
+        const http = new Http(this.httpConfiguration);
+        return http.send({
             method: "get",
             url,
             headers: {
                 Authorization: this.key
             },
-        })
-
+        });
+    }
 }
