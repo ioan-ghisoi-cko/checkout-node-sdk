@@ -14,7 +14,6 @@ import {
     RefundActionBody,
     VoidActionBody
 } from "../index";
-import { determineError } from "../utils/ErrorHandler";
 import { performRequest } from "../utils/RequestHandler";
 import BaseEndpoint from "./BaseEndpoint";
 
