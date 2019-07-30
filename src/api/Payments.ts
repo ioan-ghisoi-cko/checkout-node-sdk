@@ -80,16 +80,8 @@ export default class Payments extends BaseEndpoint {
      */
     public get = async (
         id: string,
-    ): Promise<GetPaymentResponse> => {
-        return new GetPaymentResponse(await performRequest({
-            config: this.httpConfiguration,
-            method: "get",
-            url: `${this.httpConfiguration.environment}/payments/${id}`,
-            headers: {
-                "Authorization": this.key,
-            }
-        }));
-    };
+    ): Promise<GetPaymentResponse> => this._getHandler(`${this.httpConfiguration.environment}/payments/${id}`);
+
 
     /**
      * Returns all the actions associated with a payment ordered by processing date in descending order (latest first).
@@ -100,16 +92,7 @@ export default class Payments extends BaseEndpoint {
      */
     public getActions = async (
         id: string,
-    ): Promise<GetPaymentActionsResponseType> => {
-        return performRequest({
-            config: this.httpConfiguration,
-            method: "get",
-            url: `${this.httpConfiguration.environment}/payments/${id}/actions`,
-            headers: {
-                "Authorization": this.key,
-            }
-        });
-    };
+    ): Promise<GetPaymentActionsResponseType> => this._getHandler(`${this.httpConfiguration.environment}/payments/${id}/actions`);
 
     /**
      * Captures a payment if supported by the payment method.
@@ -178,5 +161,22 @@ export default class Payments extends BaseEndpoint {
         },
         body: body !== undefined ? body : {}
     }))
+
+    /**
+     * Handle all GET requests to remove duplication
+     *
+     * @private
+     * @memberof Payments
+     */
+    private _getHandler = async (
+        url: string,
+    ): Promise<any> => await performRequest({
+        config: this.httpConfiguration,
+        method: "get",
+        url,
+        headers: {
+            "Authorization": this.key,
+        },
+    })
 
 }
