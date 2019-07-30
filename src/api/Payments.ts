@@ -1,4 +1,4 @@
-var pjson = require('../../package.json');
+const pjson = require("../../package.json");
 
 import {
     HttpConfigurationType,
@@ -156,7 +156,7 @@ export default class Payments extends BaseEndpoint {
         method: "post",
         url: `${this.httpConfiguration.environment}/payments/${paymentId}/${action}`,
         headers: {
-            "Authorization": this.key,
+            Authorization: this.key,
         },
         body: body !== undefined ? body : {}
     }))
@@ -169,12 +169,12 @@ export default class Payments extends BaseEndpoint {
      */
     private _getHandler = async (
         url: string,
-    ): Promise<any> => await performRequest({
+    ): Promise<any> => performRequest({
         config: this.httpConfiguration,
         method: "get",
         url,
         headers: {
-            "Authorization": this.key,
+            Authorization: this.key,
         },
     })
 

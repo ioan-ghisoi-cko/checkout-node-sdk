@@ -44,4 +44,4 @@ export const determineError = async (err: any): Promise<any> => {
         default:
             return new ApiError(await errorJSON);
     }
-}
+};

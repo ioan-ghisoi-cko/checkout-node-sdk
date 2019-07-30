@@ -18,6 +18,6 @@ export class PaymentActionResponse {
     constructor(response: PaymentActionedType) {
         this.action_id = response.action_id;
         this.reference = response.reference;
-        this.links = response['_links'];
+        this.links = response._links;
     }
 }

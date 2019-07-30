@@ -12,7 +12,6 @@ import BaseEndpoint from "./BaseEndpoint";
 import { NewWebhookInstance } from "../models/types/Types";
 import { WebhookResponse } from "../models/response";
 
-
 /**
  * Webhooks class
  *
@@ -21,7 +20,6 @@ import { WebhookResponse } from "../models/response";
  * @extends {BaseEndpoint}
  */
 export default class Webhooks extends BaseEndpoint {
-
 
     /**
      * Creates an instance of Webhooks.
@@ -85,7 +83,6 @@ export default class Webhooks extends BaseEndpoint {
      */
     public retrieveWebhook = async (id: string): Promise<WebhookResponse> =>
         new WebhookResponse(await this._getHandler(`${this.httpConfiguration.environment}/webhooks/${id}`));
-
 
     /**
      * Updates an existing webhook
@@ -151,7 +148,7 @@ export default class Webhooks extends BaseEndpoint {
             method: "get",
             url,
             headers: {
-                "Authorization": this.key
+                Authorization: this.key
             },
         })
 

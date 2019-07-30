@@ -9,7 +9,7 @@ export const performRequest = async (
     const http = new Http(config);
     try {
         // In case the body is undefined remove it completely
-        let httpParams = body === undefined ? {
+        const httpParams = body === undefined ? {
             method,
             url,
             headers,

@@ -71,8 +71,8 @@ export default class Events extends BaseEndpoint {
      * @memberof Events
      */
     public retrieveEvents = async (arg?: RetrieveEventsParams): Promise<RetriveEventsResponse> => {
-        let params = querystring.stringify(arg).length > 0 ? `?${querystring.stringify(arg)}` : '';
-        return new RetriveEventsResponse(await this._getHandler(`${this.httpConfiguration.environment}/events${params}`))
+        const params = querystring.stringify(arg).length > 0 ? `?${querystring.stringify(arg)}` : "";
+        return new RetriveEventsResponse(await this._getHandler(`${this.httpConfiguration.environment}/events${params}`));
     };
 
     /**
@@ -154,7 +154,7 @@ export default class Events extends BaseEndpoint {
             method: "get",
             url,
             headers: {
-                "Authorization": this.key
+                Authorization: this.key
             },
         })
 
