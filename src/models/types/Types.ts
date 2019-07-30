@@ -670,3 +670,11 @@ export interface CardDestinationType {
     billing_address?: Address;
     phone?: Phone;
 }
+
+export interface RequestHandlerType {
+    config: HttpConfigurationType;
+    method: RequestType;
+    url: string;
+    headers: any;
+    body?: any;
+}

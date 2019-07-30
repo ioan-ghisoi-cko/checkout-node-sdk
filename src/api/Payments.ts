@@ -15,6 +15,7 @@ import {
     VoidActionBody
 } from "../index";
 import { determineError } from "../utils/ErrorHandler";
+import { performRequest } from "../utils/RequestHandler";
 import BaseEndpoint from "./BaseEndpoint";
 
 /**
@@ -57,22 +58,16 @@ export default class Payments extends BaseEndpoint {
     public request = async <T, S = {}>(
         arg: PaymentRequest<T, S>, idempotency_key = ""
     ): Promise<PaymentResponse> => {
-        const http = new Http(this.httpConfiguration);
-        try {
-            const response = await http.send({
-                method: "post",
-                url: `${this.httpConfiguration.environment}/payments`,
-                headers: {
-                    Authorization: this.key,
-                    "Cko-Idempotency-Key": idempotency_key
-                },
-                // Add metadata, to be able to identify requests from this SDK
-                body: { ...arg, metadata: { ...arg.metadata, sdk: "node", sdk_version: pjson.version } }
-            });
-            return new PaymentResponse(await response.json);
-        } catch (err) {
-            throw await determineError(err);
-        }
+        return new PaymentResponse(await performRequest({
+            config: this.httpConfiguration,
+            method: "post",
+            url: `${this.httpConfiguration.environment}/payments`,
+            headers: {
+                "Authorization": this.key,
+                "Cko-Idempotency-Key": idempotency_key
+            },
+            body: { ...arg, metadata: { ...arg.metadata, sdk: "node", sdk_version: pjson.version } }
+        }));
     };
 
 
@@ -86,12 +81,14 @@ export default class Payments extends BaseEndpoint {
     public get = async (
         id: string,
     ): Promise<GetPaymentResponse> => {
-        try {
-            const getPayment = await this._getHandler(`${this.httpConfiguration.environment}/payments/${id}`);
-            return new GetPaymentResponse(await getPayment.json);
-        } catch (err) {
-            throw await determineError(err);
-        }
+        return new GetPaymentResponse(await performRequest({
+            config: this.httpConfiguration,
+            method: "get",
+            url: `${this.httpConfiguration.environment}/payments/${id}`,
+            headers: {
+                "Authorization": this.key,
+            }
+        }));
     };
 
     /**
@@ -104,12 +101,14 @@ export default class Payments extends BaseEndpoint {
     public getActions = async (
         id: string,
     ): Promise<GetPaymentActionsResponseType> => {
-        try {
-            const getPaymentActions = await this._getHandler(`${this.httpConfiguration.environment}/payments/${id}/actions`);
-            return await getPaymentActions.json;
-        } catch (err) {
-            throw await determineError(err);
-        }
+        return performRequest({
+            config: this.httpConfiguration,
+            method: "get",
+            url: `${this.httpConfiguration.environment}/payments/${id}/actions`,
+            headers: {
+                "Authorization": this.key,
+            }
+        });
     };
 
     /**
@@ -126,7 +125,16 @@ export default class Payments extends BaseEndpoint {
     public capture = async (
         paymentId: string,
         body?: CaptureActionBody
-    ): Promise<PaymentActionResponse> => this._actionHandler("captures", paymentId, body);
+    ): Promise<PaymentActionResponse> =>
+        new PaymentActionResponse(await performRequest({
+            config: this.httpConfiguration,
+            method: "post",
+            url: `${this.httpConfiguration.environment}/payments/${paymentId}/captures`,
+            headers: {
+                "Authorization": this.key,
+            },
+            body: body !== undefined ? body : {}
+        }));
 
     /**
      * Refunds a payment if supported by the payment method.
@@ -142,7 +150,17 @@ export default class Payments extends BaseEndpoint {
     public refund = async (
         paymentId: string,
         body?: RefundActionBody
-    ): Promise<PaymentActionResponse> => this._actionHandler("refunds", paymentId, body);
+    ): Promise<PaymentActionResponse> =>
+        new PaymentActionResponse(await performRequest({
+            config: this.httpConfiguration,
+            method: "post",
+            url: `${this.httpConfiguration.environment}/payments/${paymentId}/refunds`,
+            headers: {
+                "Authorization": this.key,
+            },
+            body: body !== undefined ? body : {}
+        }));
+
 
     /**
      * Voids a payment if supported by the payment method.
@@ -157,54 +175,14 @@ export default class Payments extends BaseEndpoint {
     public void = async (
         paymentId: string,
         body?: VoidActionBody
-    ): Promise<PaymentActionResponse> => this._actionHandler("voids", paymentId, body);
-
-
-    /**
-     * Handles payment actions POST requests to avoid duplication.
-     *
-     * @private
-     * @memberof Payments
-     */
-    private _actionHandler = async (
-        action: string,
-        paymentId: string,
-        body?: VoidActionBody,
-    ): Promise<PaymentActionResponse> => {
-        const http = new Http(this.httpConfiguration);
-        try {
-            const response = await http.send({
-                method: "post",
-                url: `${this.httpConfiguration.environment}/payments/${paymentId}/${action}`,
-                headers: {
-                    Authorization: this.key
-                },
-                body: body !== undefined ? body : {}
-            });
-
-            return new PaymentActionResponse(await response.json);
-
-        } catch (err) {
-            throw await determineError(err);
-        }
-    }
-
-    /**
-     * Handle all GET requests to remove duplication
-     *
-     * @private
-     * @memberof Payments
-     */
-    private _getHandler = async (
-        url: string,
-    ): Promise<any> => {
-        const http = new Http(this.httpConfiguration);
-        return http.send({
-            method: "get",
-            url,
+    ): Promise<PaymentActionResponse> =>
+        new PaymentActionResponse(await performRequest({
+            config: this.httpConfiguration,
+            method: "post",
+            url: `${this.httpConfiguration.environment}/payments/${paymentId}/voids`,
             headers: {
-                Authorization: this.key
+                "Authorization": this.key,
             },
-        });
-    }
+            body: body !== undefined ? body : {}
+        }));
 }
