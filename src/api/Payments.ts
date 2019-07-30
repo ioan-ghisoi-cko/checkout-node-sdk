@@ -125,16 +125,7 @@ export default class Payments extends BaseEndpoint {
     public capture = async (
         paymentId: string,
         body?: CaptureActionBody
-    ): Promise<PaymentActionResponse> =>
-        new PaymentActionResponse(await performRequest({
-            config: this.httpConfiguration,
-            method: "post",
-            url: `${this.httpConfiguration.environment}/payments/${paymentId}/captures`,
-            headers: {
-                "Authorization": this.key,
-            },
-            body: body !== undefined ? body : {}
-        }));
+    ): Promise<PaymentActionResponse> => this._actionHandler("captures", paymentId, body)
 
     /**
      * Refunds a payment if supported by the payment method.
@@ -150,16 +141,7 @@ export default class Payments extends BaseEndpoint {
     public refund = async (
         paymentId: string,
         body?: RefundActionBody
-    ): Promise<PaymentActionResponse> =>
-        new PaymentActionResponse(await performRequest({
-            config: this.httpConfiguration,
-            method: "post",
-            url: `${this.httpConfiguration.environment}/payments/${paymentId}/refunds`,
-            headers: {
-                "Authorization": this.key,
-            },
-            body: body !== undefined ? body : {}
-        }));
+    ): Promise<PaymentActionResponse> => this._actionHandler("refunds", paymentId, body)
 
 
     /**
@@ -175,14 +157,26 @@ export default class Payments extends BaseEndpoint {
     public void = async (
         paymentId: string,
         body?: VoidActionBody
-    ): Promise<PaymentActionResponse> =>
-        new PaymentActionResponse(await performRequest({
-            config: this.httpConfiguration,
-            method: "post",
-            url: `${this.httpConfiguration.environment}/payments/${paymentId}/voids`,
-            headers: {
-                "Authorization": this.key,
-            },
-            body: body !== undefined ? body : {}
-        }));
+    ): Promise<PaymentActionResponse> => this._actionHandler("voids", paymentId, body)
+
+    /**
+     * Handles payment actions POST requests to avoid duplication.
+     *
+     * @private
+     * @memberof Payments
+     */
+    private _actionHandler = async (
+        action: string,
+        paymentId: string,
+        body?: VoidActionBody,
+    ): Promise<PaymentActionResponse> => new PaymentActionResponse(await performRequest({
+        config: this.httpConfiguration,
+        method: "post",
+        url: `${this.httpConfiguration.environment}/payments/${paymentId}/${action}`,
+        headers: {
+            "Authorization": this.key,
+        },
+        body: body !== undefined ? body : {}
+    }))
+
 }
