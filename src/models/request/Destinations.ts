@@ -6,14 +6,20 @@ import {
     CardDestinationType
 } from "../types/Types";
 
+class BaseDestination {
+    private readonly type: string;
+    public constructor(type: string) {
+        this.type = type;
+    }
+}
+
 /**
  * TokenDestination class
  *
  * @export
  * @class TokenDestination
  */
-export class TokenDestination {
-    private readonly type: string = "token";
+export class TokenDestination extends BaseDestination {
     public token: string;
     public first_name: string;
     public last_name: string;
@@ -21,6 +27,7 @@ export class TokenDestination {
     public phone?: Phone;
 
     public constructor(destination: TokenDestinationType) {
+        super("token")
         this.token = destination.token;
         this.first_name = destination.first_name;
         this.last_name = destination.last_name;
@@ -35,13 +42,13 @@ export class TokenDestination {
  * @export
  * @class IdDestination
  */
-export class IdDestination {
-    private readonly type: string = "id";
+export class IdDestination extends BaseDestination {
     public id: string;
     public first_name: string;
     public last_name: string;
 
     public constructor(destination: IdDestinationType) {
+        super("id");
         this.id = destination.id;
         this.first_name = destination.first_name;
         this.last_name = destination.last_name;
@@ -54,8 +61,7 @@ export class IdDestination {
  * @export
  * @class CardDestination
  */
-export class CardDestination {
-    private readonly type: string = "card";
+export class CardDestination extends BaseDestination {
     number: string;
     expiry_month: number;
     expiry_year: number;
@@ -66,6 +72,7 @@ export class CardDestination {
     phone?: Phone;
 
     public constructor(destination: CardDestinationType) {
+        super("card");
         this.number = destination.number;
         this.expiry_month = destination.expiry_month;
         this.expiry_year = destination.expiry_year;

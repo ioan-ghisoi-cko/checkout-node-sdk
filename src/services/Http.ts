@@ -49,7 +49,9 @@ export class Http {
                     body: JSON.stringify(request.body),
                     headers: {
                         ...request.headers,
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
+                        "Cache-Control": "no-cache",
+                        "pragma": "no-cache"
                     }
                 }
             );

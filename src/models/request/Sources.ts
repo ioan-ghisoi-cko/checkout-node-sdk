@@ -28,25 +28,32 @@ import {
     QpaySourceType
 } from "../types/Types";
 
-export class TokenSource {
-    private readonly type: string = 'token';
+class BaseSource {
+    private readonly type: string;
+    public constructor(type: string) {
+        this.type = type;
+    }
+}
+
+export class TokenSource extends BaseSource {
     public token: string;
     public billing_address?: Address;
     public phone?: Phone
 
     public constructor(source: TokenSourceType) {
+        super("token");
         this.token = source.token;
         this.billing_address = source.billing_address;
         this.phone = source.phone;
     }
 }
 
-export class IdSource {
-    private readonly type: string = 'id';
+export class IdSource extends BaseSource {
     public id: string;
     public cvv?: string;
 
     public constructor(source: IdSourceType) {
+        super("id");
         this.id = source.id;
         this.cvv = source.cvv;
     }
@@ -58,8 +65,7 @@ export class IdSource {
  * @export
  * @class CardSource
  */
-export class CardSource {
-    private readonly type: string = "card";
+export class CardSource extends BaseSource {
     public number: string;
     public expiry_month: number;
     public expiry_year: number;
@@ -70,6 +76,7 @@ export class CardSource {
     public phone?: Phone;
 
     public constructor(source: CardSourceType) {
+        super("card");
         this.number = source.number;
         this.expiry_month = source.expiry_month;
         this.expiry_year = source.expiry_year;
@@ -87,11 +94,11 @@ export class CardSource {
  * @export
  * @class ApplePaySource
  */
-export class ApplePaySource {
-    private readonly type: string = "applepay";
+export class ApplePaySource extends BaseSource {
     public token_data: TokenData<AppleTokenData>;
 
     public constructor(source: TokenData<AppleTokenData>) {
+        super("applepay");
         this.token_data = source;
     }
 }
@@ -103,29 +110,28 @@ export class ApplePaySource {
  * @export
  * @class GooglePaySource
  */
-export class GooglePaySource {
-    private readonly type: string = "googlepay";
+export class GooglePaySource extends BaseSource {
     public token_data: TokenData<GoogleTokenData>;
 
     public constructor(source: TokenData<GoogleTokenData>) {
+        super("googlepay");
         this.token_data = source;
     }
 }
 
 
-export class CustomerSource {
-    private readonly type: string = 'customer';
+export class CustomerSource extends BaseSource {
     public id?: string;
     public email?: string;
 
     public constructor(source: CustomerSourceType) {
+        super("customer");
         this.id = source.id;
         this.email = source.email;
     }
 }
 
-export class NetworkTokenSource {
-    private readonly type: string = 'network_token';
+export class NetworkTokenSource extends BaseSource {
     public token: string;
     public expiry_month: number;
     public expiry_year: number;
@@ -139,6 +145,7 @@ export class NetworkTokenSource {
     public phone?: Phone;
 
     public constructor(source: NetworkTokenSourceType) {
+        super("network_token");
         this.token = source.token;
         this.expiry_month = source.expiry_month;
         this.expiry_year = source.expiry_year;
@@ -153,51 +160,50 @@ export class NetworkTokenSource {
     }
 }
 
-export class AlipaySource {
-    private readonly type: string = 'alipay';
-
-    public constructor() { }
+export class AlipaySource extends BaseSource {
+    public constructor() {
+        super("alipay");
+    }
 }
 
-export class BoletoSource {
-    private readonly type: string = 'boleto';
+export class BoletoSource extends BaseSource {
     public birthDate: string;
     public cpf: string;
     public customerName: string;
 
     public constructor(source: BoletoSourceType) {
+        super("boleto");
         this.birthDate = source.birthDate;
         this.cpf = source.cpf;
         this.customerName = source.customerName;
     }
 }
 
-export class BancontactSource {
-    private readonly type: string = 'bancontact';
+export class BancontactSource extends BaseSource {
     public payment_country: string;
     public account_holder_name: string;
     public billing_descriptor?: string;
 
     public constructor(source: BancontactSourceType) {
+        super("bancontact");
         this.payment_country = source.payment_country;
         this.account_holder_name = source.account_holder_name;
         this.billing_descriptor = source.billing_descriptor;
     }
 }
 
-export class EpsSource {
-    private readonly type: string = 'eps';
+export class EpsSource extends BaseSource {
     public purpose: string;
     public bic?: string;
 
     public constructor(source: EpsSourceType) {
+        super("eps");
         this.purpose = source.purpose;
         this.bic = source.bic;
     }
 }
 
-export class FawrySource {
-    private readonly type: string = 'fawry';
+export class FawrySource extends BaseSource {
     public description: string;
     public customer_profile_id?: string;
     public customer_email: string;
@@ -205,6 +211,7 @@ export class FawrySource {
     public products: FawryProduct[];
 
     public constructor(source: FawrySourceType) {
+        super("fawry");
         this.description = source.description;
         this.customer_profile_id = source.customer_profile_id;
         this.customer_email = source.customer_email;
@@ -213,8 +220,7 @@ export class FawrySource {
     }
 }
 
-export class KlarnaSource {
-    private readonly type: string = 'klarna';
+export class KlarnaSource extends BaseSource {
     public authorization_token: string;
     public locale: string;
     public purchase_country: string;
@@ -230,6 +236,7 @@ export class KlarnaSource {
     public attachment?: any;
 
     public constructor(source: KlarnaSourceType) {
+        super("klarna");
         this.authorization_token = source.authorization_token;
         this.locale = source.locale;
         this.purchase_country = source.purchase_country;
@@ -246,14 +253,14 @@ export class KlarnaSource {
     }
 }
 
-export class GiropaySource {
-    private readonly type: string = 'giropay';
+export class GiropaySource extends BaseSource {
     public purpose: string;
     public bic?: string;
     public iban?: string;
     public info_fields?: InfoFields;
 
     public constructor(source: GiropaySourceType) {
+        super("giropay");
         this.purpose = source.purpose;
         this.bic = source.bic;
         this.iban = source.iban;
@@ -261,21 +268,20 @@ export class GiropaySource {
     }
 }
 
-export class IdealSource {
-    private readonly type: string = 'ideal';
+export class IdealSource extends BaseSource {
     public description: string;
     public bic: string;
     public language?: string;
 
     public constructor(source: IdealSourceType) {
+        super("ideal");
         this.description = source.description;
         this.bic = source.bic;
         this.language = source.language;
     }
 }
 
-export class KnetSource {
-    private readonly type: string = 'knet';
+export class KnetSource extends BaseSource {
     public language: KnetLanguage;
     public user_defined_field1?: string;
     public user_defined_field2?: string;
@@ -286,6 +292,7 @@ export class KnetSource {
     public ptlf?: string;
 
     public constructor(source: KnetSourceType) {
+        super("knet");
         this.language = source.language;
         this.user_defined_field1 = source.user_defined_field1;
         this.user_defined_field2 = source.user_defined_field2;
@@ -297,14 +304,14 @@ export class KnetSource {
     }
 }
 
-export class QpaySource {
-    private readonly type: string = 'qpay';
+export class QpaySource extends BaseSource {
     public quantity?: number;
     public description: string;
     public language?: string;
     public national_id?: string;
 
     public constructor(source: QpaySourceType) {
+        super("qpay");
         this.quantity = source.quantity;
         this.description = source.description;
         this.language = source.language;
@@ -312,15 +319,15 @@ export class QpaySource {
     }
 }
 
-export class PoliSource {
-    private readonly type: string = 'poli';
-
-    public constructor() { }
+export class PoliSource extends BaseSource {
+    public constructor() {
+        super("poli");
+    }
 }
 
-export class SofortSource {
-    private readonly type: string = 'sofort';
-
-    public constructor() { }
+export class SofortSource extends BaseSource {
+    public constructor() {
+        super("sofort");
+    }
 }
 

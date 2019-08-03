@@ -58,7 +58,41 @@ export class PaymentResponse {
         this._links = response._links;
     }
 
-    public isPending = () => {
+
+    /**
+     * Determines if the transaction authorisation is completed and no
+     * further action is required.
+     *
+     * @memberof PaymentResponse
+     */
+    public isCompleted = (): boolean => {
+        return this.status === "Pending" ?
+            false :
+            this.approved &&
+            this.risk.flagged !== true &&
+            this.status === "Authorized" &&
+            this.response_summary === "Approved";
+    }
+
+    /**
+     * Determines if the transaction authorisation requires an additional
+     * verification (redirection). This is generally the case for 3DS or
+     * local payment options.
+     *
+     * @memberof PaymentResponse
+     */
+    public requiresRedirect = (): boolean => {
         return this.status === "Pending";
+    }
+
+    /**
+     * Determines if the transaction authorisation was flagged by any of
+     * the risk rules of the business. A positive outcome generally indicates
+     * a success, but where manually review is required for completion.
+     *
+     * @memberof PaymentResponse
+     */
+    public isFlagged = (): boolean => {
+        return this.status === "Pending" ? false : this.risk.flagged;
     }
 }

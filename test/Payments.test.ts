@@ -144,7 +144,10 @@ describe("Request Payment with card source", async () => {
             currency: "USD",
             amount: 100
         });
-        expect(transaction.approved).to.be.true;
+        expect(transaction.isCompleted()).to.be.true;
+        expect(transaction.isFlagged()).to.be.false;
+        expect(transaction.requiresRedirect()).to.be.false;
+        expect(transaction.isCompleted()).to.be.true;
         expect(transaction.risk.flagged).to.be.false;
         expect(transaction._links.redirect).to.be.undefined;
     });
@@ -186,7 +189,9 @@ describe("Request Payment with card source", async () => {
                 enabled: true
             }
         });
-        expect(transaction.isPending()).to.be.true;
+        expect(transaction.isCompleted()).to.be.false;
+        expect(transaction.isFlagged()).to.be.false;
+        expect(transaction.requiresRedirect()).to.be.true;
         expect(transaction.status).to.equal('Pending');
     });
 
@@ -258,6 +263,9 @@ describe("Request Payment with card source", async () => {
             amount: 1005,
         });
 
+        expect(transaction.isCompleted()).to.be.false;
+        expect(transaction.isFlagged()).to.be.false;
+        expect(transaction.requiresRedirect()).to.be.false;
         expect(transaction.approved).to.be.false;
         expect(transaction.status).to.equal('Declined');
         expect(transaction.status).to.equal('Declined');
@@ -1156,7 +1164,7 @@ describe("Request Payment with token source", async () => {
                 enabled: true
             }
         });
-        expect(transaction.isPending()).to.be.true;
+        expect(transaction.requiresRedirect()).to.be.true;
         expect(transaction.status).to.equal('Pending');
     });
 
@@ -1472,7 +1480,7 @@ describe("Request Payment with token source", async () => {
                 enabled: true
             }
         });
-        expect(transaction.isPending()).to.be.true;
+        expect(transaction.requiresRedirect()).to.be.true;
         expect(transaction.status).to.equal('Pending');
     });
 
@@ -1788,7 +1796,7 @@ describe("Request Payment with customer source", async () => {
                 enabled: true
             }
         });
-        expect(transaction.isPending()).to.be.true;
+        expect(transaction.requiresRedirect()).to.be.true;
         expect(transaction.status).to.equal('Pending');
     });
 
@@ -2114,7 +2122,7 @@ describe("Request Payment with network token source", async () => {
                 enabled: true
             }
         });
-        expect(transaction.isPending()).to.be.true;
+        expect(transaction.requiresRedirect()).to.be.true;
         expect(transaction.status).to.equal('Pending');
     });
 
@@ -2401,7 +2409,7 @@ describe("Request Payment with alipay source", async () => {
         });
 
         expect(transaction.status).to.equal("Pending");
-        expect(transaction.isPending()).to.be.true;
+        expect(transaction.requiresRedirect()).to.be.true;
     });
 
 
@@ -2565,7 +2573,7 @@ describe("Request Payment with boleto source", async () => {
         });
 
         expect(transaction.status).to.equal("Pending");
-        expect(transaction.isPending()).to.be.true;
+        expect(transaction.requiresRedirect()).to.be.true;
     });
 
 
@@ -2753,7 +2761,7 @@ describe("Request Payment with bancontact source", async () => {
         });
 
         expect(transaction.status).to.equal("Pending");
-        expect(transaction.isPending()).to.be.true;
+        expect(transaction.requiresRedirect()).to.be.true;
     });
 
 
@@ -2939,7 +2947,7 @@ describe("Request Payment with eps source", async () => {
         });
 
         expect(transaction.status).to.equal("Pending");
-        expect(transaction.isPending()).to.be.true;
+        expect(transaction.requiresRedirect()).to.be.true;
     });
 
 
@@ -3126,7 +3134,7 @@ describe("Request Payment with fawry source", async () => {
         });
 
         expect(transaction.status).to.equal("Pending");
-        expect(transaction.isPending()).to.be.true;
+        expect(transaction.requiresRedirect()).to.be.true;
     });
 
 
@@ -3363,7 +3371,7 @@ describe("Request Payment with giropay source", async () => {
         });
 
         expect(transaction.status).to.equal("Pending");
-        expect(transaction.isPending()).to.be.true;
+        expect(transaction.requiresRedirect()).to.be.true;
     });
 
 
@@ -3542,7 +3550,7 @@ describe("Request Payment with ideal source", async () => {
         });
 
         expect(transaction.status).to.equal("Pending");
-        expect(transaction.isPending()).to.be.true;
+        expect(transaction.requiresRedirect()).to.be.true;
     });
 
 
@@ -3760,7 +3768,7 @@ describe("Request Payment with Klarna Source", async () => {
         });
 
         expect(transaction.status).to.equal("Pending");
-        expect(transaction.isPending()).to.be.true;
+        expect(transaction.requiresRedirect()).to.be.true;
     });
 
 
@@ -4113,7 +4121,7 @@ describe("Request Payment with Knet Source", async () => {
         });
 
         expect(transaction.status).to.equal("Pending");
-        expect(transaction.isPending()).to.be.true;
+        expect(transaction.requiresRedirect()).to.be.true;
     });
 
 
@@ -4318,7 +4326,7 @@ describe("Request Payment with Poli Source", async () => {
         });
 
         expect(transaction.status).to.equal("Pending");
-        expect(transaction.isPending()).to.be.true;
+        expect(transaction.requiresRedirect()).to.be.true;
     });
 
 
@@ -4486,7 +4494,7 @@ describe("Request Payment with Qpay Source", async () => {
         });
 
         expect(transaction.status).to.equal("Pending");
-        expect(transaction.isPending()).to.be.true;
+        expect(transaction.requiresRedirect()).to.be.true;
     });
 
 
@@ -4679,7 +4687,7 @@ describe("Request Payment with Sofort Source", async () => {
         });
 
         expect(transaction.status).to.equal("Pending");
-        expect(transaction.isPending()).to.be.true;
+        expect(transaction.requiresRedirect()).to.be.true;
     });
 
 
