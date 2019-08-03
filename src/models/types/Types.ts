@@ -573,6 +573,11 @@ export interface RetrieveEventsLinks {
     webhooks_retry?: Link;
 }
 
+export interface GetDisputesLinks {
+    self: Link;
+    evidence?: Link;
+}
+
 export interface EventSummary {
     id: string;
     type: string;
@@ -670,3 +675,126 @@ export interface CardDestinationType {
     billing_address?: Address;
     phone?: Phone;
 }
+
+export interface GetDisputesParams {
+    limit?: number;
+    skip?: number;
+    from?: string;
+    to?: string;
+    id?: string;
+    statuses?: string;
+    payment_id?: string;
+    payment_reference?: string;
+    payment_arn?: string;
+    this_channel_only?: boolean;
+}
+
+export interface DisputeSummary {
+    id?: string;
+    category?: string;
+    from?: string;
+    status?: string;
+    amount?: number;
+    currency?: string;
+    payment_id?: string;
+    payment_reference?: string;
+    payment_arn?: string;
+    payment_method?: string;
+    evidence_required_by?: string;
+    received_on?: string;
+    last_update?: string;
+    _links?: GetDisputesLinks;
+}
+
+export interface GetDisputesResponseType {
+    limit: number;
+    skip: number;
+    from: string;
+    to: string;
+    id: string;
+    statuses: string;
+    payment_id: string;
+    payment_reference: string;
+    payment_arn: string;
+    this_channel_only: boolean;
+    total_count: boolean;
+    data: DisputeSummary[];
+}
+
+type DisputeStatus = "received" | "evidence_required" | "evidence_under_review" | "resolved" | "closed" | "won" | "lost" | "canceled" | "accepted";
+type DisputeCategory = "fraudulent" | "unrecognized" | "canceled_recurring" | "product_service_not_received" | "not_as_described" | "credit_not_issued" | "duplicate" | "incorrect_amount" | "general";
+type DisputeItems = "proof_of_delivery_or_service" | "invoice_or_receipt" | "invoice_showing_distinct_transactions" | "customer_communication" | "refund_or_cancellation_policy" | "proof_of_delivery_or_service_date" | "recurring_transaction_agreement" | "additional_evidence";
+
+export interface DisputePayment {
+    id: string;
+    amount: string;
+    currency: string;
+    method: string;
+    arn: string;
+    processed_on: string;
+}
+
+export interface GetDisputesDetailsResponseType {
+    id: string;
+    category: DisputeCategory;
+    amount: number;
+    currency: string;
+    reason_code: string;
+    status: DisputeStatus;
+    relevant_evidence: [any];
+    items: DisputeItems;
+    evidence_required_by: string;
+    received_on: string;
+    last_update: boolean;
+    payment: DisputePayment;
+    _links: GetDisputesLinks;
+}
+
+export interface ProvideDisputesEvidenceRequestType {
+    proof_of_delivery_or_service_file?: string;
+    proof_of_delivery_or_service_text?: string;
+    invoice_or_receipt_file?: string;
+    invoice_or_receipt_text?: string;
+    invoice_showing_distinct_transactions_file?: string;
+    invoice_showing_distinct_transactions_text?: string;
+    customer_communication_file?: string;
+    customer_communication_text?: string;
+    refund_or_cancellation_policy_file?: string;
+    refund_or_cancellation_policy_text?: string;
+    recurring_transaction_agreement_file?: string;
+    recurring_transaction_agreement_text?: string;
+    additional_evidence_file?: string;
+    additional_evidence_text?: string;
+    proof_of_delivery_or_service_date_file?: string;
+    proof_of_delivery_or_service_date_text?: string;
+}
+
+export interface GetDisputeEvidenceResponseType {
+    proof_of_delivery_or_service_file: string;
+    proof_of_delivery_or_service_text: string;
+    proof_of_delivery_or_service_date_text: string;
+}
+
+export interface UploadFileLinks {
+    self: Link;
+}
+export interface GetFileInfoLinks extends UploadFileLinks {
+    self: Link;
+    download: Link;
+}
+
+
+export interface UploadFileResponseType {
+    id: string;
+    _links: UploadFileLinks;
+}
+
+export interface GetFileInfoResponseType {
+    id: string;
+    filename: string;
+    purpose: string;
+    size: number;
+    uploaded_on: string;
+    _links: GetFileInfoLinks;
+}
+
