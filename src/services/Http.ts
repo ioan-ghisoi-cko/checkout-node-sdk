@@ -62,7 +62,16 @@ export class Http {
             // For 'no body' response, replace with empty object
             return response.json()
                 .then(data => {
-                    return { status: response.status, json: data };
+                    return {
+                        status: response.status,
+                        json: {
+                            ...data,
+                            headers: {
+                                "cko-request-id": response.headers.raw()["cko-request-id"][0],
+                                "cko-version": response.headers.raw()["cko-version"][0]
+                            }
+                        }
+                    };
                 })
                 .catch(err => {
                     return { status: response.status, json: {} };

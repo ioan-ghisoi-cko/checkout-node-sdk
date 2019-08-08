@@ -133,6 +133,11 @@ export interface SourceRequest {
     source_data: SepaSourceData;
 }
 
+export interface PaymentHeaders {
+    "cko-request-id": string;
+    "cko-version": string;
+}
+
 export interface PaymentRequest<T, S> {
     source?: T;
     destination?: S;
@@ -389,6 +394,7 @@ export interface DestinationResponse {
 }
 
 export interface PaymentResponseType {
+    headers: PaymentHeaders;
     id: string;
     action_id: string;
     amount: number;

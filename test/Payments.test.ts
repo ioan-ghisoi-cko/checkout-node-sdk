@@ -66,7 +66,7 @@ describe("Request Payment with card source", async () => {
         expect(pay.httpConfiguration.timeout).to.equal(4000);
     });
 
-    it("should perform normal payment request with a Card Source", async () => {
+    it.only("should perform normal payment request with a Card Source", async () => {
         nock("https://api.sandbox.checkout.com")
             .post("/payments")
             .reply(201, {
@@ -130,7 +130,11 @@ describe("Request Payment with card source", async () => {
                             'https://api.sandbox.checkout.com/payments/pay_6ndp5facelxurne7gloxkxm57u/voids'
                     }
                 }
-            });
+            },
+                {
+                    'cko-request-id': ['1695a930-09cf-4db0-a91e-a772e6ee076f'],
+                    'cko-version': ['3.31.4'],
+                });
 
         const pay = new payments('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
 
@@ -143,7 +147,9 @@ describe("Request Payment with card source", async () => {
             }),
             currency: "USD",
             amount: 100
-        });
+        }, "1695a930-09cf-4db0-a91e-a772e6ee076f");
+
+        expect(transaction.headers["cko-request-id"]).to.equal("1695a930-09cf-4db0-a91e-a772e6ee076f");
         expect(transaction.isCompleted()).to.be.true;
         expect(transaction.isFlagged()).to.be.false;
         expect(transaction.requiresRedirect()).to.be.false;

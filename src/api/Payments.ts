@@ -55,7 +55,8 @@ export default class Payments extends BaseEndpoint {
      * @return {Promise<PaymentResponse>} A promise to payment response.
      */
     public request = async <T, S = {}>(
-        arg: PaymentRequest<T, S>, idempotency_key = ""
+        arg: PaymentRequest<T, S>,
+        idempotency_key = ""
     ): Promise<PaymentResponse> => {
         const http = new Http(this.httpConfiguration);
         try {

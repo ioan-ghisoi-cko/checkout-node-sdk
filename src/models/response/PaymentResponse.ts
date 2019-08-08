@@ -5,7 +5,8 @@ import {
     SourceResponse,
     Customer,
     Links,
-    DestinationResponse
+    DestinationResponse,
+    PaymentHeaders
 } from "../types/Types";
 
 
@@ -16,6 +17,7 @@ import {
  * @class PaymentResponse
  */
 export class PaymentResponse {
+    public headers: PaymentHeaders;
     public id: string;
     public action_id: string;
     public amount: number;
@@ -37,6 +39,7 @@ export class PaymentResponse {
     public _links: Links;
 
     constructor(response: PaymentResponseType) {
+        this.headers = response.headers;
         this.id = response.id;
         this.action_id = response.action_id;
         this.amount = response.amount;
