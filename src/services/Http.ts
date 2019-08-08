@@ -59,19 +59,25 @@ export class Http {
             if (!response.ok) {
                 throw { status: response.status, json: response.json() };
             }
+
             // For 'no body' response, replace with empty object
             return response.json()
                 .then(data => {
-                    return {
-                        status: response.status,
-                        json: {
-                            ...data,
-                            headers: {
-                                "cko-request-id": response.headers.raw()["cko-request-id"][0],
-                                "cko-version": response.headers.raw()["cko-version"][0]
+                    // Return CKO response headers when available
+                    if ("cko-request-id" in response.headers.raw()) {
+                        return {
+                            status: response.status,
+                            json: {
+                                ...data,
+                                headers: {
+                                    "cko-request-id": response.headers.raw()["cko-request-id"][0],
+                                    "cko-version": response.headers.raw()["cko-version"][0]
+                                }
                             }
-                        }
-                    };
+                        };
+                    } else {
+                        return { status: response.status, json: data };
+                    }
                 })
                 .catch(err => {
                     return { status: response.status, json: {} };

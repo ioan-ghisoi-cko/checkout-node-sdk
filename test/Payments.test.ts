@@ -66,7 +66,7 @@ describe("Request Payment with card source", async () => {
         expect(pay.httpConfiguration.timeout).to.equal(4000);
     });
 
-    it.only("should perform normal payment request with a Card Source", async () => {
+    it("should perform normal payment request with a Card Source", async () => {
         nock("https://api.sandbox.checkout.com")
             .post("/payments")
             .reply(201, {
