@@ -83,6 +83,23 @@ export class NotFoundError extends Error {
 }
 
 /**
+ * UnprocessableError
+ *
+ * @export
+ * @class UnprocessableError
+ * @extends {Error}
+ */
+export class UnprocessableError extends Error {
+    public http_code = 400;
+
+    constructor(message = "UnprocessableError") {
+        super(message);
+        Object.setPrototypeOf(this, new.target.prototype);
+        this.name = UnprocessableError.name;
+    }
+}
+
+/**
  * ValidationError
  *
  * @export

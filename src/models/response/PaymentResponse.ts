@@ -6,7 +6,7 @@ import {
     Customer,
     Links,
     DestinationResponse
-} from "../../index";
+} from "../types/Types";
 
 
 /**

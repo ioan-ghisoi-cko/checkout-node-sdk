@@ -721,9 +721,9 @@ export interface GetDisputesResponseType {
     data: DisputeSummary[];
 }
 
-type DisputeStatus = "received" | "evidence_required" | "evidence_under_review" | "resolved" | "closed" | "won" | "lost" | "canceled" | "accepted";
-type DisputeCategory = "fraudulent" | "unrecognized" | "canceled_recurring" | "product_service_not_received" | "not_as_described" | "credit_not_issued" | "duplicate" | "incorrect_amount" | "general";
-type DisputeItems = "proof_of_delivery_or_service" | "invoice_or_receipt" | "invoice_showing_distinct_transactions" | "customer_communication" | "refund_or_cancellation_policy" | "proof_of_delivery_or_service_date" | "recurring_transaction_agreement" | "additional_evidence";
+export type DisputeStatus = "received" | "evidence_required" | "evidence_under_review" | "resolved" | "closed" | "won" | "lost" | "canceled" | "accepted";
+export type DisputeCategory = "fraudulent" | "unrecognized" | "canceled_recurring" | "product_service_not_received" | "not_as_described" | "credit_not_issued" | "duplicate" | "incorrect_amount" | "general";
+export type DisputeItems = "proof_of_delivery_or_service" | "invoice_or_receipt" | "invoice_showing_distinct_transactions" | "customer_communication" | "refund_or_cancellation_policy" | "proof_of_delivery_or_service_date" | "recurring_transaction_agreement" | "additional_evidence";
 
 export interface DisputePayment {
     id: string;
@@ -751,6 +751,7 @@ export interface GetDisputesDetailsResponseType {
 }
 
 export interface ProvideDisputesEvidenceRequestType {
+    id: string;
     proof_of_delivery_or_service_file?: string;
     proof_of_delivery_or_service_text?: string;
     invoice_or_receipt_file?: string;
@@ -798,3 +799,12 @@ export interface GetFileInfoResponseType {
     _links: GetFileInfoLinks;
 }
 
+export interface SubmitEvidenceResponseType {
+    id: string;
+    _links: UploadFileLinks;
+}
+
+export interface SubmitEvidenceType {
+    path: string;
+    purpose: string;
+}

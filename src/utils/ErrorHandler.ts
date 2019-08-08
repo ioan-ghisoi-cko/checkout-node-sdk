@@ -7,7 +7,8 @@ import {
     BadGateway,
     NotFoundError,
     ActionNotAllowed,
-    UrlAlreadyRegistered
+    UrlAlreadyRegistered,
+    UnprocessableError
 } from "../models/response/HttpErrors";
 import { NoWebhooksConfigured } from "../models/response";
 
@@ -31,6 +32,8 @@ export const determineError = async (err: any): Promise<any> => {
             return new NoWebhooksConfigured(204);
         case 404:
             return new NotFoundError();
+        case 400:
+            return new UnprocessableError();
         case 403:
             return new ActionNotAllowed();
         case 409:
