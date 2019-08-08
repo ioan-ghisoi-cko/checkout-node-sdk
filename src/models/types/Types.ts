@@ -148,7 +148,7 @@ export interface PaymentRequest<T, S> {
     shipping?: Shipping;
     "3ds"?: ThreeDSecure;
     previous_payment_id?: string;
-    risk?: string;
+    risk?: RiskRequest;
     success_url?: string;
     failure_url?: string;
     payment_ip?: string;
@@ -418,6 +418,10 @@ export interface ThreeDSecureResponse {
 
 export interface Risk {
     flagged: boolean;
+}
+
+export interface RiskRequest {
+    enabled: boolean;
 }
 
 export interface SourceResponse {
