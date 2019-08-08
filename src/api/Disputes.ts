@@ -24,7 +24,7 @@ export default class Disputes extends BaseEndpoint {
 
 
     /**
-     * Creates an instance of Events.
+     * Creates an instance of Disputes.
      * @param {string} key
      * @param {http_options} HttpConfigurationType
      * @param {HttpConfigurationType.timeout} HttpConfigurationType.timeout HTTP request timeout

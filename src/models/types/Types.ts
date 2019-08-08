@@ -818,3 +818,47 @@ export interface SubmitEvidenceType {
     path: string;
     purpose: string;
 }
+
+export interface GetPaymentsType {
+    path: string;
+    purpose: string;
+}
+
+export interface ReconcilePaymentResponseType {
+    count: number;
+    data: ReconciledPayment[];
+    _links: UploadFileLinks;
+}
+
+export interface ReconciledPayment {
+    id: string;
+    processing_currency: string;
+    payout_currency: string;
+    requested_on: string;
+    channel_name: string;
+    reference: string;
+    payment_method: string;
+    card_type: string;
+    card_category: string;
+    issuer_country: string;
+    merchant_country: string;
+    mid: string;
+    actions: ReconciledPaymentAction[];
+}
+
+export interface ReconciledPaymentAction {
+    type: string;
+    id: string;
+    processed_on: string;
+    response_code: string;
+    response_description: string;
+    breakdown: ReconciledPaymentBreakdown[];
+}
+
+export interface ReconciledPaymentBreakdown {
+    type: string;
+    date: string;
+    processing_currency_amount: string;
+    payout_currency_amount: string;
+}
+

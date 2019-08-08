@@ -15,3 +15,5 @@ export * from "./GetDisputesResponse";
 export * from "./GetFileInfoResponse";
 export * from "./UploadFileResponse";
 export * from "./SubmitEvidenceResponse";
+export * from "./ReconcilePaymentResponse";
+
