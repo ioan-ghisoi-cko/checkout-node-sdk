@@ -4,12 +4,7 @@ import {
     Environment,
     DEFAULT_TIMEOUT,
     ReconcilePaymentResponse,
-    GetDisputeEvidenceResponse,
-    ProvideDisputesEvidenceRequestType,
-    SubmitEvidenceResponse,
-    GetFileInfoResponse,
-    SubmitEvidenceType,
-    UploadFileResponse
+    ReconcilePaymentsResponseType
 } from "../index";
 import {
     GetDisputesResponse,
@@ -43,6 +38,18 @@ export default class Reconciliation extends BaseEndpoint {
     public getPayment = async (id: string): Promise<ReconcilePaymentResponse> => {
         try {
             const get = await this._getHandler(`${this.httpConfiguration.environment}/reporting/payments/${id}`);
+            return new ReconcilePaymentResponse(await get.json);
+        } catch (err) {
+            throw await determineError(err);
+        }
+    };
+
+
+    public getPayments = async (arg?: ReconcilePaymentsResponseType): Promise<ReconcilePaymentResponse> => {
+        try {
+            // build query params
+            const params = querystring.stringify(arg).length > 0 ? `?${querystring.stringify(arg)}` : "";
+            const get = await this._getHandler(`${this.httpConfiguration.environment}/reporting/payments${params}`);
             return new ReconcilePaymentResponse(await get.json);
         } catch (err) {
             throw await determineError(err);

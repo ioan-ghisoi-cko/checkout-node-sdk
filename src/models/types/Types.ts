@@ -861,3 +861,14 @@ export interface ReconciledPaymentBreakdown {
     payout_currency_amount: string;
 }
 
+export interface ReconcilePaymentsType {
+    from?: string;
+    to?: string;
+    reference?: string;
+}
+
+export interface ReconcilePaymentsResponseType {
+    from?: string;
+    to?: string;
+    reference?: string;
+}
