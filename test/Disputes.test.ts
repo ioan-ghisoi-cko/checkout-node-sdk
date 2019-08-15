@@ -543,7 +543,6 @@ describe("Disputes", async () => {
 		const dsp = new disputes('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
 		try {
 			const outcome = await dsp.getFileInfo("file_6lbss42ezvoufcb2beo76rvwly");
-			console.log(outcome)
 		} catch (err) {
 			throw err;
 		}
@@ -570,7 +569,6 @@ describe("Disputes", async () => {
 		const dsp = new disputes('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
 		try {
 			const outcome = await dsp.getFileInfo("file_6lbss42ezvoufcb2beo76rvwly");
-			console.log(outcome)
 		} catch (err) {
 			const error = err as NotFoundError;
 			expect(err).to.be.instanceOf(NotFoundError)
@@ -584,7 +582,6 @@ describe("Disputes", async () => {
 		const dsp = new disputes('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
 		try {
 			const outcome = await dsp.getFileInfo("file_6lbss42ezvoufcb2beo76rvwly");
-			console.log(outcome)
 		} catch (err) {
 			expect(err).to.be.instanceOf(TooManyRequestsError)
 		}

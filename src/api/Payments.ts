@@ -56,21 +56,21 @@ export default class Payments extends BaseEndpoint {
      */
     public request = async <T, S = {}>(
         arg: PaymentRequest<T, S>,
-        idempotency_key = ""
+        idempotency_key?: string
     ): Promise<PaymentResponse> => {
         const http = new Http(this.httpConfiguration);
         try {
             const response = await http.send({
                 method: "post",
                 url: `${this.httpConfiguration.environment}/payments`,
-                headers: {
-                    Authorization: this.key,
-                    "Cko-Idempotency-Key": idempotency_key
-                },
+                headers: idempotency_key !== undefined ?
+                    { "Authorization": this.key, "Cko-Idempotency-Key": idempotency_key } :
+                    { Authorization: this.key },
                 // Add metadata, to be able to identify requests from this SDK
                 body: { ...arg, metadata: { ...arg.metadata, sdk: "node", sdk_version: pjson.version } }
             });
-            return new PaymentResponse(await response.json);
+            let out = await response.json;
+            return new PaymentResponse(await out);
         } catch (err) {
             throw await determineError(err);
         }
