@@ -17,7 +17,6 @@ const querystring = require("querystring");
 
 export default class Reconciliation extends BaseEndpoint {
 
-
     /**
      * Creates an instance of Reconciliation.
      * @param {string} key
@@ -35,6 +34,13 @@ export default class Reconciliation extends BaseEndpoint {
         super(key, http_options);
     }
 
+    /**
+     * Returns the reconciled a payment details
+     *
+     * @memberof Reconciliation
+     * @param {id}  string Payment id
+     * @return {Promise<ReconcilePaymentResponse>} A promise to the reconcile payment response.
+     */
     public getPayment = async (id: string): Promise<ReconcilePaymentResponse> => {
         try {
             const get = await this._getHandler(`${this.httpConfiguration.environment}/reporting/payments/${id}`);
@@ -44,7 +50,13 @@ export default class Reconciliation extends BaseEndpoint {
         }
     };
 
-
+    /**
+     * Returns the reconciled a payment details
+     *
+     * @memberof Reconciliation
+     * @param {arg}  ReconcilePaymentsResponseType Filters
+     * @return {Promise<ReconcilePaymentResponse>} A promise to the reconcile payment response.
+     */
     public getPayments = async (arg?: ReconcilePaymentsResponseType): Promise<ReconcilePaymentResponse> => {
         try {
             // build query params
