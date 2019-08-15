@@ -27,6 +27,7 @@
         "lint": "tslint --project tsconfig.json --config tslint.json 'src/**/*.ts' -t verbose",
         "lint-fix": "tslint --fix --project tsconfig.json --config tslint.json 'src/**/*.ts' -t verbose",
         "test": "nyc --reporter=text mocha --timeout 10000 -r ts-node/register test/**/*test.ts",
+        "playground": "mocha --timeout 20000 --require ts-node/register --watch-extensions ts --watch playground/*.ts",
         "test:watch": "mocha --timeout 20000 --require ts-node/register --watch-extensions ts --watch 'test/**/*test.ts'",
         "posttest": "nyc report --reporter=json"
     },
