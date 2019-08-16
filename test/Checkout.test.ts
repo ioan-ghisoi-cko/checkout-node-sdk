@@ -15,7 +15,7 @@ describe("Checkout", async () => {
 		expect(cko.sources.key).to.equal('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
 		expect(cko.httpConfiguration.timeout).to.equal(4000);
 		expect(cko.payments.httpConfiguration.timeout).to.equal(4000);
-		expect(cko.payments.httpConfiguration.timeout).to.equal(4000);
+		// expect(cko.payments.httpConfiguration.timeout).to.equal(4000);
 	});
 
 	it("should be able to set the public key", async () => {
@@ -30,5 +30,18 @@ describe("Checkout", async () => {
 		expect(cko.key).to.equal('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
 		expect(cko.payments.key).to.equal('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
 		expect(cko.sources.key).to.equal('sk_test_43ed9a7f-4799-461d-b201-a70507878b51');
+	});
+
+	it("should determine the environment based on key", async () => {
+		const cko = new checkout();
+		expect(cko.httpConfiguration.environment).to.equal(Environment.Sandbox);
+		expect(cko.tokens.httpConfiguration.environment).to.equal(Environment.Sandbox);
+		cko.setSecretKey("sk_43ed9a7f-4799-461d-b201-a70507878b51")
+		expect(cko.httpConfiguration.environment).to.equal(Environment.Live);
+		expect(cko.tokens.httpConfiguration.environment).to.equal(Environment.Live);
+
+		const cko1 = new checkout("sk_43ed9a7f-4799-461d-b201-a70507878b51");
+		expect(cko1.httpConfiguration.environment).to.equal(Environment.Live);
+		expect(cko1.tokens.httpConfiguration.environment).to.equal(Environment.Live);
 	});
 });
