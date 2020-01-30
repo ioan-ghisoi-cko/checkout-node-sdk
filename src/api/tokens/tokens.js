@@ -2,7 +2,6 @@ import { determineError } from "../../services/errors";
 import fetch from "node-fetch";
 import http from "../../services/http";
 import { setTokenType } from "../../services/validation";
-const pjson = require("../../../package.json");
 
 export default class Tokens {
     constructor(config) {
