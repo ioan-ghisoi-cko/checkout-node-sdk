@@ -1,6 +1,6 @@
 ![Status](https://img.shields.io/badge/status-ALPHA-red.svg)
 
-# checkout-node-sdk TEST
+# checkout-node-sdk
 
 [![codecov](https://codecov.io/gh/ioan-ghisoi-cko/checkout-node-sdk/branch/remake/graph/badge.svg)](https://codecov.io/gh/ioan-ghisoi-cko/checkout-node-sdk)
 [![Build Status](https://travis-ci.org/ioan-ghisoi-cko/checkout-node-sdk.svg?branch=remake)](https://travis-ci.org/ioan-ghisoi-cko/checkout-node-sdk)
@@ -12,7 +12,7 @@
 import import { Checkout } from "{soon_on_npm}";
 ```
 
-# Initilise
+# Initialise
 
 > Picks up your environment variables set as **CKO_SECRET_KEY** and **CKO_PUBLIC_KEY**
 
