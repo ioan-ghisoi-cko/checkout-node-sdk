@@ -51,7 +51,7 @@ const cko = new Checkout("sk_XXXX", { pk: "pk_XXX" });
 
 # Payments
 
-The SDK will infer the `type` of the payment `source`, if not provided, for: `token`, `id`, `card`, `customer`, `network_token`
+The SDK will infer the `type` of the payment `source` or `destination`, if not provided, for: `token`, `id`, `card`, `customer`, `network_token`
 
 > The request body is dynamic so if you want to see the paramenters check [the docs](https://api-reference.checkout.com/#tag/Payments)
 
