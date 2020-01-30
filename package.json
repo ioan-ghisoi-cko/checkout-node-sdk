@@ -27,11 +27,13 @@
     "posttest": "nyc report --reporter=json",
     "test:watch": "mocha 'test/**/*.js' --watch --compilers js:@babel/register",
     "build": "babel src --out-dir ./dist --source-maps",
-    "serve": "node ./dist/index.js"
+    "serve": "node ./dist/index.js",
+    "codecov": "codecov -f coverage/*.json "
   },
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.8.3",
     "@babel/runtime": "^7.8.3",
+    "codecov": "^3.6.2",
     "node-fetch": "^2.3.0"
   },
   "babel": {
