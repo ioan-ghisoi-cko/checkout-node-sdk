@@ -1,71 +1,53 @@
 {
-    "name": "checkout-node-sdk",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
-    "devDependencies": {
-        "@babel/cli": "^7.4.4",
-        "@babel/core": "^7.4.5",
-        "@babel/plugin-proposal-class-properties": "^7.4.4",
-        "@babel/preset-env": "^7.4.5",
-        "@babel/preset-typescript": "^7.3.3",
-        "@types/chai": "^4.1.7",
-        "@types/mocha": "^5.2.6",
-        "@types/node-fetch": "^2.3.2",
-        "chai": "^4.2.0",
-        "codecov": "^3.1.0",
-        "mocha": "^5.2.0",
-        "node-fetch": "^2.3.0",
-        "ts-node": "^8.1.0",
-        "typedoc": "^0.14.2",
-        "typescript": "^3.5.1"
-    },
-    "scripts": {
-        "build": "tsc",
-        "docs": "typedoc --out doc",
-        "build-watch": "tsc --watch",
-        "lint": "tslint --project tsconfig.json --config tslint.json 'src/**/*.ts' -t verbose",
-        "lint-fix": "tslint --fix --project tsconfig.json --config tslint.json 'src/**/*.ts' -t verbose",
-        "test": "nyc --reporter=text mocha --timeout 10000 -r ts-node/register test/**/*test.ts",
-        "playground": "mocha --timeout 20000 --require ts-node/register --watch-extensions ts --watch playground/*.ts",
-        "test:watch": "mocha --timeout 20000 --require ts-node/register --watch-extensions ts --watch 'test/**/*test.ts'",
-        "posttest": "nyc report --reporter=json"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/ioan-ghisoi-cko/checkout-node-sdk.git"
-    },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/ioan-ghisoi-cko/checkout-node-sdk/issues"
-    },
-    "homepage": "https://github.com/codecov/example-typescript#readme",
-    "dependencies": {
-        "@types/jquery": "^3.3.29",
-        "@types/nock": "^10.0.2",
-        "lodash": "^4.17.11",
-        "nock": "^10.0.6",
-        "nyc": "^14.1.1",
-        "tslint": "^5.17.0"
-    },
-    "nyc": {
-        "include": [
-            "src/**/*.ts"
-        ],
-        "extension": [
-            ".ts",
-            ".tsx"
-        ],
-        "require": [
-            "ts-node/register"
-        ],
-        "reporter": [
-            "text-summary",
-            "html"
-        ],
-        "sourceMap": true,
-        "instrument": true
-    }
+  "name": "new-node-sdk",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "devDependencies": {
+    "@babel/core": "^7.8.3",
+    "@babel/node": "^7.8.3",
+    "@babel/preset-env": "^7.8.3",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-es2015": "^6.24.1",
+    "chai": "^4.2.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^4.1.0",
+    "eslint-plugin-chai-friendly": "^0.4.0",
+    "eslint-plugin-prettier": "^3.0.1",
+    "mocha": "^5.2.0",
+    "mocha-junit-reporter": "^1.23.1",
+    "nock": "^10.0.6",
+    "nyc": "^14.1.1",
+    "prettier": "^1.16.4"
+  },
+  "scripts": {
+    "start": "nodemon --exec babel-node ./src/index.js",
+    "lint": "eslint --fix --ext .js src/",
+    "test": "nyc --reporter=html mocha 'test/**/*.js' --compilers js:@babel/register",
+    "posttest": "nyc report --reporter=json",
+    "test:watch": "mocha 'test/**/*.js' --watch --compilers js:@babel/register",
+    "build": "babel src --out-dir ./dist --source-maps",
+    "serve": "node ./dist/index.js"
+  },
+  "dependencies": {
+    "@babel/plugin-transform-runtime": "^7.8.3",
+    "@babel/runtime": "^7.8.3",
+    "node-fetch": "^2.3.0"
+  },
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "useBuiltIns": false
+        }
+      ]
+    ],
+    "plugins": [
+      "@babel/plugin-transform-runtime"
+    ]
+  },
+  "author": "",
+  "license": "ISC",
+  "type": "module"
 }
