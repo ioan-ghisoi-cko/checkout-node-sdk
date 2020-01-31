@@ -11,9 +11,9 @@ install:
 script:
   - npm test
   - codecov -f coverage/*.json
-before_deply:
   - npm run build
   - rsync -avh --progress ./types/ ./
+
 deploy:
   provider: npm
   email: "$NPM_EMAIL"
