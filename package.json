@@ -1,8 +1,8 @@
 {
-  "name": "new-node-sdk",
-  "version": "1.0.0",
+  "name": "johnny-tools-node",
+  "version": "1.0.2",
   "description": "",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "devDependencies": {
     "@babel/core": "^7.8.3",
     "@babel/node": "^7.8.3",
@@ -49,7 +49,7 @@
       "@babel/plugin-transform-runtime"
     ]
   },
-  "author": "",
+  "author": "Ioan Ghisoi",
   "license": "ISC",
   "type": "module"
 }

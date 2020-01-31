@@ -11,5 +11,13 @@ install:
 script:
   - npm test
   - codecov -f coverage/*.json
+before_deply:
+  - npm run build
   - rsync -avh --progress ./types/ ./
-  - find . -type d | sed -e "s/[^-][^\/]*\//  |/g" -e "s/|\([^ ]\)/|-\1/"
+deploy:
+  provider: npm
+  email: "$NPM_EMAIL"
+  api_key: "$NPM_API_TOKEN"
+  skip_cleanup: true
+  on:
+    branch: remake
