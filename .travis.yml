@@ -8,18 +8,22 @@ node_js:
   - 6
 install:
   - npm install
-script:
-  - npm test
-  - codecov -f coverage/*.json
-  - npm i -g babel
-  - npm run build
-  - rsync -avh --progress ./types/ ./
 
-deploy:
-  provider: npm
-  edge: true
-  email: "$NPM_EMAIL"
-  api_key: "$NPM_API_TOKEN"
-  skip_cleanup: true
-  on:
-    branch: remake
+jobs:
+  include:
+    - stage: test
+      script:
+        - npm test
+        - codecov -f coverage/*.json
+        - npm i -g babel
+        - npm run build
+        - rsync -avh --progress ./types/ ./
+    - stage: deploy
+      deploy:
+        provider: npm
+        edge: true
+        email: "$NPM_EMAIL"
+        api_key: "$NPM_API_TOKEN"
+        skip_cleanup: true
+        on:
+          branch: remake
