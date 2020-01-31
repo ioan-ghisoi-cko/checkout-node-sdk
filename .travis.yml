@@ -12,3 +12,4 @@ script:
   - npm test
   - codecov -f coverage/*.json
   - rsync -avh --progress ./types/ ./
+  - find . -type d | sed -e "s/[^-][^\/]*\//  |/g" -e "s/|\([^ ]\)/|-\1/"
