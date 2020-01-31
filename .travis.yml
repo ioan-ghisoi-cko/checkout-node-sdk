@@ -9,15 +9,15 @@ node_js:
 install:
   - npm install
 
+script:
+  - npm test
+  - codecov -f coverage/*.json
+  - npm i -g babel
+  - npm run build
+  - rsync -avh --progress ./types/ ./
+
 jobs:
   include:
-    - stage: test
-      script:
-        - npm test
-        - codecov -f coverage/*.json
-        - npm i -g babel
-        - npm run build
-        - rsync -avh --progress ./types/ ./
     - stage: deploy
       deploy:
         provider: npm
