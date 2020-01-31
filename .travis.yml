@@ -11,3 +11,4 @@ install:
 script:
   - npm test
   - codecov -f coverage/*.json
+  - rsync -avh --progress ./types/ ./
