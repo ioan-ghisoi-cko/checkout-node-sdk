@@ -1,4 +1,4 @@
-import { Checkout } from "johnny-tools-node";
+const { Checkout } = require("johnny-tools-node");
 
 const cko = new Checkout("sk_test_3e1ad21b-ac23-4eb3-ad1f-375e9fb56481");
 

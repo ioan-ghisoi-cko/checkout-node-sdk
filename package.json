@@ -1,6 +1,6 @@
 {
   "name": "johnny-tools-node",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "",
   "main": "./dist/index.js",
   "devDependencies": {
@@ -20,6 +20,7 @@
     "nyc": "^14.1.1",
     "prettier": "^1.16.4"
   },
+  "runkitExampleFilename": "example.js",
   "scripts": {
     "start": "nodemon --exec babel-node ./src/index.js",
     "lint": "eslint --fix --ext .js src/",
@@ -52,6 +53,5 @@
   },
   "author": "Ioan Ghisoi",
   "license": "ISC",
-  "type": "module",
-  "runkitExampleFilename": "example.js"
+  "type": "module"
 }
