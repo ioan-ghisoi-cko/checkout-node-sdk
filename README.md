@@ -248,7 +248,7 @@ const token = await cko.tokens.request({
 
 The SDK will infer the `type` of the source, if not provided
 
-cbody is dynamic so if you want to see the paramenters check [the docs](https://api-reference.checkout.com/#tag/Sources)
+> The request body is dynamic so if you want to see the paramenters check [the docs](https://api-reference.checkout.com/#tag/Sources)
 
 ### Request a source
 
