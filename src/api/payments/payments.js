@@ -66,7 +66,18 @@ export default class Payments {
                 requiresRedirect = json.status === "Pending";
             }
 
-            return { ...json, isCompleted, isFlagged, requiresRedirect };
+            // If the redirection URL exists add it to the response body as 'redirectLink'
+            let redirectLink = undefined;
+            if (requiresRedirect && json._links.redirect) {
+                redirectLink = json._links.redirect.href;
+            }
+            return {
+                ...json,
+                isCompleted,
+                isFlagged,
+                requiresRedirect,
+                redirectLink
+            };
         } catch (err) {
             const error = await determineError(err);
             throw error;

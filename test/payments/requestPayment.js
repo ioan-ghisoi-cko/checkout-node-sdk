@@ -201,6 +201,7 @@ describe("Request a payment or payout", () => {
     expect(transaction.isCompleted).to.be.false;
     expect(transaction.isFlagged).to.be.false;
     expect(transaction.requiresRedirect).to.be.true;
+    expect(transaction.redirectLink).to.be.a("string");
   });
 
   it("should perform payout with type", async () => {

@@ -2,6 +2,10 @@ const { Checkout } = require("johnny-tools-node");
 
 const cko = new Checkout("sk_test_3e1ad21b-ac23-4eb3-ad1f-375e9fb56481");
 
+/**
+ * Keep in mind that requests with raw card details
+ * requre a high level of PCI Compliance.
+ */
 (async () => {
   const transaction = await cko.payments.request({
     source: {

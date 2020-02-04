@@ -8,6 +8,16 @@ import {
 import { Payments, Sources, Tokens } from "./index";
 
 export default class Checkout {
+    /**
+     * Creates an instance of Checkout.com's SDK.
+     *
+     * Determines the environemtn based on the key
+     *
+     * @constructor
+     * @param {string} [key] Secret Key /^(sk)
+     * @param {Object}  [options] Cofiguration options
+     * @memberof Payments
+     */
     constructor(key, options) {
         let host = "";
         let pk = "";

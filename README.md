@@ -10,7 +10,7 @@
 # Import
 
 ```js
-import import { Checkout } from "{soon_on_npm}";
+import import { Checkout } from "johnny-tools-node";
 ```
 
 # Initialise
