@@ -18,6 +18,7 @@ script:
 jobs:
   include:
     - stage: deploy
+      if: branch = remake
       deploy:
         provider: npm
         edge: true
