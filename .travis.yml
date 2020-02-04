@@ -8,21 +8,22 @@ node_js:
 install:
   - npm install
 
-script:
-  - npm test
-  - codecov -f coverage/*.json
-  - npm i -g babel
-  - npm run build
-  - rsync -avh --progress ./types/ ./
-
 jobs:
   include:
-    - stage: deploy
-      if: branch = remake
+    - stage: Test
+      script:
+        - npm test
+    - stage: Update coverage
+      script:
+        - codecov -f coverage/*.json
+    - stage: Build and add types
+      script:
+        - npm i -g babel
+        - npm run build
+        - rsync -avh --progress ./types/ ./
+    - stage: Deploy
       deploy:
         provider: npm
         edge: true
         email: "$NPM_EMAIL"
         api_key: "$NPM_API_TOKEN"
-        on:
-          branch: remake
