@@ -158,6 +158,95 @@ describe("Request a payment or payout", () => {
     expect(transaction.requiresRedirect).to.be.false;
   });
 
+  it("should perform normal payment request with a Card Source and idempotencyKey", async () => {
+    nock("https://api.sandbox.checkout.com")
+      .post("/payments")
+      .reply(
+        201,
+        {
+          id: "pay_6ndp5facelxurne7gloxkxm57u",
+          action_id: "act_6ndp5facelxurne7gloxkxm57u",
+          amount: 100,
+          currency: "USD",
+          approved: true,
+          status: "Authorized",
+          auth_code: "277368",
+          response_code: "10000",
+          response_summary: "Approved",
+          "3ds": undefined,
+          risk: { flagged: false },
+          source: {
+            id: "src_mtagg5kktcoerkwloibzfuilpy",
+            type: "card",
+            expiry_month: 6,
+            expiry_year: 2029,
+            scheme: "Visa",
+            last4: "4242",
+            fingerprint:
+              "107A352DFAE35E3EEBA5D0856FCDFB88ECF91E8CFDE4275ABBC791FD9579AB2C",
+            bin: "424242",
+            card_type: "Credit",
+            card_category: "Consumer",
+            issuer: "JPMORGAN CHASE BANK NA",
+            issuer_country: "US",
+            product_id: "A",
+            product_type: "Visa Traditional",
+            avs_check: "S",
+            cvv_check: "Y"
+          },
+          customer: { id: "cus_leu5pp2zshpuvbt6yjxl5xcrdi" },
+          processed_on: "2019-06-09T22:43:54Z",
+          reference: undefined,
+          eci: "05",
+          scheme_id: "638284745624527",
+          _links: {
+            self: {
+              href:
+                "https://api.sandbox.checkout.com/payments/pay_6ndp5facelxurne7gloxkxm57u"
+            },
+            actions: {
+              href:
+                "https://api.sandbox.checkout.com/payments/pay_6ndp5facelxurne7gloxkxm57u/actions"
+            },
+            capture: {
+              href:
+                "https://api.sandbox.checkout.com/payments/pay_6ndp5facelxurne7gloxkxm57u/captures"
+            },
+            void: {
+              href:
+                "https://api.sandbox.checkout.com/payments/pay_6ndp5facelxurne7gloxkxm57u/voids"
+            }
+          }
+        },
+        {
+          "cko-request-id": ["1695a930-09cf-4db0-a91e-a772e6ee076g"],
+          "cko-version": ["3.31.4"]
+        }
+      );
+
+    const cko = new Checkout(SK);
+
+    const transaction = await cko.payments.request(
+      {
+        source: {
+          type: "card",
+          number: "4242424242424242",
+          expiry_month: 6,
+          expiry_year: 2029,
+          cvv: "100"
+        },
+        currency: "USD",
+        amount: 100
+      },
+      "6ndp5facelxurne7gloxkxm57u"
+    );
+
+    /* eslint-disable no-unused-expressions */
+    expect(transaction.isCompleted).to.be.true;
+    expect(transaction.isFlagged).to.be.false;
+    expect(transaction.requiresRedirect).to.be.false;
+  });
+
   it("should perform 3DS payment request with a Card Source", async () => {
     nock("https://api.sandbox.checkout.com")
       .post("/payments")
