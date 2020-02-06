@@ -87,7 +87,7 @@ export default class Payments {
      *
      * @memberof Payments
      * @param {string} paymentId /^(pay)_(\w{26})$/ The payment or payment session identifier.
-     * @param {Object} body Capture request body.
+     * @param {Object} [body] Capture request body.
      * @return {Promise} A promise to the capture response.
      */
     async capture(paymentId, body) {
@@ -109,6 +109,7 @@ export default class Payments {
      *
      * @memberof Payments
      * @param {string} id /^(pay)_(\w{26})$/ The payment or payment session identifier.
+     * @param {Object} [body] Refund request body.
      * @return {Promise} A promise to the refund response.
      */
     async refund(paymentId, body) {
@@ -130,6 +131,7 @@ export default class Payments {
      *
      * @memberof Payments
      * @param {string} id /^(pay)_(\w{26})$/ The payment or payment session identifier.
+     * @param {Object} [body] Void request body.
      * @return {Promise} A promise to the void response.
      */
     async void(paymentId, body) {
