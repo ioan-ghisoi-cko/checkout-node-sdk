@@ -12,6 +12,14 @@ export default class Payments {
         this.config = config;
     }
 
+    /**
+     * Sends payment or a payout requests.
+     *
+     * @memberof Payments
+     * @param {Object} body Payment Request body.
+     * @param {string} [idempotencyKey] Idempotency Key.
+     * @return {Promise} A promise to payment response.
+     */
     async request(body, idempotencyKey) {
         try {
             setSourceOrDestinationType(body);
@@ -35,6 +43,13 @@ export default class Payments {
         }
     }
 
+    /**
+     * Returns the details of the payment with the specified identifier string.
+     *
+     * @memberof Payments
+     * @param {string} id /^(pay|sid)_(\w{26})$/ The payment or payment session identifier.
+     * @return {Promise} A promise to the get payment response.
+     */
     async get(id) {
         try {
             const response = await _getHandler(
@@ -47,6 +62,14 @@ export default class Payments {
         }
     }
 
+    /**
+     * Returns all the actions associated with a payment ordered by processing date in
+     * descending order (latest first).
+     *
+     * @memberof Payments
+     * @param {string} id /^(pay)_(\w{26})$/ The payment identifier.
+     * @return {Promise} A promise to the getActions response.
+     */
     async getActions(id) {
         try {
             const response = await _getHandler(
@@ -59,6 +82,14 @@ export default class Payments {
         }
     }
 
+    /**
+     * Captures a payment if supported by the payment method.
+     *
+     * @memberof Payments
+     * @param {string} paymentId /^(pay)_(\w{26})$/ The payment or payment session identifier.
+     * @param {Object} body Capture request body.
+     * @return {Promise} A promise to the capture response.
+     */
     async capture(paymentId, body) {
         try {
             const response = await _actionHandler(
@@ -73,6 +104,13 @@ export default class Payments {
         }
     }
 
+    /**
+     * Refunds a payment if supported by the payment method.
+     *
+     * @memberof Payments
+     * @param {string} id /^(pay)_(\w{26})$/ The payment or payment session identifier.
+     * @return {Promise} A promise to the refund response.
+     */
     async refund(paymentId, body) {
         try {
             const response = await _actionHandler(
@@ -87,6 +125,13 @@ export default class Payments {
         }
     }
 
+    /**
+     * Voids a payment if supported by the payment method.
+     *
+     * @memberof Payments
+     * @param {string} id /^(pay)_(\w{26})$/ The payment or payment session identifier.
+     * @return {Promise} A promise to the void response.
+     */
     async void(paymentId, body) {
         try {
             const response = await _actionHandler(

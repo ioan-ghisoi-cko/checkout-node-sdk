@@ -22,9 +22,7 @@ export default class Sources {
                     body
                 }
             );
-
-            const json = await response.json;
-            return json;
+            return await response.json;
         } catch (err) {
             const error = await determineError(err);
             throw error;
