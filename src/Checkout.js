@@ -19,34 +19,11 @@ export default class Checkout {
      * @memberof Payments
      */
     constructor(key, options) {
-        let host = "";
-        let pk = "";
-        let sk = "";
-
-        sk = !key ? process.env.CKO_SECRET_KEY || "" : key;
-        pk = process.env.CKO_PUBLIC_KEY || "";
-
-        if (
-            sk &&
-            !LIVE_SECRET_KEY_REGEX.test(sk) &&
-            !SANDBOX_SECRET_KEY_REGEX.test(sk)
-        ) {
-            throw new Error("Invalid Secret Key");
-        }
-
-        // if the host is not specified, determine it based on the key
-        if (options && options.host) {
-            host = options.host;
-        } else {
-            host = LIVE_SECRET_KEY_REGEX.test(key)
-                ? LIVE_BASE_URL
-                : SANDBOX_BASE_URL;
-        }
-
+        // Set configuration to be use for all services
         this.config = {
-            sk,
-            pk,
-            host,
+            sk: _determineSecretKey(key),
+            pk: _determinePublicKey(options),
+            host: _determineHost(key, options),
             timeout:
                 options && options.timeout ? options.timeout : DEFAULT_TIMEOUT
         };
@@ -56,3 +33,28 @@ export default class Checkout {
         this.tokens = new Tokens(this.config);
     }
 }
+
+const _determineHost = (key, options) => {
+    // Unless specified, determine the hosted based on the secret key
+    if (options && options.host) {
+        return options.host;
+    } else {
+        return LIVE_SECRET_KEY_REGEX.test(key)
+            ? LIVE_BASE_URL
+            : SANDBOX_BASE_URL;
+    }
+};
+
+const _determineSecretKey = key => {
+    // Unless specified, check environemtn variables for the key
+    return !key ? process.env.CKO_SECRET_KEY || "" : key;
+};
+
+const _determinePublicKey = options => {
+    // Unless specified, check environemtn variables for the key
+    if (options && options.pk) {
+        return options.pk;
+    } else {
+        return process.env.CKO_PUBLIC_KEY || "";
+    }
+};

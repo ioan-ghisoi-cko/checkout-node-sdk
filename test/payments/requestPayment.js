@@ -36,6 +36,11 @@ describe("Request a payment or payout", () => {
     expect(cko.config.pk).to.equal(pk);
   });
 
+  it("should set the public key in constructor", () => {
+    const cko = new Checkout(SK, { pk: "pk_123" });
+    expect(cko.config.pk).to.equal("pk_123");
+  });
+
   it("should set read env variables", () => {
     process.env.CKO_SECRET_KEY = SK;
     process.env.CKO_PUBLIC_KEY = "pk_test_6e40a700-d563-43cd-89d0-f9bb17d35e73";
