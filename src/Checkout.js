@@ -7,6 +7,12 @@ import {
 } from "./config";
 import { Payments, Sources, Tokens } from "./index";
 
+/**
+ * Main Checkout.com SDK class
+ *
+ * @export
+ * @class Checkout
+ */
 export default class Checkout {
     /**
      * Creates an instance of Checkout.com's SDK.
@@ -19,7 +25,6 @@ export default class Checkout {
      * @memberof Payments
      */
     constructor(key, options) {
-        // Set configuration to be use for all services
         this.config = {
             sk: _determineSecretKey(key),
             pk: _determinePublicKey(options),

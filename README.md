@@ -38,9 +38,9 @@ const cko = new Checkout("sk_XXXX", { timeout: 7000 });
 > Unless you specify the host, the SDK will determine the environemnt based on your secret key
 
 ```js
-const cko = new Checkout('sk_XXXX', { host:'test.com' }); => custom host
-const cko = new Checkout('sk_XXXX'); => Live Environemnt
-const cko = new Checkout('sk_test_XXXX'); => Sandbox Environemnt
+const cko = new Checkout("sk_XXXX", { host: "test.com" }); // custom host
+const cko = new Checkout("sk_XXXX"); // Live Environemnt
+const cko = new Checkout("sk_test_XXXX"); // Sandbox Environemnt
 ```
 
 > In case you use the token endpoint you can set you publick key like this:

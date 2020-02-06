@@ -3,6 +3,12 @@ import fetch from "node-fetch";
 import http from "../../services/http";
 import { setTokenType } from "../../services/validation";
 
+/**
+ * Class dealing with the /tokens endpoint
+ *
+ * @export
+ * @class Tokens
+ */
 export default class Tokens {
     constructor(config) {
         this.config = config;

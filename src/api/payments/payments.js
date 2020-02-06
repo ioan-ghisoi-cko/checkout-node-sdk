@@ -7,6 +7,12 @@ import {
 } from "../../services/validation";
 const pjson = require("../../../package.json");
 
+/**
+ * Class dealing with the /payments endpoint
+ *
+ * @export
+ * @class Payments
+ */
 export default class Payments {
     constructor(config) {
         this.config = config;

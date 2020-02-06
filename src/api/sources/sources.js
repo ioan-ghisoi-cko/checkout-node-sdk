@@ -4,6 +4,12 @@ import http from "../../services/http";
 import { setSourceType } from "../../services/validation";
 const pjson = require("../../../package.json");
 
+/**
+ * Class dealing with the /sources endpoint
+ *
+ * @export
+ * @class Sources
+ */
 export default class Sources {
     constructor(config) {
         this.config = config;
