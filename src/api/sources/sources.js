@@ -9,6 +9,14 @@ export default class Sources {
         this.config = config;
     }
 
+    /**
+     * Add a reusable payment source that can be used later to make one or more payments.
+     * Payment sources are linked to a specific customer and cannot be shared between customers.
+     *
+     * @memberof Sources
+     * @param {Object} body Source request body.
+     * @return {Promise<Object>} A promise to the add source response.
+     */
     async add(body) {
         setSourceType(body);
         try {

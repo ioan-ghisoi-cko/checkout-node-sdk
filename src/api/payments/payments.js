@@ -18,7 +18,7 @@ export default class Payments {
      * @memberof Payments
      * @param {Object} body Payment Request body.
      * @param {string} [idempotencyKey] Idempotency Key.
-     * @return {Promise} A promise to payment response.
+     * @return {Promise<Object>} A promise to payment response.
      */
     async request(body, idempotencyKey) {
         try {
@@ -48,7 +48,7 @@ export default class Payments {
      *
      * @memberof Payments
      * @param {string} id /^(pay|sid)_(\w{26})$/ The payment or payment session identifier.
-     * @return {Promise} A promise to the get payment response.
+     * @return {Promise<Object>} A promise to the get payment response.
      */
     async get(id) {
         try {
@@ -68,7 +68,7 @@ export default class Payments {
      *
      * @memberof Payments
      * @param {string} id /^(pay)_(\w{26})$/ The payment identifier.
-     * @return {Promise} A promise to the getActions response.
+     * @return {Promise<Object>} A promise to the getActions response.
      */
     async getActions(id) {
         try {
@@ -88,7 +88,7 @@ export default class Payments {
      * @memberof Payments
      * @param {string} paymentId /^(pay)_(\w{26})$/ The payment or payment session identifier.
      * @param {Object} [body] Capture request body.
-     * @return {Promise} A promise to the capture response.
+     * @return {Promise<Object>} A promise to the capture response.
      */
     async capture(paymentId, body) {
         try {
@@ -110,7 +110,7 @@ export default class Payments {
      * @memberof Payments
      * @param {string} id /^(pay)_(\w{26})$/ The payment or payment session identifier.
      * @param {Object} [body] Refund request body.
-     * @return {Promise} A promise to the refund response.
+     * @return {Promise<Object>} A promise to the refund response.
      */
     async refund(paymentId, body) {
         try {
@@ -132,7 +132,7 @@ export default class Payments {
      * @memberof Payments
      * @param {string} id /^(pay)_(\w{26})$/ The payment or payment session identifier.
      * @param {Object} [body] Void request body.
-     * @return {Promise} A promise to the void response.
+     * @return {Promise<Object>} A promise to the void response.
      */
     async void(paymentId, body) {
         try {
