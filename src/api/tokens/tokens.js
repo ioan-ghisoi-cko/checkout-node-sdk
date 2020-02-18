@@ -1,7 +1,7 @@
-import { determineError } from "../../services/errors";
-import fetch from "node-fetch";
-import http from "../../services/http";
-import { setTokenType } from "../../services/validation";
+import fetch from 'node-fetch';
+import { determineError } from '../../services/errors';
+import http from '../../services/http';
+import { setTokenType } from '../../services/validation';
 
 /**
  * Class dealing with the /tokens endpoint
@@ -29,7 +29,7 @@ export default class Tokens {
                 fetch,
                 { timeout: this.config.timeout },
                 {
-                    method: "post",
+                    method: 'post',
                     url: `${this.config.host}/tokens`,
                     headers: { Authorization: this.config.pk },
                     body

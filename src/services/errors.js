@@ -1,47 +1,5 @@
-export const determineError = async err => {
-    // Fot time outs
-    if (err.type === "request-timeout") {
-        return new ApiTimeout();
-    }
-
-    if (err instanceof ValueError) {
-        throw err;
-    }
-
-    // For 'no body' response, replace with empty object
-    const errorJSON =
-        err.json !== undefined
-            ? await err.json
-                  .then(data => {
-                      return data;
-                  })
-                  .catch(err => {})
-            : {};
-
-    switch (err.status) {
-        case 401:
-            return new AuthenticationError();
-        case 204:
-            return new NoWebhooksConfigured(204);
-        case 404:
-            return new NotFoundError();
-        case 400:
-            return new UnprocessableError();
-        case 403:
-            return new ActionNotAllowed();
-        case 409:
-            return new UrlAlreadyRegistered();
-        case 422:
-            return new ValidationError(await errorJSON);
-        case 429:
-            return new TooManyRequestsError(await errorJSON);
-        case 502:
-            return new BadGateway();
-        default:
-            return new ApiError(await errorJSON);
-    }
-};
-
+/* eslint-disable camelcase */
+/* eslint-disable max-classes-per-file */
 /**
  * Error raised for pre-api value validation
  *
@@ -51,7 +9,7 @@ export const determineError = async err => {
  */
 export class ApiTimeout extends Error {
     constructor() {
-        super("ApiTimeout");
+        super('ApiTimeout');
         Object.setPrototypeOf(this, new.target.prototype);
         this.name = ApiTimeout.name;
     }
@@ -81,7 +39,7 @@ export class AuthenticationError extends Error {
  * @extends {Error}
  */
 export class ActionNotAllowed extends Error {
-    constructor(message = "ActionNotAllowed") {
+    constructor(message = 'ActionNotAllowed') {
         ActionNotAllowed.http_code = 403;
         super(message);
         Object.setPrototypeOf(this, new.target.prototype);
@@ -96,14 +54,14 @@ export class ActionNotAllowed extends Error {
  * @class UrlAlreadyRegistered
  * @extends {Error}
  */
-export class UrlAlreadyRegistered extends Error {
-    constructor(message = "UrlAlreadyRegistered") {
-        UrlAlreadyRegistered.http_code = 409;
-        super(message);
-        Object.setPrototypeOf(this, new.target.prototype);
-        this.name = UrlAlreadyRegistered.name;
-    }
-}
+// export class UrlAlreadyRegistered extends Error {
+//     constructor(message = 'UrlAlreadyRegistered') {
+//         UrlAlreadyRegistered.http_code = 409;
+//         super(message);
+//         Object.setPrototypeOf(this, new.target.prototype);
+//         this.name = UrlAlreadyRegistered.name;
+//     }
+// }
 
 /**
  * NotFoundError
@@ -113,7 +71,7 @@ export class UrlAlreadyRegistered extends Error {
  * @extends {Error}
  */
 export class NotFoundError extends Error {
-    constructor(message = "NotFoundError") {
+    constructor(message = 'NotFoundError') {
         NotFoundError.http_code = 404;
         super(message);
         Object.setPrototypeOf(this, new.target.prototype);
@@ -128,14 +86,14 @@ export class NotFoundError extends Error {
  * @class UnprocessableError
  * @extends {Error}
  */
-export class UnprocessableError extends Error {
-    constructor(message = "UnprocessableError") {
-        UnprocessableError.http_code = 400;
-        super(message);
-        Object.setPrototypeOf(this, new.target.prototype);
-        this.name = UnprocessableError.name;
-    }
-}
+// export class UnprocessableError extends Error {
+//     constructor(message = 'UnprocessableError') {
+//         UnprocessableError.http_code = 400;
+//         super(message);
+//         Object.setPrototypeOf(this, new.target.prototype);
+//         this.name = UnprocessableError.name;
+//     }
+// }
 
 /**
  * ValidationError
@@ -161,7 +119,7 @@ export class ErrorWithBody extends Error {
  * @extends {Error}
  */
 export class ValidationError extends ErrorWithBody {
-    constructor(error, message = "ValidationError") {
+    constructor(error, message = 'ValidationError') {
         super(422, error, message);
     }
 }
@@ -174,7 +132,7 @@ export class ValidationError extends ErrorWithBody {
  * @extends {Error}
  */
 export class TooManyRequestsError extends ErrorWithBody {
-    constructor(error, message = "TooManyRequestsError") {
+    constructor(error, message = 'TooManyRequestsError') {
         super(429, error, message);
     }
 }
@@ -188,7 +146,7 @@ export class TooManyRequestsError extends ErrorWithBody {
  */
 export class BadGateway extends Error {
     constructor() {
-        super("Bad gateway");
+        super('Bad gateway');
         BadGateway.http_code = 502;
         Object.setPrototypeOf(this, new.target.prototype);
     }
@@ -203,9 +161,10 @@ export class BadGateway extends Error {
  */
 export class ApiError extends Error {
     constructor(error) {
-        super("API Error");
+        super('API Error');
         Object.setPrototypeOf(this, new.target.prototype);
-        this.name = "API Error";
+        this.name = 'API Error';
+        this.body = error;
     }
 }
 
@@ -224,3 +183,43 @@ export class ValueError extends Error {
         this.body = message;
     }
 }
+
+export const determineError = async err => {
+    // Fot time outs
+    if (err.type === 'request-timeout') {
+        return new ApiTimeout();
+    }
+
+    if (err instanceof ValueError) {
+        throw err;
+    }
+
+    // For 'no body' response, replace with empty object
+    const errorJSON =
+        err.json !== undefined
+            ? await err.json.then(data => {
+                  return data;
+              })
+            : {};
+
+    switch (err.status) {
+        case 401:
+            return new AuthenticationError();
+        case 404:
+            return new NotFoundError();
+        case 400:
+            return new UnprocessableError();
+        case 403:
+            return new ActionNotAllowed();
+        case 409:
+            return new UrlAlreadyRegistered();
+        case 422:
+            return new ValidationError(await errorJSON);
+        case 429:
+            return new TooManyRequestsError(await errorJSON);
+        case 502:
+            return new BadGateway();
+        default:
+            return new ApiError(await errorJSON);
+    }
+};

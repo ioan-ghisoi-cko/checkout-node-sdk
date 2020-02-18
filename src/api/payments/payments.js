@@ -1,11 +1,100 @@
-import { determineError } from "../../services/errors";
-import fetch from "node-fetch";
-import http from "../../services/http";
-import {
-    validatePayment,
-    setSourceOrDestinationType
-} from "../../services/validation";
-const pjson = require("../../../package.json");
+/* eslint-disable no-underscore-dangle */
+import fetch from 'node-fetch';
+import { determineError } from '../../services/errors';
+import http from '../../services/http';
+import { validatePayment, setSourceOrDestinationType } from '../../services/validation';
+
+const pjson = require('../../../package.json');
+
+const actionHandler = async (config, action, paymentId, body) => {
+    const response = await http(
+        fetch,
+        { timeout: config.timeout },
+        {
+            method: 'post',
+            url: `${config.host}/payments/${paymentId}/${action}`,
+            headers: {
+                Authorization: config.sk
+            },
+            body: body !== undefined ? body : {}
+        }
+    );
+    return response.json;
+};
+
+const getHandler = async (config, url) => {
+    const response = await http(
+        fetch,
+        { timeout: config.timeout },
+        {
+            method: 'get',
+            url,
+            headers: {
+                Authorization: config.sk
+            }
+        }
+    );
+    return response;
+};
+
+const determineHeaders = (config, idempotencyKey) => {
+    if (idempotencyKey !== undefined) {
+        return {
+            Authorization: config.sk,
+            'Cko-Idempotency-Key': idempotencyKey
+        };
+    }
+    return { Authorization: config.sk };
+};
+
+const addMetadata = body => {
+    const metaBody = {
+        ...body,
+        metadata: {
+            ...body.metadata,
+            sdk: 'node',
+            sdk_version: pjson.version
+        }
+    };
+    return metaBody;
+};
+
+const addUtilityParams = json => {
+    let isCompleted = false;
+    let isFlagged = false;
+    let requiresRedirect = false;
+
+    if (json.destination) {
+        if (json.approved && json.status === 'Paid') {
+            isCompleted = true;
+        }
+        isFlagged = false;
+        requiresRedirect = false;
+    } else {
+        isCompleted =
+            json.status === 'Pending'
+                ? false
+                : json.approved &&
+                  json.risk.flagged !== true &&
+                  json.status === 'Authorized' &&
+                  json.response_summary === 'Approved';
+        isFlagged = json.status === 'Pending' ? false : json.risk.flagged;
+        requiresRedirect = json.status === 'Pending';
+    }
+
+    // If the redirection URL exists add it to the response body as 'redirectLink'
+    let redirectLink;
+    if (requiresRedirect && json._links.redirect) {
+        redirectLink = json._links.redirect.href;
+    }
+    return {
+        ...json,
+        isCompleted,
+        isFlagged,
+        requiresRedirect,
+        redirectLink
+    };
+};
 
 /**
  * Class dealing with the /payments endpoint
@@ -30,19 +119,19 @@ export default class Payments {
         try {
             setSourceOrDestinationType(body);
             validatePayment(body);
-            _addMetadata(body);
+            const alteredBody = addMetadata(body);
 
             const response = await http(
                 fetch,
                 { timeout: this.config.timeout },
                 {
-                    method: "post",
+                    method: 'post',
                     url: `${this.config.host}/payments`,
-                    headers: _determineHeaders(this.config, idempotencyKey),
-                    body
+                    headers: determineHeaders(this.config, idempotencyKey),
+                    alteredBody
                 }
             );
-            return _addUtilityParams(await response.json);
+            return addUtilityParams(await response.json);
         } catch (err) {
             const error = await determineError(err);
             throw error;
@@ -58,10 +147,7 @@ export default class Payments {
      */
     async get(id) {
         try {
-            const response = await _getHandler(
-                this.config,
-                `${this.config.host}/payments/${id}`
-            );
+            const response = await getHandler(this.config, `${this.config.host}/payments/${id}`);
             return response.json;
         } catch (err) {
             throw await determineError(err);
@@ -78,7 +164,7 @@ export default class Payments {
      */
     async getActions(id) {
         try {
-            const response = await _getHandler(
+            const response = await getHandler(
                 this.config,
                 `${this.config.host}/payments/${id}/actions`
             );
@@ -98,12 +184,7 @@ export default class Payments {
      */
     async capture(paymentId, body) {
         try {
-            const response = await _actionHandler(
-                this.config,
-                "captures",
-                paymentId,
-                body
-            );
+            const response = await actionHandler(this.config, 'captures', paymentId, body);
             return response;
         } catch (err) {
             throw await determineError(err);
@@ -120,12 +201,7 @@ export default class Payments {
      */
     async refund(paymentId, body) {
         try {
-            const response = await _actionHandler(
-                this.config,
-                "refunds",
-                paymentId,
-                body
-            );
+            const response = await actionHandler(this.config, 'refunds', paymentId, body);
             return response;
         } catch (err) {
             throw await determineError(err);
@@ -142,112 +218,10 @@ export default class Payments {
      */
     async void(paymentId, body) {
         try {
-            const response = await _actionHandler(
-                this.config,
-                "voids",
-                paymentId,
-                body
-            );
+            const response = await actionHandler(this.config, 'voids', paymentId, body);
             return response;
         } catch (err) {
             throw await determineError(err);
         }
     }
 }
-
-const _actionHandler = async (config, action, paymentId, body) => {
-    try {
-        const response = await http(
-            fetch,
-            { timeout: config.timeout },
-            {
-                method: "post",
-                url: `${config.host}/payments/${paymentId}/${action}`,
-                headers: {
-                    Authorization: config.sk
-                },
-                body: body !== undefined ? body : {}
-            }
-        );
-        return response.json;
-    } catch (err) {
-        throw err;
-    }
-};
-
-const _getHandler = async (config, url) => {
-    try {
-        const response = await http(
-            fetch,
-            { timeout: config.timeout },
-            {
-                method: "get",
-                url,
-                headers: {
-                    Authorization: config.sk
-                }
-            }
-        );
-        return response;
-    } catch (err) {
-        throw err;
-    }
-};
-
-const _determineHeaders = (config, idempotencyKey) => {
-    if (idempotencyKey !== undefined) {
-        return {
-            Authorization: config.sk,
-            "Cko-Idempotency-Key": idempotencyKey
-        };
-    }
-    return { Authorization: config.sk };
-};
-
-const _addMetadata = body => {
-    body = {
-        ...body,
-        metadata: {
-            ...body.metadata,
-            sdk: "node",
-            sdk_version: pjson.version
-        }
-    };
-};
-
-const _addUtilityParams = json => {
-    let isCompleted = false;
-    let isFlagged = false;
-    let requiresRedirect = false;
-
-    if (json.destination) {
-        if (json.approved && json.status === "Paid") {
-            isCompleted = true;
-        }
-        isFlagged = false;
-        requiresRedirect = false;
-    } else {
-        isCompleted =
-            json.status === "Pending"
-                ? false
-                : json.approved &&
-                  json.risk.flagged !== true &&
-                  json.status === "Authorized" &&
-                  json.response_summary === "Approved";
-        isFlagged = json.status === "Pending" ? false : json.risk.flagged;
-        requiresRedirect = json.status === "Pending";
-    }
-
-    // If the redirection URL exists add it to the response body as 'redirectLink'
-    let redirectLink = undefined;
-    if (requiresRedirect && json._links.redirect) {
-        redirectLink = json._links.redirect.href;
-    }
-    return {
-        ...json,
-        isCompleted,
-        isFlagged,
-        requiresRedirect,
-        redirectLink
-    };
-};

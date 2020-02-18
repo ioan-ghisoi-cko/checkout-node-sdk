@@ -1,8 +1,7 @@
-import { determineError } from "../../services/errors";
-import fetch from "node-fetch";
-import http from "../../services/http";
-import { setSourceType } from "../../services/validation";
-const pjson = require("../../../package.json");
+import fetch from 'node-fetch';
+import { determineError } from '../../services/errors';
+import http from '../../services/http';
+import { setSourceType } from '../../services/validation';
 
 /**
  * Class dealing with the /sources endpoint
@@ -30,7 +29,7 @@ export default class Sources {
                 fetch,
                 { timeout: this.config.timeout },
                 {
-                    method: "post",
+                    method: 'post',
                     url: `${this.config.host}/sources`,
                     headers: { Authorization: this.config.sk },
                     body
