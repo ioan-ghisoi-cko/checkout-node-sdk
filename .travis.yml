@@ -19,7 +19,7 @@ jobs:
     include:
         - stage: deploy
           on:
-              branch: remake
+              branch: master
           deploy:
               provider: npm
               tag: beta
