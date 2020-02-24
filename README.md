@@ -356,29 +356,6 @@ try {
 
 ### Utility
 
-> To make it easier to determine the transaction outcomes there are a few utility functions
-> that were added in the response payload:
-
-#### `isCompleted`
-
-```js
-const payment = await cko.payments.request(...);
-
-console.log(payment.isCompleted)
-```
-
-Boolean value. For the "true" value, this means that the transaction was Authorised, no risk rules were triggered and no further action is need. (if you do not use the autocapture feature you still need to capture the transaction)
-
-#### `isFlagged`
-
-```js
-const payment = await cko.payments.request(...);
-
-console.log(payment.isCompleted)
-```
-
-Boolean value. For the "true" value, this means that the transaction was Flagged by a risk rule and it requires manual review.
-
 #### `requiresRedirect`
 
 ```js
