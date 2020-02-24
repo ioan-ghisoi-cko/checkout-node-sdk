@@ -150,9 +150,11 @@ describe('Request a payment or payout', () => {
             amount: 100
         });
 
+        console.log(transaction);
+
         /* eslint-disable no-unused-expressions */
-        expect(transaction.isCompleted).to.be.true;
-        expect(transaction.isFlagged).to.be.false;
+        expect(transaction.approved).to.be.true;
+        expect(transaction.risk.flagged).to.be.false;
         expect(transaction.requiresRedirect).to.be.false;
     });
 
@@ -240,15 +242,15 @@ describe('Request a payment or payout', () => {
         );
 
         /* eslint-disable no-unused-expressions */
-        expect(transaction.isCompleted).to.be.true;
-        expect(transaction.isFlagged).to.be.false;
+        expect(transaction.approved).to.be.true;
+        expect(transaction.risk.flagged).to.be.false;
         expect(transaction.requiresRedirect).to.be.false;
     });
 
     it('should perform 3DS payment request with a Card Source', async () => {
         nock('https://api.sandbox.checkout.com')
             .post('/payments')
-            .reply(201, {
+            .reply(202, {
                 id: 'pay_k72n4u433mierlthuim5oc5syu',
                 status: 'Pending',
                 customer: { id: 'cus_6artgoevd77u7ojah2wled32sa' },
@@ -267,8 +269,6 @@ describe('Request a payment or payout', () => {
                     'cko-request-id': 'f02e7328-b7fc-4993-b9f6-4c913421f57e',
                     'cko-version': '3.34.5'
                 },
-                isCompleted: false,
-                isFlagged: false,
                 requiresRedirect: true
             });
 
@@ -290,8 +290,6 @@ describe('Request a payment or payout', () => {
         });
 
         /* eslint-disable no-unused-expressions */
-        expect(transaction.isCompleted).to.be.false;
-        expect(transaction.isFlagged).to.be.false;
         expect(transaction.requiresRedirect).to.be.true;
         expect(transaction.redirectLink).to.be.a('string');
     });
@@ -357,8 +355,7 @@ describe('Request a payment or payout', () => {
         });
 
         /* eslint-disable no-unused-expressions */
-        expect(transaction.isCompleted).to.be.true;
-        expect(transaction.isFlagged).to.be.false;
+        expect(transaction.approved).to.be.true;
         expect(transaction.requiresRedirect).to.be.false;
     });
 
@@ -424,8 +421,7 @@ describe('Request a payment or payout', () => {
         });
 
         /* eslint-disable no-unused-expressions */
-        expect(transaction.isCompleted).to.be.true;
-        expect(transaction.isFlagged).to.be.false;
+        expect(transaction.approved).to.be.true;
         expect(transaction.requiresRedirect).to.be.false;
     });
 
@@ -513,8 +509,7 @@ describe('Request a payment or payout', () => {
             amount: 100
         });
         /* eslint-disable no-unused-expressions */
-        expect(transaction.isCompleted).to.be.true;
-        expect(transaction.isFlagged).to.be.false;
+        expect(transaction.approved).to.be.true;
         expect(transaction.requiresRedirect).to.be.false;
     });
 
@@ -538,8 +533,6 @@ describe('Request a payment or payout', () => {
                     'cko-request-id': '3e62dcc5-0581-4fdb-a8ca-a62e87466314',
                     'cko-version': '3.34.5'
                 },
-                isCompleted: false,
-                isFlagged: false,
                 requiresRedirect: true
             });
 
@@ -553,8 +546,6 @@ describe('Request a payment or payout', () => {
             amount: 100
         });
         /* eslint-disable no-unused-expressions */
-        expect(transaction.isCompleted).to.be.false;
-        expect(transaction.isFlagged).to.be.false;
         expect(transaction.requiresRedirect).to.be.true;
     });
 
@@ -597,8 +588,6 @@ describe('Request a payment or payout', () => {
             }
         });
 
-        expect(transaction.isCompleted).to.be.false;
-        expect(transaction.isFlagged).to.be.false;
         expect(transaction.requiresRedirect).to.be.true;
         expect(transaction.status).to.equal('Pending');
     });
@@ -667,8 +656,8 @@ describe('Request a payment or payout', () => {
             amount: 1005
         });
 
-        expect(transaction.isCompleted).to.be.false;
-        expect(transaction.isFlagged).to.be.false;
+        expect(transaction.approved).to.be.false;
+        expect(transaction.risk.flagged).to.be.false;
         expect(transaction.requiresRedirect).to.be.false;
         expect(transaction.approved).to.be.false;
         expect(transaction.status).to.equal('Declined');
@@ -1010,7 +999,7 @@ describe('Request a payment or payout', () => {
             reference: 'test',
             amount: 123
         });
-        expect(transaction.isCompleted).to.be.true;
+        expect(transaction.approved).to.be.true;
     });
 
     it('should dynamically determine source type for token', async () => {
@@ -1119,7 +1108,7 @@ describe('Request a payment or payout', () => {
             reference: 'test',
             amount: 123
         });
-        expect(transaction.isCompleted).to.be.true;
+        expect(transaction.approved).to.be.true;
     });
 
     it('should dynamically determine source type for id', async () => {
@@ -1203,7 +1192,7 @@ describe('Request a payment or payout', () => {
             reference: 'test',
             amount: 123
         });
-        expect(transaction.isCompleted).to.be.true;
+        expect(transaction.approved).to.be.true;
     });
 
     it('should dynamically determine source type for network token', async () => {
@@ -1287,6 +1276,6 @@ describe('Request a payment or payout', () => {
             reference: 'test',
             amount: 123
         });
-        expect(transaction.isCompleted).to.be.true;
+        expect(transaction.approved).to.be.true;
     });
 });

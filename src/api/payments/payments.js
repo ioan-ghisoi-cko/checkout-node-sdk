@@ -4,8 +4,6 @@ import { determineError } from '../../services/errors';
 import http from '../../services/http';
 import { validatePayment, setSourceOrDestinationType } from '../../services/validation';
 
-const pjson = require('../../../package.json');
-
 const actionHandler = async (config, action, paymentId, body) => {
     const response = await http(
         fetch,
@@ -47,38 +45,16 @@ const determineHeaders = (config, idempotencyKey) => {
     return { Authorization: config.sk };
 };
 
-const addMetadata = body => {
-    const metaBody = {
-        ...body,
-        metadata: {
-            ...body.metadata,
-            sdk: 'node',
-            sdk_version: pjson.version
-        }
-    };
-    return metaBody;
-};
-
 const addUtilityParams = json => {
     let isCompleted = false;
-    let isFlagged = false;
     let requiresRedirect = false;
 
     if (json.destination) {
         if (json.approved && json.status === 'Paid') {
             isCompleted = true;
         }
-        isFlagged = false;
         requiresRedirect = false;
     } else {
-        isCompleted =
-            json.status === 'Pending'
-                ? false
-                : json.approved &&
-                  json.risk.flagged !== true &&
-                  json.status === 'Authorized' &&
-                  json.response_summary === 'Approved';
-        isFlagged = json.status === 'Pending' ? false : json.risk.flagged;
         requiresRedirect = json.status === 'Pending';
     }
 
@@ -89,8 +65,6 @@ const addUtilityParams = json => {
     }
     return {
         ...json,
-        isCompleted,
-        isFlagged,
         requiresRedirect,
         redirectLink
     };
@@ -119,7 +93,6 @@ export default class Payments {
         try {
             setSourceOrDestinationType(body);
             validatePayment(body);
-            const alteredBody = addMetadata(body);
 
             const response = await http(
                 fetch,
@@ -128,7 +101,7 @@ export default class Payments {
                     method: 'post',
                     url: `${this.config.host}/payments`,
                     headers: determineHeaders(this.config, idempotencyKey),
-                    alteredBody
+                    body
                 }
             );
             return addUtilityParams(await response.json);

@@ -1,5 +1,6 @@
 /* eslint-disable no-throw-literal */
 import { API_VERSION_HEADER, REQUEST_ID_HEADER } from '../config';
+const pjson = require('../../package.json');
 
 const http = async (fetch, config, request) => {
     const response = await fetch(request.url, {
@@ -10,7 +11,8 @@ const http = async (fetch, config, request) => {
             ...request.headers,
             'Content-Type': 'application/json',
             'Cache-Control': 'no-cache',
-            pragma: 'no-cache'
+            pragma: 'no-cache',
+            'user-agent': `checkout-sdk-node/${pjson.version}`
         }
     });
 

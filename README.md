@@ -24,13 +24,13 @@ const cko = new Checkout();
 > With your secret key.
 
 ```js
-const cko = new Checkout("sk_XXXX");
+const cko = new Checkout('sk_XXXX');
 ```
 
 > With your secret key and custom config
 
 ```js
-const cko = new Checkout("sk_XXXX", { timeout: 7000 });
+const cko = new Checkout('sk_XXXX', { timeout: 7000 });
 ```
 
 # Environment
@@ -38,15 +38,15 @@ const cko = new Checkout("sk_XXXX", { timeout: 7000 });
 > Unless you specify the host, the SDK will determine the environemnt based on your secret key
 
 ```js
-const cko = new Checkout("sk_XXXX", { host: "test.com" }); // custom host
-const cko = new Checkout("sk_XXXX"); // Live Environemnt
-const cko = new Checkout("sk_test_XXXX"); // Sandbox Environemnt
+const cko = new Checkout('sk_XXXX', { host: 'test.com' }); // custom host
+const cko = new Checkout('sk_XXXX'); // Live Environemnt
+const cko = new Checkout('sk_test_XXXX'); // Sandbox Environemnt
 ```
 
 > In case you use the token endpoint you can set you publick key like this:
 
 ```js
-const cko = new Checkout("sk_XXXX", { pk: "pk_XXX" });
+const cko = new Checkout('sk_XXXX', { pk: 'pk_XXX' });
 // or cko.config.pk = "pk_XXX"
 ```
 
@@ -62,11 +62,11 @@ The SDK will infer the `type` of the payment `source` or `destination`, if not p
 
 ```js
 const payment = await cko.payments.request({
-  source: {
-    token: "tok_bzi43qc6jeee5mmnfo4gnsnera"
-  },
-  currency: "USD",
-  amount: 1000 // cents
+    source: {
+        token: 'tok_bzi43qc6jeee5mmnfo4gnsnera'
+    },
+    currency: 'USD',
+    amount: 1000 // cents
 });
 ```
 
@@ -74,14 +74,14 @@ const payment = await cko.payments.request({
 
 ```js
 const payment = await cko.payments.request({
-  source: {
-    number: "4242424242424242",
-    expiry_month: 6,
-    expiry_year: 2029,
-    cvv: "100"
-  },
-  currency: "USD",
-  amount: 1000 // cents
+    source: {
+        number: '4242424242424242',
+        expiry_month: 6,
+        expiry_year: 2029,
+        cvv: '100'
+    },
+    currency: 'USD',
+    amount: 1000 // cents
 });
 ```
 
@@ -89,11 +89,11 @@ const payment = await cko.payments.request({
 
 ```js
 const payment = await cko.payments.request({
-  source: {
-    id: "src_vg3tm54ndfbefotjlmgrrvbxli"
-  },
-  currency: "USD",
-  amount: 1000 // cents
+    source: {
+        id: 'src_vg3tm54ndfbefotjlmgrrvbxli'
+    },
+    currency: 'USD',
+    amount: 1000 // cents
 });
 ```
 
@@ -101,11 +101,11 @@ const payment = await cko.payments.request({
 
 ```js
 const payment = await cko.payments.request({
-  source: {
-    id: "cus_6artgoevd77u7ojah2wled32sa"
-  },
-  currency: "USD",
-  amount: 1000 // cents
+    source: {
+        id: 'cus_6artgoevd77u7ojah2wled32sa'
+    },
+    currency: 'USD',
+    amount: 1000 // cents
 });
 ```
 
@@ -113,11 +113,11 @@ const payment = await cko.payments.request({
 
 ```js
 const payment = await cko.payments.request({
-  source: {
-    type: "sofort"
-  },
-  currency: "EUR",
-  amount: 1000 // cents
+    source: {
+        type: 'sofort'
+    },
+    currency: 'EUR',
+    amount: 1000 // cents
 });
 ```
 
@@ -125,11 +125,11 @@ const payment = await cko.payments.request({
 
 ```js
 const payment = await cko.payments.request({
-  destination: {
-    id: "src_vg3tm54ndfbefotjlmgrrvbxli"
-  },
-  currency: "USD",
-  amount: 1000 // cents
+    destination: {
+        id: 'src_vg3tm54ndfbefotjlmgrrvbxli'
+    },
+    currency: 'USD',
+    amount: 1000 // cents
 });
 ```
 
@@ -138,13 +138,13 @@ const payment = await cko.payments.request({
 #### With: `payment id`
 
 ```js
-const payment = await cko.payments.get("pay_je5hbbb4u3oe7k4u3lbwlu3zkq");
+const payment = await cko.payments.get('pay_je5hbbb4u3oe7k4u3lbwlu3zkq');
 ```
 
 #### With: `session id`
 
 ```js
-const payment = await cko.payments.get("sid_pm6woylsb23efp37npxgmml4ti");
+const payment = await cko.payments.get('sid_pm6woylsb23efp37npxgmml4ti');
 ```
 
 ### Get payment actions
@@ -152,7 +152,7 @@ const payment = await cko.payments.get("sid_pm6woylsb23efp37npxgmml4ti");
 #### With: `payment id`
 
 ```js
-const payment = await cko.payments.getActions("pay_je5hbbb4u3oe7k4u3lbwlu3zkq");
+const payment = await cko.payments.getActions('pay_je5hbbb4u3oe7k4u3lbwlu3zkq');
 ```
 
 ### Payment flow
@@ -160,14 +160,14 @@ const payment = await cko.payments.getActions("pay_je5hbbb4u3oe7k4u3lbwlu3zkq");
 #### Perform: `Capture` `Void` `Refund`
 
 ```js
-const capture = await cko.payments.capture("pay_je5hbbb4u3oe7k4u3lbwlu3zkq", {
-  reference: "capture"
+const capture = await cko.payments.capture('pay_je5hbbb4u3oe7k4u3lbwlu3zkq', {
+    reference: 'capture'
 });
-const void = await cko.payments.void("pay_je5hbbb4u3oe7k4u3lbwlu3zkq", {
-  reference: "void"
+const void = await cko.payments.void('pay_je5hbbb4u3oe7k4u3lbwlu3zkq', {
+    reference: 'void'
 });
-const refund = await cko.payments.refund("pay_je5hbbb4u3oe7k4u3lbwlu3zkq", {
-  reference: "refund"
+const refund = await cko.payments.refund('pay_je5hbbb4u3oe7k4u3lbwlu3zkq', {
+    reference: 'refund'
 });
 ```
 
@@ -177,22 +177,22 @@ const refund = await cko.payments.refund("pay_je5hbbb4u3oe7k4u3lbwlu3zkq", {
 
 ```js
 const payment = await cko.payments.request({
-  source: {
-    number: "4242424242424242",
-    expiry_month: 6,
-    expiry_year: 2029,
-    cvv: "100"
-  },
-  "3ds": {
-    enabled: true
-  },
-  currency: "USD",
-  amount: 1000 // cents
+    source: {
+        number: '4242424242424242',
+        expiry_month: 6,
+        expiry_year: 2029,
+        cvv: '100'
+    },
+    '3ds': {
+        enabled: true
+    },
+    currency: 'USD',
+    amount: 1000 // cents
 });
 
 if (payment.requiresRedirect) {
-  let redirectionUrl = payment.redirectLink;
-  // redirect to the redirectionUrl
+    let redirectionUrl = payment.redirectLink;
+    // redirect to the redirectionUrl
 }
 ```
 
@@ -208,16 +208,16 @@ The SDK will infer the `type` of the payload, if not provided
 
 ```js
 const token = await cko.tokens.request({
-  token_data: {
-    version: "EC_v1",
-    data: "XXX",
-    signature: "XXX",
-    header: {
-      ephemeralPublicKey: "XXX",
-      publicKeyHash: "XXX",
-      transactionId: "XXX"
+    token_data: {
+        version: 'EC_v1',
+        data: 'XXX',
+        signature: 'XXX',
+        header: {
+            ephemeralPublicKey: 'XXX',
+            publicKeyHash: 'XXX',
+            transactionId: 'XXX'
+        }
     }
-  }
 });
 ```
 
@@ -225,11 +225,11 @@ const token = await cko.tokens.request({
 
 ```js
 const token = await cko.tokens.request({
-  token_data: {
-    protocolVersion: "EC_v1",
-    signature: "XXX",
-    signedMessage: "XXX"
-  }
+    token_data: {
+        protocolVersion: 'EC_v1',
+        signature: 'XXX',
+        signedMessage: 'XXX'
+    }
 });
 ```
 
@@ -237,10 +237,10 @@ const token = await cko.tokens.request({
 
 ```js
 const token = await cko.tokens.request({
-  number: "4242424242424242",
-  expiry_month: "6",
-  expiry_year: "2028",
-  cvv: "100"
+    number: '4242424242424242',
+    expiry_month: '6',
+    expiry_year: '2028',
+    cvv: '100'
 });
 ```
 
@@ -292,22 +292,22 @@ const token = await cko.sources.add({
 
 ```js
 const token = await cko.sources.add({
-  billing_address: {
-    address_line1: "Wayne Plaza 1",
-    address_line2: null,
-    city: "Gotham City",
-    state: null,
-    zip: "12345",
-    country: "US"
-  },
-  source_data: {
-    account_holder_name: "Bruce Wayne",
-    account_type: "Checking",
-    account_number: "0123456789",
-    routing_number: "211370545",
-    billing_descriptor: "ACH Demo",
-    company_name: null
-  }
+    billing_address: {
+        address_line1: 'Wayne Plaza 1',
+        address_line2: null,
+        city: 'Gotham City',
+        state: null,
+        zip: '12345',
+        country: 'US'
+    },
+    source_data: {
+        account_holder_name: 'Bruce Wayne',
+        account_type: 'Checking',
+        account_number: '0123456789',
+        routing_number: '211370545',
+        billing_descriptor: 'ACH Demo',
+        company_name: null
+    }
 });
 ```
 
