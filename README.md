@@ -13,6 +13,8 @@
 import import { Checkout } from "johnny-tools-node";
 ```
 
+> If you don't have your own API keys, you can sign up for a test account [here](https://www.checkout.com/get-test-account).
+
 # Initialise
 
 > Picks up your environment variables set as **CKO_SECRET_KEY** and **CKO_PUBLIC_KEY**
