@@ -5,13 +5,9 @@ node_js:
     - 8
     - 7
     - 6
-install:
-    - npm install
 
 script:
     - npm run lint
-
-script:
     - npm test
     - codecov -f coverage/*.json
     - npm i -g babel
