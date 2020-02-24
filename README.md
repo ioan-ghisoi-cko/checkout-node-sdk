@@ -10,7 +10,7 @@
 # Import
 
 ```js
-import import { Checkout } from "johnny-tools-node";
+import import { Checkout } from "checkout-sdk-node";
 ```
 
 > If you don't have your own API keys, you can sign up for a test account [here](https://www.checkout.com/get-test-account).
@@ -40,12 +40,12 @@ const cko = new Checkout('sk_XXXX', { timeout: 7000 });
 > Unless you specify the host, the SDK will determine the environemnt based on your secret key
 
 ```js
-const cko = new Checkout('sk_XXXX', { host: 'test.com' }); // custom host
 const cko = new Checkout('sk_XXXX'); // Live Environemnt
 const cko = new Checkout('sk_test_XXXX'); // Sandbox Environemnt
+const cko = new Checkout('sk_XXXX', { host: 'test.com' }); // custom host
 ```
 
-> In case you use the token endpoint you can set you publick key like this:
+> In case you use the token endpoint you can set your public key like this:
 
 ```js
 const cko = new Checkout('sk_XXXX', { pk: 'pk_XXX' });
