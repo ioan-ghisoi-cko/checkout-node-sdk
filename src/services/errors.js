@@ -207,12 +207,8 @@ export const determineError = async err => {
             return new AuthenticationError();
         case 404:
             return new NotFoundError();
-        case 400:
-            return new UnprocessableError();
         case 403:
             return new ActionNotAllowed();
-        case 409:
-            return new UrlAlreadyRegistered();
         case 422:
             return new ValidationError(await errorJSON);
         case 429:

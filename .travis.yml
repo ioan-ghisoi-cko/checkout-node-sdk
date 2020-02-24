@@ -9,6 +9,9 @@ install:
     - npm install
 
 script:
+    - npm run lint
+
+script:
     - npm test
     - codecov -f coverage/*.json
     - npm i -g babel

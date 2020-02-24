@@ -46,13 +46,9 @@ const determineHeaders = (config, idempotencyKey) => {
 };
 
 const addUtilityParams = json => {
-    let isCompleted = false;
     let requiresRedirect = false;
 
     if (json.destination) {
-        if (json.approved && json.status === 'Paid') {
-            isCompleted = true;
-        }
         requiresRedirect = false;
     } else {
         requiresRedirect = json.status === 'Pending';

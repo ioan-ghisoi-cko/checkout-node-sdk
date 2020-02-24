@@ -1,5 +1,6 @@
 /* eslint-disable no-throw-literal */
 import { API_VERSION_HEADER, REQUEST_ID_HEADER } from '../config';
+
 const pjson = require('../../package.json');
 
 const http = async (fetch, config, request) => {

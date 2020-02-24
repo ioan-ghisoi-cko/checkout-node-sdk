@@ -10,12 +10,12 @@ const determineHost = (key, options) => {
 };
 
 const determineSecretKey = key => {
-    // Unless specified, check environemtn variables for the key
+    // Unless specified, check environemnt variables for the key
     return !key ? process.env.CKO_SECRET_KEY || '' : key;
 };
 
 const determinePublicKey = options => {
-    // Unless specified, check environemtn variables for the key
+    // Unless specified, check environemnt variables for the key
     if (options && options.pk) {
         return options.pk;
     }
@@ -32,7 +32,7 @@ export default class Checkout {
     /**
      * Creates an instance of Checkout.com's SDK.
      *
-     * Determines the environemtn based on the key
+     * Determines the environemnt based on the key
      *
      * @constructor
      * @param {string} [key] Secret Key /^(sk)
