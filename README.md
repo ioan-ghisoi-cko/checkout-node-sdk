@@ -1,6 +1,6 @@
 ![Status](https://img.shields.io/badge/status-BETA-red.svg)
 
-# checkout-sdk-node
+# checkout-sdk-node BETA
 
 [![codecov](https://codecov.io/gh/ioan-ghisoi-cko/checkout-node-sdk/branch/remake/graph/badge.svg)](https://codecov.io/gh/ioan-ghisoi-cko/checkout-node-sdk)
 [![Build Status](https://travis-ci.org/ioan-ghisoi-cko/checkout-node-sdk.svg?branch=remake)](https://travis-ci.org/ioan-ghisoi-cko/checkout-node-sdk)
